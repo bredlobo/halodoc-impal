@@ -1,6 +1,6 @@
-import { products } from '../data/mockData'
-import ProductCard from './ProductCard'
-import SectionHeader from './SectionHeader'
+import { products } from "../../../data/mockData";
+import ProductCard from "../../../components/ProductCard";
+import SectionHeader from "../../../components/SectionHeader";
 
 function StorePreviewSection() {
   return (
@@ -18,7 +18,7 @@ function StorePreviewSection() {
         </div>
       </div>
     </section>
-  )
+  );
 }
 
-export default StorePreviewSection
+export default StorePreviewSection;

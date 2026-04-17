@@ -1,8 +1,8 @@
 function DoctorCard({ doctor }) {
   return (
     <article className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-      <div className="mb-4 aspect-[3/4] overflow-hidden rounded-xl border border-slate-200 bg-slate-100">
-        <div className="flex h-full w-full items-center justify-center bg-gradient-to-b from-slate-100 to-slate-200 text-sm font-medium text-slate-500">
+      <div className="aspect-poster mb-4 overflow-hidden rounded-xl border border-slate-200 bg-slate-100">
+        <div className="flex h-full w-full items-center justify-center bg-linear-to-b from-slate-100 to-slate-200 text-sm font-medium text-slate-500">
           Foto Dokter
         </div>
       </div>
@@ -18,7 +18,7 @@ function DoctorCard({ doctor }) {
         Konsultasi Sekarang
       </button>
     </article>
-  )
+  );
 }
 
-export default DoctorCard
+export default DoctorCard;

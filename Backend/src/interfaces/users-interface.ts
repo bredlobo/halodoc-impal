@@ -24,6 +24,7 @@ export interface AuthenticatedUser {
 export interface RegisteredUser {
   id: number;
   email: string;
+  telephoneNumber?: string | null;
   role: "PATIENT" | "DOCTOR" | "ADMIN";
 }
 
@@ -31,6 +32,7 @@ export interface UserListItem {
   id: number;
   fullName: string;
   email: string;
+  telephoneNumber?: string | null;
   role: "PATIENT" | "DOCTOR" | "ADMIN";
   createdAt: Date;
   patientProfile?: any;

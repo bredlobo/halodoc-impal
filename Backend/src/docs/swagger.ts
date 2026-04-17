@@ -10,9 +10,9 @@ const options: any = {
   definition: {
     openapi: "3.0.0",
     info: {
-      title: "Halodoc API Docs",
+      title: "IMPAL Backend API Docs",
       version: "1.0.0",
-      description: "API Documentation for Halodoc Backend",
+      description: "API documentation for IMPAL backend services",
     },
     servers: [
       {
@@ -27,11 +27,52 @@ const options: any = {
           scheme: "bearer",
           bearerFormat: "JWT",
         },
+        cookieAuth: {
+          type: "apiKey",
+          in: "cookie",
+          name: "accessToken",
+          description: "JWT access token sent via httpOnly cookie",
+        },
+        refreshCookieAuth: {
+          type: "apiKey",
+          in: "cookie",
+          name: "refreshToken",
+          description: "JWT refresh token sent via httpOnly cookie",
+        },
       },
     },
+    tags: [
+      {
+        name: "Users",
+        description: "Authentication and user management endpoints",
+      },
+      {
+        name: "Doctors",
+        description: "Doctor profile and specialization management",
+      },
+      {
+        name: "Consultations",
+        description: "Consultation, chat, and prescription operations",
+      },
+      {
+        name: "Pharmacy",
+        description: "Pharmacy products, stock, and cart checkout",
+      },
+      {
+        name: "Ecommerce",
+        description: "General ecommerce product, cart, and order flows",
+      },
+      {
+        name: "Reviews",
+        description: "Doctor and product rating endpoints",
+      },
+    ],
     security: [
       {
         bearerAuth: [],
+      },
+      {
+        cookieAuth: [],
       },
     ],
   },

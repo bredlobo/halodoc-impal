@@ -11,6 +11,29 @@ const jwtRefreshSecret = config.key.jwtSecret
   ? config.key.jwtSecret + "-refresh"
   : "dev-refresh-secret";
 
+const getTokenFromRequest = (req: Request): string | undefined => {
+  const cookieToken =
+    typeof req.cookies?.accessToken === "string"
+      ? req.cookies.accessToken
+      : undefined;
+
+  if (cookieToken) {
+    return cookieToken;
+  }
+
+  const authorization = req.headers.authorization;
+  if (!authorization) {
+    return undefined;
+  }
+
+  const [scheme, token] = authorization.split(" ");
+  if (scheme !== "Bearer" || !token) {
+    return undefined;
+  }
+
+  return token;
+};
+
 export const createToken = (data: TokenData): TokenResponse => {
   const accessToken: string = jwt.sign(
     {
@@ -40,7 +63,7 @@ export const verifyRefreshToken = (token: string): any => {
 };
 
 export const decodeToken = (token: string): JwtPayload | string => {
-  const data: string = token.split(" ")[1];
+  const data = token.startsWith("Bearer ") ? token.split(" ")[1] : token;
   const decode: string | JwtPayload = jwt.verify(data, jwtSecret);
   return decode;
 };
@@ -51,8 +74,7 @@ export const verifyToken = (
   next: NextFunction,
 ) => {
   try {
-    const { authorization } = req.headers;
-    const token = authorization && authorization.split(" ")[1];
+    const token = getTokenFromRequest(req);
 
     if (token == null) {
       const error = wrapper.error(new Unauthorized("Invalid Token"));

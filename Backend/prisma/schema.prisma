@@ -57,13 +57,14 @@ enum Gender {
 // ==========================================
 
 model User {
-  id        Int      @id @default(autoincrement())
-  email     String   @unique
-  password  String
-  fullName  String
-  role      Role     @default(PATIENT)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id              Int      @id @default(autoincrement())
+  email           String   @unique
+  password        String
+  fullName        String
+  telephoneNumber String?
+  role            Role     @default(PATIENT)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
 
   // Profiles
   doctorProfile  DoctorProfile?
@@ -93,7 +94,7 @@ model PatientProfile {
   id     Int       @id @default(autoincrement())
   user   User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId Int       @unique
-  dob    DateTime?
+  dob    DateTime? @db.Date
   gender Gender?
 
   addresses Address[]
@@ -236,7 +237,7 @@ model PrescriptionItem {
   prescriptionId Int
   product        Product      @relation(fields: [productId], references: [id])
   productId      Int
-  dosage         String 
+  dosage         String
   quantity       Int
 
   @@index([prescriptionId])

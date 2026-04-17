@@ -1,8 +1,8 @@
 export const navLinks = [
-  { name: 'Beranda', href: '#' },
-  { name: 'Konsultasi', href: '#consultation' },
-  { name: 'Toko', href: '#store' },
-  { name: 'Profil', href: '#profile' },
+  { name: 'Beranda', to: '/' },
+  { name: 'Konsultasi', to: '/#consultation' },
+  { name: 'Toko', to: '/#store' },
+  { name: 'Profil', to: '/#profile' },
 ]
 
 export const features = [
