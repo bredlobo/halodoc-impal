@@ -74,7 +74,17 @@ export default class DoctorsService {
     userId: number,
   ): Promise<ResponseResult<any>> {
     try {
-      const history = await DoctorsRepository.getConsultationHistory(userId); // using userId as doctor identifier for now in this mapping assuming consistent id query mapping logic but technically mapped per schema properly.
+      const doctorProfile =
+        await DoctorsRepository.findDoctorProfileByUserId(userId);
+      if (!doctorProfile) {
+        return wrapper.error(new NotFoundError("Doctor profile not found"));
+      }
+
+      // User requested doctorProfile.id, but Consultation schema maps doctorId to User.id.
+      // So we use doctorProfile.userId (which is identical to userId) to avoid query mismatch.
+      const history = await DoctorsRepository.getConsultationHistory(
+        doctorProfile.userId,
+      );
       return wrapper.data(history);
     } catch (err) {
       const message = err instanceof Error ? err.message : String(err);

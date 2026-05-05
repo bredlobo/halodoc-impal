@@ -1,0 +1,209 @@
+{
+  "info": {
+    "_postman_id": "c1a2b3c4-d5e6-f7a8-b9c0-d1e2f3a4b5c6",
+    "name": "Consultation Flow Tests",
+    "description": "Tests for the Consultation Flow (Booking, Accept/Decline). For WebSockets, you will still need to create a manual Socket.io connection in Postman using the tokens retrieved here.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "1. Patient Login",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "var jsonData = pm.response.json();",
+              "if (jsonData.data && jsonData.data.accessToken) {",
+              "    pm.collectionVariables.set(\"patientToken\", jsonData.data.accessToken);",
+              "}"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n    \"email\": \"patient@example.com\",\n    \"password\": \"password123\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/users/login",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "v1", "users", "login"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "2. Doctor Login",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "var jsonData = pm.response.json();",
+              "if (jsonData.data && jsonData.data.accessToken) {",
+              "    pm.collectionVariables.set(\"doctorToken\", jsonData.data.accessToken);",
+              "    pm.collectionVariables.set(\"doctorId\", jsonData.data.user.id);",
+              "}"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n    \"email\": \"doctor@example.com\",\n    \"password\": \"password123\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/users/login",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "v1", "users", "login"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "3. Request Consultation (Patient)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "var jsonData = pm.response.json();",
+              "if (jsonData.data && jsonData.data.id) {",
+              "    pm.collectionVariables.set(\"consultationId\", jsonData.data.id);",
+              "}"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{patientToken}}"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n    \"doctorId\": {{doctorId}}\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/consultations/request",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "v1", "consultations", "request"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "4. Respond to Consultation - ACCEPT (Doctor)",
+      "request": {
+        "method": "PATCH",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{doctorToken}}"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n    \"action\": \"ACCEPT\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/consultations/{{consultationId}}/respond",
+          "host": ["{{baseUrl}}"],
+          "path": [
+            "api",
+            "v1",
+            "consultations",
+            "{{consultationId}}",
+            "respond"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "5. Respond to Consultation - DECLINE (Doctor)",
+      "request": {
+        "method": "PATCH",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{doctorToken}}"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n    \"action\": \"DECLINE\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/consultations/{{consultationId}}/respond",
+          "host": ["{{baseUrl}}"],
+          "path": [
+            "api",
+            "v1",
+            "consultations",
+            "{{consultationId}}",
+            "respond"
+          ]
+        }
+      },
+      "response": []
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:3000"
+    },
+    {
+      "key": "patientToken",
+      "value": ""
+    },
+    {
+      "key": "doctorToken",
+      "value": ""
+    },
+    {
+      "key": "doctorId",
+      "value": "2"
+    },
+    {
+      "key": "consultationId",
+      "value": ""
+    }
+  ]
+}

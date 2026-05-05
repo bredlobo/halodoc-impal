@@ -6,7 +6,9 @@ import {
 import logger from "@/helpers/utils/winston";
 import { Request, Response } from "express";
 import ConsultationsService from "@/modules/Consultations/services/consultations-services";
+import ConsultationsRepository from "@/modules/Consultations/repositories/consultations-repositories";
 import { ConsultationStatus } from "@/generated/prisma";
+import { getIO, emitMessageSafely } from "@/helpers/utils/socket";
 
 export const requestConsultation = async (
   req: Request,
@@ -37,7 +39,54 @@ export const requestConsultation = async (
       http.CREATED,
     );
   } catch (err: unknown) {
-    logger.error(`Error requesting consultation: ${err instanceof Error ? err.message : String(err)}`);
+    logger.error(
+      `Error requesting consultation: ${err instanceof Error ? err.message : String(err)}`,
+    );
+    return wrapper.response(
+      res,
+      "fail",
+      wrapper.error(err instanceof Error ? err : new Error(String(err))),
+      "Internal Server Error",
+      httpError.INTERNAL_ERROR,
+    );
+  }
+};
+
+export const respondToConsultation = async (
+  req: Request,
+  res: Response,
+): Promise<void> => {
+  try {
+    const doctorId = (req as any).user.userId;
+    const consultationId = parseInt(req.params.id as string, 10);
+    const { action } = req.body;
+
+    const result = await ConsultationsService.respondToConsultation(
+      consultationId,
+      doctorId,
+      action,
+    );
+
+    if (result.err) {
+      return wrapper.response(
+        res,
+        "fail",
+        result,
+        "Failed to respond to consultation",
+        httpError.BAD_REQUEST,
+      );
+    }
+    return wrapper.response(
+      res,
+      "success",
+      result,
+      `Consultation ${action.toLowerCase()}ed`,
+      http.OK,
+    );
+  } catch (err: unknown) {
+    logger.error(
+      `Error responding to consultation: ${err instanceof Error ? err.message : String(err)}`,
+    );
     return wrapper.response(
       res,
       "fail",
@@ -71,7 +120,9 @@ export const updateStatus = async (
     }
     return wrapper.response(res, "success", result, "Status updated", http.OK);
   } catch (err: unknown) {
-    logger.error(`Error updating consultation status: ${err instanceof Error ? err.message : String(err)}`);
+    logger.error(
+      `Error updating consultation status: ${err instanceof Error ? err.message : String(err)}`,
+    );
     return wrapper.response(
       res,
       "fail",
@@ -107,7 +158,9 @@ export const processPayment = async (
       http.OK,
     );
   } catch (err: unknown) {
-    logger.error(`Error processing payment: ${err instanceof Error ? err.message : String(err)}`);
+    logger.error(
+      `Error processing payment: ${err instanceof Error ? err.message : String(err)}`,
+    );
     return wrapper.response(
       res,
       "fail",
@@ -135,6 +188,7 @@ export const getChatHistory = async (
         httpError.BAD_REQUEST,
       );
     }
+
     return wrapper.response(
       res,
       "success",
@@ -143,7 +197,9 @@ export const getChatHistory = async (
       http.OK,
     );
   } catch (err: unknown) {
-    logger.error(`Error fetching chat history: ${err instanceof Error ? err.message : String(err)}`);
+    logger.error(
+      `Error fetching chat history: ${err instanceof Error ? err.message : String(err)}`,
+    );
     return wrapper.response(
       res,
       "fail",
@@ -178,6 +234,9 @@ export const sendMessage = async (
         httpError.BAD_REQUEST,
       );
     }
+
+    emitMessageSafely(consultationId, result.data);
+
     return wrapper.response(
       res,
       "success",
@@ -186,7 +245,9 @@ export const sendMessage = async (
       http.CREATED,
     );
   } catch (err: unknown) {
-    logger.error(`Error sending message: ${err instanceof Error ? err.message : String(err)}`);
+    logger.error(
+      `Error sending message: ${err instanceof Error ? err.message : String(err)}`,
+    );
     return wrapper.response(
       res,
       "fail",
@@ -219,6 +280,24 @@ export const generatePrescription = async (
         httpError.BAD_REQUEST,
       );
     }
+
+    try {
+      const consultation =
+        await ConsultationsRepository.getConsultationById(consultationId);
+      if (consultation) {
+        getIO()
+          .to(`user_${consultation.patientId}`)
+          .emit("prescription_ready", {
+            prescriptionId: result.data.id,
+            consultationId,
+          });
+      }
+    } catch (socketErr) {
+      logger.error(
+        `Socket error: ${socketErr instanceof Error ? socketErr.message : String(socketErr)}`,
+      );
+    }
+
     return wrapper.response(
       res,
       "success",
@@ -227,7 +306,9 @@ export const generatePrescription = async (
       http.CREATED,
     );
   } catch (err: unknown) {
-    logger.error(`Error generating prescription: ${err instanceof Error ? err.message : String(err)}`);
+    logger.error(
+      `Error generating prescription: ${err instanceof Error ? err.message : String(err)}`,
+    );
     return wrapper.response(
       res,
       "fail",
@@ -268,7 +349,9 @@ export const updatePrescriptionNotes = async (
       http.OK,
     );
   } catch (err: unknown) {
-    logger.error(`Error updating prescription notes: ${err instanceof Error ? err.message : String(err)}`);
+    logger.error(
+      `Error updating prescription notes: ${err instanceof Error ? err.message : String(err)}`,
+    );
     return wrapper.response(
       res,
       "fail",
@@ -309,7 +392,9 @@ export const addPrescriptionItem = async (
       http.CREATED,
     );
   } catch (err: unknown) {
-    logger.error(`Error adding prescription item: ${err instanceof Error ? err.message : String(err)}`);
+    logger.error(
+      `Error adding prescription item: ${err instanceof Error ? err.message : String(err)}`,
+    );
     return wrapper.response(
       res,
       "fail",
@@ -345,7 +430,9 @@ export const removePrescriptionItem = async (
       http.OK,
     );
   } catch (err: unknown) {
-    logger.error(`Error removing prescription item: ${err instanceof Error ? err.message : String(err)}`);
+    logger.error(
+      `Error removing prescription item: ${err instanceof Error ? err.message : String(err)}`,
+    );
     return wrapper.response(
       res,
       "fail",

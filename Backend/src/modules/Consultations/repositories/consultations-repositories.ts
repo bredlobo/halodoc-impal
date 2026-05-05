@@ -2,6 +2,16 @@ import prisma from "@/helpers/db/prisma/client";
 import { ConsultationStatus, PaymentStatus } from "@/generated/prisma";
 
 export default class ConsultationsRepository {
+  static async cancelExpiredConsultations() {
+    return prisma.consultation.updateMany({
+      where: {
+        status: "REQUESTED",
+        createdAt: { lt: new Date(Date.now() - 5 * 60 * 1000) },
+      },
+      data: { status: "CANCELLED" },
+    });
+  }
+
   static async requestConsultation(
     patientId: number,
     doctorId: number,
