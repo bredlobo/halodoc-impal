@@ -8,6 +8,7 @@
  *         - fullName
  *         - email
  *         - password
+ *         - confirmPassword
  *       properties:
  *         fullName:
  *           type: string
@@ -21,26 +22,31 @@
  *           type: string
  *           minLength: 8
  *           example: "password123"
+ *         confirmPassword:
+ *           type: string
+ *           minLength: 8
+ *           example: "password123"
+ *         telephoneNumber:
+ *           type: string
+ *           pattern: '^\\+?[0-9]{8,15}$'
+ *           example: "+628123456789"
  *         dob:
  *           type: string
- *           format: date-time
- *           example: "1990-01-01T00:00:00.000Z"
+ *           format: date
+ *           example: "2026-04-01"
  *         gender:
  *           type: string
  *           enum: [MALE, FEMALE, OTHER]
  *           example: "MALE"
- *         specialization:
- *           type: string
- *           example: "Cardiologist"
- *           description: For DOCTOR registration
+ *         specializationId:
+ *           type: integer
+ *           minimum: 1
+ *           example: 2
+ *           description: Required when creating a DOCTOR account
  *         strNumber:
  *           type: string
  *           example: "STR-123456789"
- *           description: For DOCTOR registration
- *         department:
- *           type: string
- *           example: "Operations"
- *           description: For ADMIN registration
+ *           description: Required when creating a DOCTOR account
  *
  *     LoginUserRequest:
  *       type: object
@@ -64,18 +70,32 @@
  *           type: string
  *           minLength: 3
  *           example: "John Doe Edited"
+ *         telephoneNumber:
+ *           type: string
+ *           pattern: '^\\+?[0-9]{8,15}$'
+ *           example: "+628123456789"
  *         dob:
  *           type: string
- *           format: date-time
+ *           format: date
+ *           example: "2026-04-01"
  *         gender:
  *           type: string
  *           enum: [MALE, FEMALE, OTHER]
- *         specialization:
- *           type: string
+ *         specializationId:
+ *           type: integer
+ *           minimum: 1
  *         strNumber:
  *           type: string
- *         department:
+
+ *     RefreshTokenRequest:
+ *       type: object
+ *       required:
+ *         - refreshToken
+ *       properties:
+ *         refreshToken:
  *           type: string
+ *           minLength: 1
+ *           description: Optional in practice when refreshToken cookie is present
  *
  *     AddCartItemRequest:
  *       type: object

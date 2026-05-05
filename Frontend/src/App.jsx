@@ -1,31 +1,33 @@
-import { useState } from 'react'
-import Navbar from './components/Navbar'
-import HeroSection from './components/HeroSection'
-import FeaturesSection from './components/FeaturesSection'
-import DoctorsPreviewSection from './components/DoctorsPreviewSection'
-import StorePreviewSection from './components/StorePreviewSection'
-import Footer from './components/Footer'
-import LoginRegisterPage from './components/LoginRegisterPage'
+import "./App.css";
+import { RouterProvider, createBrowserRouter } from "react-router-dom";
+import PublicLayout from "./layout/PublicLayout";
+import HomePage from "./Pages/Home/Home";
+import AuthPage from "./Pages/Auth/Auth";
+import NotFound from "./Pages/NotFound";
+
+const routes = createBrowserRouter([
+  {
+    path: "/",
+    element: <PublicLayout />,
+    children: [
+      {
+        index: true,
+        element: <HomePage />,
+      },
+      {
+        path: "auth",
+        element: <AuthPage />,
+      },
+    ],
+  },
+  {
+    path: "*",
+    element: <NotFound />,
+  },
+]);
 
 function App() {
-  const [isAuthOpen, setIsAuthOpen] = useState(false)
-
-  if (isAuthOpen) {
-    return <LoginRegisterPage onClose={() => setIsAuthOpen(false)} />
-  }
-
-  return (
-    <div className="min-h-screen bg-[radial-gradient(circle_at_top,#fff1f2_0%,#ffffff_30%,#f8fafc_100%)]">
-      <Navbar onLoginClick={() => setIsAuthOpen(true)} />
-      <main>
-        <HeroSection />
-        <FeaturesSection />
-        <DoctorsPreviewSection />
-        <StorePreviewSection />
-      </main>
-      <Footer />
-    </div>
-  )
+  return <RouterProvider router={routes} />;
 }
 
-export default App
+export default App;

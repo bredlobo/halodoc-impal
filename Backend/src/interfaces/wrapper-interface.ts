@@ -3,6 +3,7 @@ export interface ApiResponse<T> {
   data: T | null;
   message: string;
   code: number;
+  errors?: Record<string, string>;
 }
 
 export interface SuccessResponse<T> {

@@ -2,7 +2,7 @@ function SectionHeader({ eyebrow, title, description }) {
   return (
     <div className="mx-auto mb-8 max-w-2xl text-center sm:mb-10">
       {eyebrow && (
-        <p className="mb-2 text-xs font-semibold uppercase tracking-[0.2em] text-red-500">
+        <p className="mb-2 text-xs font-semibold tracking-widest text-red-500 uppercase">
           {eyebrow}
         </p>
       )}
@@ -11,7 +11,7 @@ function SectionHeader({ eyebrow, title, description }) {
         {description}
       </p>
     </div>
-  )
+  );
 }
 
-export default SectionHeader
+export default SectionHeader;

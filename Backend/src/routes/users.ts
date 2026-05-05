@@ -3,6 +3,7 @@ import {
   getAllUsers,
   userEdit,
   userLogin,
+  userLogout,
   userRegister,
   refreshToken,
 } from "@/modules/Users/controllers/users-controllers";
@@ -17,6 +18,7 @@ const router = Router();
  *   get:
  *     summary: Users route health check
  *     tags: [Users]
+ *     security: []
  *     responses:
  *       "200":
  *         description: Health check success
@@ -33,6 +35,7 @@ router.get("/health", (req: Request, res: Response) => {
  *   post:
  *     summary: Register a new user
  *     tags: [Users]
+ *     security: []
  *     requestBody:
  *       required: true
  *       content:
@@ -56,7 +59,9 @@ router.post("/register", userRegister("PATIENT"));
  * /api/v1/users/login:
  *   post:
  *     summary: Login a user
+ *     description: Returns access and refresh tokens in the response body and sets both as httpOnly cookies.
  *     tags: [Users]
+ *     security: []
  *     requestBody:
  *       required: true
  *       content:
@@ -65,7 +70,12 @@ router.post("/register", userRegister("PATIENT"));
  *             $ref: '#/components/schemas/LoginUserRequest'
  *     responses:
  *       "200":
- *         description: Login successful
+ *         description: Login successful and auth cookies are set
+ *         headers:
+ *           Set-Cookie:
+ *             description: accessToken and refreshToken httpOnly cookies
+ *             schema:
+ *               type: string
  *       "400":
  *         $ref: '#/components/responses/ValidationError'
  *       "401":
@@ -82,21 +92,26 @@ router.post("/login", userLogin);
  * /api/v1/users/refresh:
  *   post:
  *     summary: Refresh access token
+ *     description: Uses refreshToken cookie by default (request body fallback is supported for backward compatibility) and rotates both auth cookies.
  *     tags: [Users]
+ *     security:
+ *       - refreshCookieAuth: []
+ *       - bearerAuth: []
+ *       - cookieAuth: []
  *     requestBody:
- *       required: true
+ *       required: false
  *       content:
  *         application/json:
  *           schema:
- *             type: object
- *             required:
- *               - refreshToken
- *             properties:
- *               refreshToken:
- *                 type: string
+ *             $ref: '#/components/schemas/RefreshTokenRequest'
  *     responses:
  *       "200":
- *         description: Token refreshed successfully
+ *         description: Token refreshed successfully and auth cookies are rotated
+ *         headers:
+ *           Set-Cookie:
+ *             description: refreshed accessToken and refreshToken httpOnly cookies
+ *             schema:
+ *               type: string
  *       "400":
  *         $ref: '#/components/responses/ValidationError'
  *       "401":
@@ -108,12 +123,29 @@ router.post("/refresh", refreshToken);
 
 /**
  * @swagger
+ * /api/v1/users/logout:
+ *   post:
+ *     summary: Logout current user
+ *     description: Clears accessToken and refreshToken cookies.
+ *     tags: [Users]
+ *     security: []
+ *     responses:
+ *       "200":
+ *         description: Logout successful and auth cookies cleared
+ *       "500":
+ *         $ref: '#/components/responses/InternalServerError'
+ */
+router.post("/logout", userLogout);
+
+/**
+ * @swagger
  * /api/v1/users/admin/doctors:
  *   post:
  *     summary: Admin creates a doctor account
  *     tags: [Users]
  *     security:
  *       - bearerAuth: []
+ *       - cookieAuth: []
  *     requestBody:
  *       required: true
  *       content:
@@ -149,6 +181,7 @@ router.post(
  *     tags: [Users]
  *     security:
  *       - bearerAuth: []
+ *       - cookieAuth: []
  *     requestBody:
  *       required: true
  *       content:
@@ -184,6 +217,7 @@ router.post(
  *     tags: [Users]
  *     security:
  *       - bearerAuth: []
+ *       - cookieAuth: []
  *     requestBody:
  *       required: true
  *       content:
@@ -212,6 +246,7 @@ router.post("/edit", verifyToken, userEdit);
  *     tags: [Users]
  *     security:
  *       - bearerAuth: []
+ *       - cookieAuth: []
  *     responses:
  *       "200":
  *         description: Users fetched

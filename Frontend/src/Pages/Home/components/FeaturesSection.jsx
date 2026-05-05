@@ -1,6 +1,6 @@
-import { features } from '../data/mockData'
-import FeatureCard from './FeatureCard'
-import SectionHeader from './SectionHeader'
+import { features } from "../../../data/mockData";
+import FeatureCard from "../../../components/FeatureCard";
+import SectionHeader from "../../../components/SectionHeader";
 
 function FeaturesSection() {
   return (
@@ -18,7 +18,7 @@ function FeaturesSection() {
         </div>
       </div>
     </section>
-  )
+  );
 }
 
-export default FeaturesSection
+export default FeaturesSection;

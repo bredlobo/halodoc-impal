@@ -20,7 +20,7 @@ export default class UserService {
     role: Role = "PATIENT",
   ): Promise<ResponseResult<RegisteredUser>> {
     try {
-      const { fullName, email, password } = payload;
+      const { fullName, email, password, telephoneNumber } = payload;
 
       logger.info(`Creating Account: ${email} as ${role}`);
 
@@ -36,6 +36,7 @@ export default class UserService {
         fullName,
         email,
         password: hashPassword,
+        telephoneNumber,
         role: role as Role,
         dob: payload.dob,
         gender: payload.gender,
@@ -62,17 +63,13 @@ export default class UserService {
       const user = await UsersRepository.findByEmail(email);
 
       if (!user) {
-        return wrapper.error(new NotFoundError("User not found"));
-      }
-
-      if (!user.password) {
-        return wrapper.error(new UnauthorizedError("Invalid credentials"));
+        return wrapper.error(new NotFoundError("email tidak ditemukan"));
       }
 
       const isValid = await bcrypt.compare(password, user.password);
 
       if (!isValid) {
-        return wrapper.error(new UnauthorizedError("Incorrect password"));
+        return wrapper.error(new UnauthorizedError("Password Salah"));
       }
 
       const { accessToken, refreshToken } = await createToken({
@@ -80,7 +77,16 @@ export default class UserService {
         email: user.email,
         role: user.role,
       });
-      return wrapper.data({ token: accessToken, refreshToken });
+      return wrapper.data({
+        token: accessToken,
+        refreshToken,
+        user: {
+          id: user.id,
+          email: user.email,
+          telephoneNumber: user.telephoneNumber,
+          fullName: user.fullName,
+        },
+      });
     } catch (err) {
       const message = err instanceof Error ? err.message : String(err);
       return wrapper.error(new BadRequestError(message));
@@ -98,7 +104,129 @@ export default class UserService {
     }
   }
 
-  static async editUser() {}
+  static async getRoleProfile(userId: number): Promise<ResponseResult<any>> {
+    try {
+      const user = await UsersRepository.findById(userId);
+      if (!user) return wrapper.error(new NotFoundError("User not found"));
+      return wrapper.data(user);
+    } catch (err) {
+      const message = err instanceof Error ? err.message : String(err);
+      return wrapper.error(new BadRequestError(message));
+    }
+  }
+
+  static async updatePassword(
+    userId: number,
+    payload: any,
+  ): Promise<ResponseResult<any>> {
+    try {
+      const existingUser = await UsersRepository.findById(userId);
+      if (!existingUser)
+        return wrapper.error(new NotFoundError("User not found"));
+
+      const isValid = await bcrypt.compare(
+        payload.oldPassword,
+        existingUser.password,
+      );
+      if (!isValid)
+        return wrapper.error(new UnauthorizedError("Incorrect old password"));
+
+      const hashPassword = await bcrypt.hash(payload.newPassword, 10);
+      await UsersRepository.updatePassword(userId, hashPassword);
+
+      return wrapper.data({ message: "Password updated successfully" });
+    } catch (err) {
+      const message = err instanceof Error ? err.message : String(err);
+      return wrapper.error(new BadRequestError(message));
+    }
+  }
+
+  static async updateProfile(
+    userId: number,
+    payload: any,
+  ): Promise<ResponseResult<any>> {
+    try {
+      const existingUser = await UsersRepository.findById(userId);
+      if (!existingUser)
+        return wrapper.error(new NotFoundError("User not found"));
+
+      await UsersRepository.updateUserProfile(userId, {
+        fullName: payload.fullName,
+        telephoneNumber: payload.telephoneNumber,
+      });
+
+      if (existingUser.role === "PATIENT" && (payload.dob || payload.gender)) {
+        await UsersRepository.updatePatientDemographics(
+          userId,
+          payload.dob ? new Date(payload.dob) : undefined,
+          payload.gender,
+        );
+      }
+
+      const updatedUser = await UsersRepository.findById(userId);
+      return wrapper.data(updatedUser);
+    } catch (err) {
+      const message = err instanceof Error ? err.message : String(err);
+      return wrapper.error(new BadRequestError(message));
+    }
+  }
+
+  static async addAddress(
+    userId: number,
+    payload: any,
+  ): Promise<ResponseResult<any>> {
+    try {
+      const user = await UsersRepository.findById(userId);
+      if (!user || !user.patientProfile)
+        return wrapper.error(new NotFoundError("Patient profile not found"));
+
+      if (payload.isDefault) {
+        await UsersRepository.clearDefaultAddress(user.patientProfile.id);
+      }
+
+      const address = await UsersRepository.addAddress({
+        patientProfileId: user.patientProfile.id,
+        ...payload,
+      });
+
+      return wrapper.data(address);
+    } catch (err) {
+      const message = err instanceof Error ? err.message : String(err);
+      return wrapper.error(new BadRequestError(message));
+    }
+  }
+
+  static async getAddresses(userId: number): Promise<ResponseResult<any>> {
+    try {
+      const user = await UsersRepository.findById(userId);
+      if (!user || !user.patientProfile)
+        return wrapper.error(new NotFoundError("Patient profile not found"));
+
+      const addresses = await UsersRepository.getAddresses(
+        user.patientProfile.id,
+      );
+      return wrapper.data(addresses);
+    } catch (err) {
+      const message = err instanceof Error ? err.message : String(err);
+      return wrapper.error(new BadRequestError(message));
+    }
+  }
+
+  static async updateAdminStatus(
+    adminProfileId: number,
+    isSuperAdmin: boolean,
+  ): Promise<ResponseResult<any>> {
+    try {
+      const updated = await UsersRepository.updateAdminStatus(
+        adminProfileId,
+        isSuperAdmin,
+      );
+      return wrapper.data(updated);
+    } catch (err) {
+      const message = err instanceof Error ? err.message : String(err);
+      return wrapper.error(new BadRequestError(message));
+    }
+  }
 
   static async refreshToken(payload: {
     refreshToken: string;

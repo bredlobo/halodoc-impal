@@ -1,6 +1,6 @@
-import { doctors } from '../data/mockData'
-import DoctorCard from './DoctorCard'
-import SectionHeader from './SectionHeader'
+import { doctors } from "../../../data/mockData";
+import DoctorCard from "../../../components/DoctorCard";
+import SectionHeader from "../../../components/SectionHeader";
 
 function DoctorsPreviewSection() {
   return (
@@ -18,7 +18,7 @@ function DoctorsPreviewSection() {
         </div>
       </div>
     </section>
-  )
+  );
 }
 
-export default DoctorsPreviewSection
+export default DoctorsPreviewSection;
