@@ -3,6 +3,10 @@ import axios from "axios";
 const apiBase = import.meta.env.VITE_API_BASE_URL ?? "";
 const loginRedirectPath = "/auth";
 
+const isAuthRequest = (requestUrl = "") => {
+  return /\/users\/(login|register|refresh)\b/.test(requestUrl);
+};
+
 const getAccessToken = () => localStorage.getItem("token");
 
 const http = axios.create({
@@ -30,12 +34,16 @@ http.interceptors.response.use(
       return Promise.reject(error);
     }
 
-    if (error.response?.status === 401 && !originalRequest._retry) {
+    if (
+      error.response?.status === 401 &&
+      !originalRequest._retry &&
+      !isAuthRequest(originalRequest.url)
+    ) {
       originalRequest._retry = true;
 
       try {
         const refreshResponse = await axios.post(
-          `${apiBase}/api/v1/users/refresh`,
+          `${apiBase}/users/refresh`,
           {},
           {
             withCredentials: true,
@@ -72,6 +80,7 @@ http.interceptors.response.use(
         return Promise.reject(refreshError);
       }
     }
+
 
     return Promise.reject(error);
   }

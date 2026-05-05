@@ -8,6 +8,7 @@ import {
   GatewayTimeoutError,
   ServiceUnavailableError,
   UnauthorizedError,
+  ValidationError,
 } from "@/helpers/error/index";
 import { Response } from "express";
 import { ERROR as httpError } from "@/helpers/http-status/statusCode";
@@ -24,10 +25,11 @@ const response = <T>(
   type: "success" | "fail",
   result: ResponseResult<T>,
   message: string = "",
-  code: number = 200
+  code: number = 200,
 ): void => {
   let status = type === "success";
   let data = type === "success" ? (result as SuccessResponse<T>).data : null;
+  let errors: Record<string, string> | undefined;
 
   if (type === "fail") {
     status = false;
@@ -35,6 +37,10 @@ const response = <T>(
     const error = result as ErrorResponse;
     message = error.err.message || message;
     code = checkErrorCode(error.err);
+
+    if (error.err instanceof ValidationError) {
+      errors = error.err.errors;
+    }
   }
 
   const apiResponse: ApiResponse<T> = {
@@ -42,6 +48,7 @@ const response = <T>(
     data,
     message,
     code,
+    ...(errors ? { errors } : {}),
   };
 
   res.status(code).json(apiResponse);
@@ -49,6 +56,8 @@ const response = <T>(
 
 const checkErrorCode = (error: Error): number => {
   switch (error.constructor) {
+    case ValidationError:
+      return httpError.BAD_REQUEST;
     case BadRequestError:
       return httpError.BAD_REQUEST;
     case ConflictError:

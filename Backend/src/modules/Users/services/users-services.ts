@@ -63,17 +63,13 @@ export default class UserService {
       const user = await UsersRepository.findByEmail(email);
 
       if (!user) {
-        return wrapper.error(new NotFoundError("User not found"));
-      }
-
-      if (!user.password) {
-        return wrapper.error(new UnauthorizedError("Invalid credentials"));
+        return wrapper.error(new NotFoundError("email tidak ditemukan"));
       }
 
       const isValid = await bcrypt.compare(password, user.password);
 
       if (!isValid) {
-        return wrapper.error(new UnauthorizedError("Incorrect password"));
+        return wrapper.error(new UnauthorizedError("Password Salah"));
       }
 
       const { accessToken, refreshToken } = await createToken({

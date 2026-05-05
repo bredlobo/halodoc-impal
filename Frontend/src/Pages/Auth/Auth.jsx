@@ -46,6 +46,13 @@ function AuthPage() {
     setRegisterForm((prev) => ({ ...prev, [name]: value }));
   };
 
+  const getFieldError = (error, field) => {
+    if (error && !(error instanceof Error) && typeof error === "object") {
+      return error[field];
+    }
+    return null;
+  };
+
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
@@ -84,216 +91,238 @@ function AuthPage() {
   };
 
   return (
-    <div className="bg-auth-gradient min-h-screen px-4 py-10 sm:px-6 lg:px-8">
-      <div className="mx-auto w-full max-w-6xl">
-        <Link
-          to="/"
-          className="mb-5 inline-flex rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 shadow-sm transition hover:border-slate-300 hover:bg-slate-100"
-        >
-          Kembali
-        </Link>
-
-        <div className="mx-auto w-full max-w-lg rounded-3xl border border-slate-200 bg-white p-5 shadow-xl sm:p-7">
-          <div className="mb-6 rounded-2xl bg-slate-100 p-1">
-            <div className="grid grid-cols-2 gap-1">
-              <button
-                type="button"
-                onClick={() => setActiveTab("login")}
-                className={`rounded-xl px-3 py-2 text-sm font-semibold transition ${
-                  activeTab === "login"
-                    ? "bg-white text-slate-900 shadow-sm"
-                    : "text-slate-600 hover:text-slate-900"
-                }`}
-              >
-                Login
-              </button>
-              <button
-                type="button"
-                onClick={() => setActiveTab("register")}
-                className={`rounded-xl px-3 py-2 text-sm font-semibold transition ${
-                  activeTab === "register"
-                    ? "bg-white text-slate-900 shadow-sm"
-                    : "text-slate-600 hover:text-slate-900"
-                }`}
-              >
-                Register
-              </button>
-            </div>
+    <div className="bg-auth-gradient flex min-h-screen items-center justify-center px-4 py-10 sm:px-6 lg:px-8">
+      <div className="mx-auto w-full max-w-lg rounded-3xl border border-slate-200 bg-white p-5 shadow-xl sm:p-7">
+        <div className="mb-6 rounded-2xl bg-slate-100 p-1">
+          <div className="grid grid-cols-2 gap-1">
+            <button
+              type="button"
+              onClick={() => setActiveTab("login")}
+              className={`rounded-xl px-3 py-2 text-sm font-semibold transition ${
+                activeTab === "login"
+                  ? "bg-white text-slate-900 shadow-sm"
+                  : "text-slate-600 hover:text-slate-900"
+              }`}
+            >
+              Login
+            </button>
+            <button
+              type="button"
+              onClick={() => setActiveTab("register")}
+              className={`rounded-xl px-3 py-2 text-sm font-semibold transition ${
+                activeTab === "register"
+                  ? "bg-white text-slate-900 shadow-sm"
+                  : "text-slate-600 hover:text-slate-900"
+              }`}
+            >
+              Register
+            </button>
           </div>
+        </div>
 
-          {activeTab === "login" ? (
-            <form className="space-y-4" onSubmit={handleLogin}>
-              {loginError && (
-                <div className="rounded-xl bg-red-50 p-3 text-sm text-red-600">
-                  {loginError instanceof Error
-                    ? loginError.message
-                    : "Terjadi kesalahan saat login."}
-                </div>
-              )}
-              <label className="block">
-                <span className="mb-1 block text-sm font-medium text-slate-700">
-                  Email
-                </span>
-                <input
-                  type="email"
-                  name="email"
-                  placeholder="Masukkan email"
-                  className="w-full rounded-xl border border-slate-200 px-3 py-2.5 text-sm text-slate-900 transition outline-none focus:border-red-400"
-                  value={loginForm.email}
-                  onChange={handleLoginChange}
-                  required
-                />
+        {activeTab === "login" ? (
+          <form className="space-y-4" onSubmit={handleLogin}>
+            {loginError && loginError instanceof Error && (
+              <div className="rounded-xl bg-red-50 p-3 text-sm text-red-600">
+                {loginError.message}
+              </div>
+            )}
+            <div className="block">
+              <label className="mb-1 block text-sm font-medium text-slate-700">
+                Email
               </label>
-              <label className="block">
-                <span className="mb-1 block text-sm font-medium text-slate-700">
-                  Password
+              <input
+                name="email"
+                placeholder="Masukkan email"
+                className={`w-full rounded-xl border px-3 py-2.5 text-sm text-slate-900 transition outline-none ${getFieldError(loginError, "email") ? "border-red-500 focus:border-red-500" : "border-slate-200 focus:border-red-400"}`}
+                value={loginForm.email}
+                onChange={handleLoginChange}
+              />
+              {getFieldError(loginError, "email") && (
+                <span className="mt-1 block text-xs text-red-500">
+                  {getFieldError(loginError, "email")}
                 </span>
+              )}
+            </div>
+            <div className="block">
+              <label className="mb-1 block text-sm font-medium text-slate-700">
+                Password
+              </label>
+              <input
+                type="password"
+                name="password"
+                placeholder="Masukkan password"
+                className={`w-full rounded-xl border px-3 py-2.5 text-sm text-slate-900 transition outline-none ${getFieldError(loginError, "password") ? "border-red-500 focus:border-red-500" : "border-slate-200 focus:border-red-400"}`}
+                value={loginForm.password}
+                onChange={handleLoginChange}
+              />
+              {getFieldError(loginError, "password") && (
+                <span className="mt-1 block text-xs text-red-500">
+                  {getFieldError(loginError, "password")}
+                </span>
+              )}
+            </div>
+            <button
+              type="submit"
+              disabled={isLoginPending}
+              className="w-full rounded-xl bg-red-500 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-red-600 disabled:opacity-70"
+            >
+              {isLoginPending ? "Memproses..." : "Masuk Sekarang"}
+            </button>
+            <p className="text-center text-xs text-slate-500">
+              Lupa password? Hubungi support HaloHealth.
+            </p>
+          </form>
+        ) : (
+          <form className="space-y-4" onSubmit={handleRegister}>
+            {((registerError && registerError instanceof Error) ||
+              registerFormError) && (
+              <div className="rounded-xl bg-red-50 p-3 text-sm text-red-600">
+                {registerFormError || registerError?.message}
+              </div>
+            )}
+            <div className="block">
+              <label className="mb-1 block text-sm font-medium text-slate-700">
+                Nama Lengkap
+              </label>
+              <input
+                type="text"
+                name="fullName"
+                placeholder="Masukkan nama lengkap"
+                className={`w-full rounded-xl border px-3 py-2.5 text-sm text-slate-900 transition outline-none ${getFieldError(registerError, "fullName") ? "border-red-500 focus:border-red-500" : "border-slate-200 focus:border-red-400"}`}
+                value={registerForm.fullName}
+                onChange={handleRegisterChange}
+              />
+              {getFieldError(registerError, "fullName") && (
+                <span className="mt-1 block text-xs text-red-500">
+                  {getFieldError(registerError, "fullName")}
+                </span>
+              )}
+            </div>
+            <div className="block">
+              <label className="mb-1 block text-sm font-medium text-slate-700">
+                Email
+              </label>
+              <input
+                type="email"
+                name="email"
+                placeholder="nama@email.com"
+                className={`w-full rounded-xl border px-3 py-2.5 text-sm text-slate-900 transition outline-none ${getFieldError(registerError, "email") ? "border-red-500 focus:border-red-500" : "border-slate-200 focus:border-red-400"}`}
+                value={registerForm.email}
+                onChange={handleRegisterChange}
+              />
+              {getFieldError(registerError, "email") && (
+                <span className="mt-1 block text-xs text-red-500">
+                  {getFieldError(registerError, "email")}
+                </span>
+              )}
+            </div>
+            <div className="grid grid-cols-2 gap-3">
+              <div className="block">
+                <label className="mb-1 block text-sm font-medium text-slate-700">
+                  No. Telepon
+                </label>
+                <input
+                  type="tel"
+                  name="telephoneNumber"
+                  placeholder="Contoh: 08123456789"
+                  className={`w-full rounded-xl border px-3 py-2.5 text-sm text-slate-900 transition outline-none ${getFieldError(registerError, "telephoneNumber") ? "border-red-500 focus:border-red-500" : "border-slate-200 focus:border-red-400"}`}
+                  value={registerForm.telephoneNumber}
+                  onChange={handleRegisterChange}
+                />
+                {getFieldError(registerError, "telephoneNumber") && (
+                  <span className="mt-1 block text-xs text-red-500">
+                    {getFieldError(registerError, "telephoneNumber")}
+                  </span>
+                )}
+              </div>
+              <div className="block">
+                <label className="mb-1 block text-sm font-medium text-slate-700">
+                  Tanggal Lahir
+                </label>
+                <input
+                  type="date"
+                  name="dob"
+                  className={`w-full rounded-xl border px-3 py-2.5 text-sm text-slate-900 transition outline-none ${getFieldError(registerError, "dob") ? "border-red-500 focus:border-red-500" : "border-slate-200 focus:border-red-400"}`}
+                  value={registerForm.dob}
+                  onChange={handleRegisterChange}
+                />
+                {getFieldError(registerError, "dob") && (
+                  <span className="mt-1 block text-xs text-red-500">
+                    {getFieldError(registerError, "dob")}
+                  </span>
+                )}
+              </div>
+            </div>
+            <div className="block">
+              <label className="mb-1 block text-sm font-medium text-slate-700">
+                Jenis Kelamin
+              </label>
+              <select
+                name="gender"
+                className={`w-full rounded-xl border bg-white px-3 py-2.5 text-sm text-slate-900 transition outline-none ${getFieldError(registerError, "gender") ? "border-red-500 focus:border-red-500" : "border-slate-200 focus:border-red-400"}`}
+                value={registerForm.gender}
+                onChange={handleRegisterChange}
+              >
+                <option value="MALE">Laki-laki</option>
+                <option value="FEMALE">Perempuan</option>
+              </select>
+              {getFieldError(registerError, "gender") && (
+                <span className="mt-1 block text-xs text-red-500">
+                  {getFieldError(registerError, "gender")}
+                </span>
+              )}
+            </div>
+            <div className="grid grid-cols-2 gap-3">
+              <div className="block">
+                <label className="mb-1 block text-sm font-medium text-slate-700">
+                  Password
+                </label>
                 <input
                   type="password"
                   name="password"
-                  placeholder="Masukkan password"
-                  className="w-full rounded-xl border border-slate-200 px-3 py-2.5 text-sm text-slate-900 transition outline-none focus:border-red-400"
-                  value={loginForm.password}
-                  onChange={handleLoginChange}
-                  required
-                />
-              </label>
-              <button
-                type="submit"
-                disabled={isLoginPending}
-                className="w-full rounded-xl bg-red-500 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-red-600 disabled:opacity-70"
-              >
-                {isLoginPending ? "Memproses..." : "Masuk Sekarang"}
-              </button>
-              <p className="text-center text-xs text-slate-500">
-                Lupa password? Hubungi support HaloHealth.
-              </p>
-            </form>
-          ) : (
-            <form className="space-y-4" onSubmit={handleRegister}>
-              {(registerError || registerFormError) && (
-                <div className="rounded-xl bg-red-50 p-3 text-sm text-red-600">
-                  {registerFormError ||
-                    (registerError instanceof Error
-                      ? registerError.message
-                      : "Terjadi kesalahan saat mendaftar.")}
-                </div>
-              )}
-              <label className="block">
-                <span className="mb-1 block text-sm font-medium text-slate-700">
-                  Nama Lengkap
-                </span>
-                <input
-                  type="text"
-                  name="fullName"
-                  placeholder="Masukkan nama lengkap"
-                  className="w-full rounded-xl border border-slate-200 px-3 py-2.5 text-sm text-slate-900 transition outline-none focus:border-red-400"
-                  value={registerForm.fullName}
+                  placeholder="Buat password"
+                  className={`w-full rounded-xl border px-3 py-2.5 text-sm text-slate-900 transition outline-none ${getFieldError(registerError, "password") ? "border-red-500 focus:border-red-500" : "border-slate-200 focus:border-red-400"}`}
+                  value={registerForm.password}
                   onChange={handleRegisterChange}
-                  required
                 />
-              </label>
-              <label className="block">
-                <span className="mb-1 block text-sm font-medium text-slate-700">
-                  Email
-                </span>
-                <input
-                  type="email"
-                  name="email"
-                  placeholder="nama@email.com"
-                  className="w-full rounded-xl border border-slate-200 px-3 py-2.5 text-sm text-slate-900 transition outline-none focus:border-red-400"
-                  value={registerForm.email}
-                  onChange={handleRegisterChange}
-                  required
-                />
-              </label>
-              <div className="grid grid-cols-2 gap-3">
-                <label className="block">
-                  <span className="mb-1 block text-sm font-medium text-slate-700">
-                    No. Telepon
+                {getFieldError(registerError, "password") && (
+                  <span className="mt-1 block text-xs text-red-500">
+                    {getFieldError(registerError, "password")}
                   </span>
-                  <input
-                    type="tel"
-                    name="telephoneNumber"
-                    placeholder="Contoh: 08123456789"
-                    className="w-full rounded-xl border border-slate-200 px-3 py-2.5 text-sm text-slate-900 transition outline-none focus:border-red-400"
-                    value={registerForm.telephoneNumber}
-                    onChange={handleRegisterChange}
-                    required
-                  />
-                </label>
-                <label className="block">
-                  <span className="mb-1 block text-sm font-medium text-slate-700">
-                    Tanggal Lahir
-                  </span>
-                  <input
-                    type="date"
-                    name="dob"
-                    className="w-full rounded-xl border border-slate-200 px-3 py-2.5 text-sm text-slate-900 transition outline-none focus:border-red-400"
-                    value={registerForm.dob}
-                    onChange={handleRegisterChange}
-                    required
-                  />
-                </label>
+                )}
               </div>
-              <label className="block">
-                <span className="mb-1 block text-sm font-medium text-slate-700">
-                  Jenis Kelamin
-                </span>
-                <select
-                  name="gender"
-                  className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-900 transition outline-none focus:border-red-400"
-                  value={registerForm.gender}
+              <div className="block">
+                <label className="mb-1 block text-sm font-medium text-slate-700">
+                  Konfirmasi Password
+                </label>
+                <input
+                  type="password"
+                  name="confirmPassword"
+                  placeholder="Ulangi password"
+                  className={`w-full rounded-xl border px-3 py-2.5 text-sm text-slate-900 transition outline-none ${getFieldError(registerError, "confirmPassword") ? "border-red-500 focus:border-red-500" : "border-slate-200 focus:border-red-400"}`}
+                  value={registerForm.confirmPassword}
                   onChange={handleRegisterChange}
-                  required
-                >
-                  <option value="MALE">Laki-laki</option>
-                  <option value="FEMALE">Perempuan</option>
-                </select>
-              </label>
-              <div className="grid grid-cols-2 gap-3">
-                <label className="block">
-                  <span className="mb-1 block text-sm font-medium text-slate-700">
-                    Password
+                />
+                {getFieldError(registerError, "confirmPassword") && (
+                  <span className="mt-1 block text-xs text-red-500">
+                    {getFieldError(registerError, "confirmPassword")}
                   </span>
-                  <input
-                    type="password"
-                    name="password"
-                    placeholder="Buat password"
-                    className="w-full rounded-xl border border-slate-200 px-3 py-2.5 text-sm text-slate-900 transition outline-none focus:border-red-400"
-                    value={registerForm.password}
-                    onChange={handleRegisterChange}
-                    required
-                  />
-                </label>
-                <label className="block">
-                  <span className="mb-1 block text-sm font-medium text-slate-700">
-                    Konfirmasi Password
-                  </span>
-                  <input
-                    type="password"
-                    name="confirmPassword"
-                    placeholder="Ulangi password"
-                    className="w-full rounded-xl border border-slate-200 px-3 py-2.5 text-sm text-slate-900 transition outline-none focus:border-red-400"
-                    value={registerForm.confirmPassword}
-                    onChange={handleRegisterChange}
-                    required
-                  />
-                </label>
+                )}
               </div>
-              <button
-                type="submit"
-                disabled={isRegisterPending}
-                className="w-full rounded-xl bg-red-500 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-red-600 disabled:opacity-70"
-              >
-                {isRegisterPending ? "Memproses..." : "Buat Akun"}
-              </button>
-              <p className="text-center text-xs text-slate-500">
-                Dengan mendaftar, kamu setuju dengan syarat layanan.
-              </p>
-            </form>
-          )}
-        </div>
+            </div>
+            <button
+              type="submit"
+              disabled={isRegisterPending}
+              className="w-full rounded-xl bg-red-500 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-red-600 disabled:opacity-70"
+            >
+              {isRegisterPending ? "Memproses..." : "Buat Akun"}
+            </button>
+            <p className="text-center text-xs text-slate-500">
+              Dengan mendaftar, kamu setuju dengan syarat layanan.
+            </p>
+          </form>
+        )}
       </div>
     </div>
   );

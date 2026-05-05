@@ -7,6 +7,7 @@ import InternalServerError from "./internalServerError";
 import NotFoundError from "./notFoundError";
 import ServiceUnavailableError from "./serviceUnavailable";
 import UnauthorizedError from "./unautorizedError";
+import ValidationError from "./validationError";
 
 export {
   ConflictError,
@@ -18,4 +19,5 @@ export {
   ServiceUnavailableError,
   GatewayTimeoutError,
   BadRequestError,
+  ValidationError,
 };

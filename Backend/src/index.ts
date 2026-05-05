@@ -4,8 +4,6 @@ import cors, { CorsOptions } from "cors";
 import userRoutes from "@/routes/users";
 import pharmacyRoutes from "@/routes/pharmacy";
 import consultationsRoutes from "@/routes/consultations";
-import ecommerceRoutes from "@/routes/ecommerce";
-import reviewsRoutes from "@/routes/reviews";
 import doctorsRoutes from "@/routes/doctors";
 import { config } from "@/helpers/infra/global-config";
 import { setupSwagger } from "@/docs/swagger";
@@ -55,8 +53,6 @@ app.get("/", (req: Request, res: Response) => {
 app.use("/api/v1/users", userRoutes);
 app.use("/api/v1/pharmacy", pharmacyRoutes);
 app.use("/api/v1/consultations", consultationsRoutes);
-app.use("/api/v1/ecommerce", ecommerceRoutes);
-app.use("/api/v1/reviews", reviewsRoutes);
 app.use("/api/v1/doctors", doctorsRoutes);
 
 setupSwagger(app);

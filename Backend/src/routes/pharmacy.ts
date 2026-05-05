@@ -9,12 +9,6 @@ import {
   updatePrice,
   checkAvailability,
 } from "@/modules/Pharmacy/controllers/pharmacy-controllers";
-import {
-  getMyCart,
-  addItemToCart,
-  removeCartItem,
-  checkoutCart,
-} from "@/modules/Pharmacy/controllers/cart-controllers";
 
 const router = Router();
 
@@ -271,105 +265,4 @@ router.get("/products/:productId/availability", checkAvailability);
  *       "500":
  *         $ref: '#/components/responses/InternalServerError'
  */
-// Cart Routes
-router.get("/cart", verifyToken, authorize(["PATIENT"]), getMyCart);
-
-/**
- * @swagger
- * /api/v1/pharmacy/cart/items:
- *   post:
- *     summary: Add item to pharmacy cart
- *     tags: [Pharmacy]
- *     security:
- *       - bearerAuth: []
- *       - cookieAuth: []
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             $ref: '#/components/schemas/AddCartItemRequest'
- *     responses:
- *       "201":
- *         description: Item added to cart
- *       "400":
- *         $ref: '#/components/responses/ValidationError'
- *       "401":
- *         $ref: '#/components/responses/UnauthorizedError'
- *       "403":
- *         $ref: '#/components/responses/ForbiddenError'
- *       "500":
- *         $ref: '#/components/responses/InternalServerError'
- */
-router.post("/cart/items", verifyToken, authorize(["PATIENT"]), addItemToCart);
-
-/**
- * @swagger
- * /api/v1/pharmacy/cart/items/{cartItemId}:
- *   delete:
- *     summary: Remove item from pharmacy cart
- *     tags: [Pharmacy]
- *     security:
- *       - bearerAuth: []
- *       - cookieAuth: []
- *     parameters:
- *       - in: path
- *         name: cartItemId
- *         required: true
- *         schema:
- *           type: integer
- *           minimum: 1
- *     responses:
- *       "200":
- *         description: Item removed
- *       "400":
- *         $ref: '#/components/responses/ValidationError'
- *       "401":
- *         $ref: '#/components/responses/UnauthorizedError'
- *       "403":
- *         $ref: '#/components/responses/ForbiddenError'
- *       "500":
- *         $ref: '#/components/responses/InternalServerError'
- */
-router.delete(
-  "/cart/items/:cartItemId",
-  verifyToken,
-  authorize(["PATIENT"]),
-  removeCartItem,
-);
-
-/**
- * @swagger
- * /api/v1/pharmacy/cart/checkout:
- *   post:
- *     summary: Checkout pharmacy cart
- *     tags: [Pharmacy]
- *     security:
- *       - bearerAuth: []
- *       - cookieAuth: []
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             $ref: '#/components/schemas/CheckoutRequest'
- *     responses:
- *       "201":
- *         description: Checkout successful
- *       "400":
- *         $ref: '#/components/responses/ValidationError'
- *       "401":
- *         $ref: '#/components/responses/UnauthorizedError'
- *       "403":
- *         $ref: '#/components/responses/ForbiddenError'
- *       "500":
- *         $ref: '#/components/responses/InternalServerError'
- */
-router.post(
-  "/cart/checkout",
-  verifyToken,
-  authorize(["PATIENT"]),
-  checkoutCart,
-);
-
 export default router;
