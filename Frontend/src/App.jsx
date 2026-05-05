@@ -18,6 +18,7 @@ const routes = createBrowserRouter([
         path: "auth",
         element: <AuthPage />,
       },
+      
     ],
   },
   {
