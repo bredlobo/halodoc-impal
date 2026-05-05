@@ -11,11 +11,19 @@ export default class UsersRepository {
     });
   }
 
+  static async findPhoneNumnber(telephoneNumber: string) {
+    return prisma.user.findFirst({
+      where: {
+        telephoneNumber,
+      },
+    });
+  }
+
   static async createUser(payload: {
     fullName: string;
     email: string;
     password: string;
-    telephoneNumber?: string;
+    telephoneNumber: string;
     role: Role;
     dob?: string | Date;
     gender?: "MALE" | "FEMALE" | "OTHER";
@@ -32,7 +40,7 @@ export default class UsersRepository {
         ...(payload.role === "PATIENT" && {
           patientProfile: {
             create: {
-              dob: payload.dob ? new Date(payload.dob) : undefined,
+              dob: payload.dob ? new Date(payload.dob) : new Date(),
               gender: payload.gender,
             },
           },
@@ -42,18 +50,16 @@ export default class UsersRepository {
             create: {},
           },
         }),
-        ...(payload.role === "DOCTOR" &&
-          payload.specializationId &&
-          payload.strNumber && {
-            doctorProfile: {
-              create: {
-                specialization: {
-                  connect: { id: payload.specializationId },
-                },
-                strNumber: payload.strNumber,
+        ...(payload.role === "DOCTOR" && {
+          doctorProfile: {
+            create: {
+              specialization: {
+                connect: { id: payload.specializationId || 1 },
               },
+              strNumber: `STR-${payload.specializationId || 1}-${Date.now()}`,
             },
-          }),
+          },
+        }),
       },
       select: {
         id: true,

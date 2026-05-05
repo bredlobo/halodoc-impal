@@ -27,7 +27,16 @@ export default class UserService {
       const existingUser = await UsersRepository.findByEmail(email);
 
       if (existingUser) {
-        return wrapper.error(new UnauthorizedError("Email Already Exists"));
+        return wrapper.error(new UnauthorizedError("Email Sudah Digunakan"));
+      }
+
+      const existingPhoneNumber =
+        await UsersRepository.findPhoneNumnber(telephoneNumber);
+
+      if (existingPhoneNumber) {
+        return wrapper.error(
+          new UnauthorizedError("Nomor Telepon Sudah Digunakan"),
+        );
       }
 
       const hashPassword: string = await bcrypt.hash(password, 10);
