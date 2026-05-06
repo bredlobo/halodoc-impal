@@ -2,9 +2,34 @@ import * as wrapper from "@/helpers/utils/wrapper";
 import { NotFoundError, BadRequestError } from "@/helpers/error";
 import { ResponseResult } from "@/interfaces/wrapper-interface";
 import PharmacyRepository from "@/modules/Pharmacy/repositories/pharmacy-repositories";
+import {
+  GetAllProductsFilters,
+  CreatedCategory,
+  ProductList,
+  AllProducts,
+  CreatedProduct,
+  UpdatedStock,
+  UpdatedPrice,
+  AvailabilityCheck,
+} from "@/interfaces/pharmacy-interface";
 
 export default class PharmacyService {
-  static async createCategory(payload: any): Promise<ResponseResult<any>> {
+  static async getAllProducts(
+    filters?: GetAllProductsFilters,
+  ): Promise<ResponseResult<AllProducts>> {
+    try {
+      const products = await PharmacyRepository.getAllProducts(filters);
+      return wrapper.data(products);
+    } catch (err) {
+      const message = err instanceof Error ? err.message : String(err);
+      return wrapper.error(new BadRequestError(message));
+    }
+  }
+
+  static async createCategory(payload: {
+    name: string;
+    description?: string;
+  }): Promise<ResponseResult<CreatedCategory>> {
     try {
       const category = await PharmacyRepository.createCategory(payload);
       return wrapper.data(category);
@@ -16,7 +41,7 @@ export default class PharmacyService {
 
   static async getProductsByCategory(
     categoryId: number,
-  ): Promise<ResponseResult<any>> {
+  ): Promise<ResponseResult<ProductList>> {
     try {
       const products =
         await PharmacyRepository.getProductsByCategory(categoryId);
@@ -27,7 +52,14 @@ export default class PharmacyService {
     }
   }
 
-  static async createProduct(payload: any): Promise<ResponseResult<any>> {
+  static async createProduct(payload: {
+    categoryId: number;
+    name: string;
+    description?: string;
+    price: number;
+    stock: number;
+    imageUrl?: string;
+  }): Promise<ResponseResult<CreatedProduct>> {
     try {
       const product = await PharmacyRepository.createProduct(payload);
       return wrapper.data(product);
@@ -40,7 +72,7 @@ export default class PharmacyService {
   static async updateStock(
     productId: number,
     quantity: number,
-  ): Promise<ResponseResult<any>> {
+  ): Promise<ResponseResult<UpdatedStock>> {
     try {
       const product = await PharmacyRepository.getProductById(productId);
       if (!product)
@@ -60,7 +92,7 @@ export default class PharmacyService {
   static async updatePrice(
     productId: number,
     newPrice: number,
-  ): Promise<ResponseResult<any>> {
+  ): Promise<ResponseResult<UpdatedPrice>> {
     try {
       const product = await PharmacyRepository.getProductById(productId);
       if (!product)
@@ -80,7 +112,7 @@ export default class PharmacyService {
   static async checkAvailability(
     productId: number,
     requiredQty: number,
-  ): Promise<ResponseResult<any>> {
+  ): Promise<ResponseResult<AvailabilityCheck>> {
     try {
       const product = await PharmacyRepository.getProductById(productId);
       if (!product)

@@ -2,6 +2,7 @@ import { Router } from "express";
 import { verifyToken } from "@/middlewares/jwt";
 import { authorize } from "@/middlewares/authorization";
 import {
+  getAllProducts,
   createCategory,
   getProductsByCategory,
   createProduct,
@@ -71,7 +72,61 @@ router.post("/categories", verifyToken, authorize(["ADMIN"]), createCategory);
  *       "500":
  *         $ref: '#/components/responses/InternalServerError'
  */
+/**
+ * @swagger
+ * /api/v1/pharmacy/products:
+ *   get:
+ *     summary: Get all products with optional filters and sorting
+ *     tags: [Pharmacy]
+ *     security: []
+ *     parameters:
+ *       - in: query
+ *         name: categoryId
+ *         schema:
+ *           type: integer
+ *         description: Filter by category ID
+ *       - in: query
+ *         name: categoryName
+ *         schema:
+ *           type: string
+ *         description: Filter by category name
+ *       - in: query
+ *         name: minPrice
+ *         schema:
+ *           type: number
+ *         description: Minimum price
+ *       - in: query
+ *         name: maxPrice
+ *         schema:
+ *           type: number
+ *         description: Maximum price
+ *       - in: query
+ *         name: search
+ *         schema:
+ *           type: string
+ *         description: Search term for product name or description
+ *       - in: query
+ *         name: sortBy
+ *         schema:
+ *           type: string
+ *           enum: [price, name, createdAt, stock]
+ *         description: Field to sort by
+ *       - in: query
+ *         name: sortOrder
+ *         schema:
+ *           type: string
+ *           enum: [asc, desc]
+ *         description: Sort direction
+ *     responses:
+ *       "200":
+ *         description: Products fetched successfully
+ *       "400":
+ *         $ref: '#/components/responses/BadRequestError'
+ *       "500":
+ *         $ref: '#/components/responses/InternalServerError'
+ */
 // Product Routes
+router.get("/products", getAllProducts);
 router.get("/categories/:categoryId/products", getProductsByCategory);
 
 /**
