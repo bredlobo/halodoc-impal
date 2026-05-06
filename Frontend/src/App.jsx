@@ -4,6 +4,7 @@ import PublicLayout from "./layout/PublicLayout";
 import HomePage from "./Pages/Home/Home";
 import AuthPage from "./Pages/Auth/Auth";
 import NotFound from "./Pages/NotFound";
+import ProductPage from "./Pages/Products/Home";
 
 const routes = createBrowserRouter([
   {
@@ -18,7 +19,10 @@ const routes = createBrowserRouter([
         path: "auth",
         element: <AuthPage />,
       },
-      
+      {
+        path: "products",
+        element: <ProductPage />,
+      },
     ],
   },
   {
