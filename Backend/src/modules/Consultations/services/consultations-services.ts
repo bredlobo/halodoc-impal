@@ -5,6 +5,18 @@ import ConsultationsRepository from "@/modules/Consultations/repositories/consul
 import prisma from "@/helpers/db/prisma/client";
 import { ConsultationStatus } from "@/generated/prisma";
 import { getIO } from "@/helpers/utils/socket";
+import {
+  RequestedConsultation,
+  RespondedConsultation,
+  UpdatedConsultationStatus,
+  ProcessedPayment,
+  ChatHistory,
+  SentMessage,
+  GeneratedPrescription,
+  UpdatedPrescriptionNotes,
+  AddedPrescriptionItem,
+  PrescriptionItemsList,
+} from "@/interfaces/consultations-interface";
 
 export default class ConsultationsService {
   private static timeoutJobs: Map<number, NodeJS.Timeout> = new Map();
@@ -51,7 +63,7 @@ export default class ConsultationsService {
     patientId: number,
     doctorId: number,
     fee: number = 50000, // Default fee
-  ): Promise<ResponseResult<any>> {
+  ): Promise<ResponseResult<RequestedConsultation>> {
     try {
       const patient = await prisma.user.findUnique({
         where: { id: patientId },
@@ -91,7 +103,7 @@ export default class ConsultationsService {
     consultationId: number,
     doctorId: number,
     action: "ACCEPT" | "DECLINE",
-  ): Promise<ResponseResult<any>> {
+  ): Promise<ResponseResult<RespondedConsultation>> {
     try {
       const consultation =
         await ConsultationsRepository.getConsultationById(consultationId);
@@ -169,7 +181,7 @@ export default class ConsultationsService {
   static async updateStatus(
     consultationId: number,
     status: ConsultationStatus,
-  ): Promise<ResponseResult<any>> {
+  ): Promise<ResponseResult<UpdatedConsultationStatus>> {
     try {
       const consultation =
         await ConsultationsRepository.getConsultationById(consultationId);
@@ -189,7 +201,7 @@ export default class ConsultationsService {
 
   static async processPayment(
     consultationId: number,
-  ): Promise<ResponseResult<any>> {
+  ): Promise<ResponseResult<ProcessedPayment>> {
     try {
       const consultation =
         await ConsultationsRepository.getConsultationById(consultationId);
@@ -207,7 +219,7 @@ export default class ConsultationsService {
 
   static async getChatHistory(
     consultationId: number,
-  ): Promise<ResponseResult<any>> {
+  ): Promise<ResponseResult<ChatHistory>> {
     try {
       const history =
         await ConsultationsRepository.getChatHistory(consultationId);
@@ -222,7 +234,7 @@ export default class ConsultationsService {
     consultationId: number,
     senderId: number,
     content: string,
-  ): Promise<ResponseResult<any>> {
+  ): Promise<ResponseResult<SentMessage>> {
     try {
       const message = await ConsultationsRepository.sendMessage(
         consultationId,
@@ -239,7 +251,7 @@ export default class ConsultationsService {
   static async generatePrescription(
     consultationId: number,
     notes?: string,
-  ): Promise<ResponseResult<any>> {
+  ): Promise<ResponseResult<GeneratedPrescription>> {
     try {
       const consultation =
         await ConsultationsRepository.getConsultationById(consultationId);
@@ -260,7 +272,7 @@ export default class ConsultationsService {
   static async updatePrescriptionNotes(
     prescriptionId: number,
     notes: string,
-  ): Promise<ResponseResult<any>> {
+  ): Promise<ResponseResult<UpdatedPrescriptionNotes>> {
     try {
       const auth = await ConsultationsRepository.updatePrescriptionNotes(
         prescriptionId,
@@ -276,7 +288,7 @@ export default class ConsultationsService {
   static async addPrescriptionItem(
     prescriptionId: number,
     item: { productId: number; dosage: string; quantity: number },
-  ): Promise<ResponseResult<any>> {
+  ): Promise<ResponseResult<AddedPrescriptionItem>> {
     try {
       const auth = await ConsultationsRepository.addPrescriptionItem(
         prescriptionId,
@@ -293,7 +305,7 @@ export default class ConsultationsService {
 
   static async removePrescriptionItem(
     itemId: number,
-  ): Promise<ResponseResult<any>> {
+  ): Promise<ResponseResult<{ success: boolean }>> {
     try {
       await ConsultationsRepository.removePrescriptionItem(itemId);
       return wrapper.data({ success: true });
@@ -305,7 +317,7 @@ export default class ConsultationsService {
 
   static async getPrescriptionItems(
     prescriptionId: number,
-  ): Promise<ResponseResult<any>> {
+  ): Promise<ResponseResult<PrescriptionItemsList>> {
     try {
       const items =
         await ConsultationsRepository.getPrescriptionItems(prescriptionId);
