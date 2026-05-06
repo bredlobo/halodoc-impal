@@ -1,6 +1,12 @@
 import prisma from "@/helpers/db/prisma/client";
 
 export default class DoctorsRepository {
+  static async getAllSpecializations() {
+    return prisma.specialization.findMany({
+      orderBy: { id: "asc" },
+    });
+  }
+
   static async createSpecialization(name: string, description?: string) {
     return prisma.specialization.create({
       data: {

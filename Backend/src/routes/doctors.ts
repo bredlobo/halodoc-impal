@@ -3,6 +3,7 @@ import { verifyToken } from "@/middlewares/jwt";
 import { authorize } from "@/middlewares/authorization";
 import {
   createSpecialization,
+  getAllSpecializations,
   getDoctorsBySpecialization,
   updateCredentials,
   updatePhoto,
@@ -14,6 +15,17 @@ const router = Router();
 /**
  * @swagger
  * /api/v1/doctors/specializations:
+ *   get:
+ *     summary: Get all doctor specializations
+ *     tags: [Doctors]
+ *     security: []
+ *     responses:
+ *       "200":
+ *         description: Specializations fetched
+ *       "400":
+ *         $ref: '#/components/responses/BadRequestError'
+ *       "500":
+ *         $ref: '#/components/responses/InternalServerError'
  *   post:
  *     summary: Create doctor specialization
  *     tags: [Doctors]
@@ -46,6 +58,8 @@ const router = Router();
  *         $ref: '#/components/responses/InternalServerError'
  */
 // Specializations
+router.get("/specializations", getAllSpecializations);
+
 router.post(
   "/specializations",
   verifyToken,

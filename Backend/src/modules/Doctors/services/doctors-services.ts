@@ -2,12 +2,32 @@ import * as wrapper from "@/helpers/utils/wrapper";
 import { BadRequestError, NotFoundError } from "@/helpers/error";
 import { ResponseResult } from "@/interfaces/wrapper-interface";
 import DoctorsRepository from "@/modules/Doctors/repositories/doctors-repositories";
+import {
+  SpecializationList,
+  CreatedSpecialization,
+  DoctorsBySpecialization,
+  UpdatedDoctorCredentials,
+  UpdatedDoctorPhoto,
+  ConsultationHistory,
+} from "@/interfaces/doctors-interface";
 
 export default class DoctorsService {
+  static async getAllSpecializations(): Promise<
+    ResponseResult<SpecializationList>
+  > {
+    try {
+      const specs = await DoctorsRepository.getAllSpecializations();
+      return wrapper.data(specs);
+    } catch (err) {
+      const message = err instanceof Error ? err.message : String(err);
+      return wrapper.error(new BadRequestError(message));
+    }
+  }
+
   static async createSpecialization(
     name: string,
     description?: string,
-  ): Promise<ResponseResult<any>> {
+  ): Promise<ResponseResult<CreatedSpecialization>> {
     try {
       const spec = await DoctorsRepository.createSpecialization(
         name,
@@ -22,7 +42,7 @@ export default class DoctorsService {
 
   static async getDoctorsBySpecialization(
     specId: number,
-  ): Promise<ResponseResult<any>> {
+  ): Promise<ResponseResult<DoctorsBySpecialization>> {
     try {
       const doctors =
         await DoctorsRepository.getDoctorsBySpecialization(specId);
@@ -36,7 +56,7 @@ export default class DoctorsService {
   static async updateCredentials(
     userId: number,
     strNumber: string,
-  ): Promise<ResponseResult<any>> {
+  ): Promise<ResponseResult<UpdatedDoctorCredentials>> {
     try {
       const doc = await DoctorsRepository.findDoctorProfileByUserId(userId);
       if (!doc)
@@ -56,7 +76,7 @@ export default class DoctorsService {
   static async updatePhoto(
     userId: number,
     photoUrl: string,
-  ): Promise<ResponseResult<any>> {
+  ): Promise<ResponseResult<UpdatedDoctorPhoto>> {
     try {
       const doc = await DoctorsRepository.findDoctorProfileByUserId(userId);
       if (!doc)
@@ -72,7 +92,7 @@ export default class DoctorsService {
 
   static async getConsultationHistory(
     userId: number,
-  ): Promise<ResponseResult<any>> {
+  ): Promise<ResponseResult<ConsultationHistory>> {
     try {
       const doctorProfile =
         await DoctorsRepository.findDoctorProfileByUserId(userId);
