@@ -3,6 +3,7 @@ import {
   DoctorProfile,
   PatientProfile,
 } from "@/generated/prisma";
+import UsersRepository from "@/modules/Users/repositories/users-repositories";
 
 export interface RegisterPayload {
   fullName: string;
@@ -50,3 +51,17 @@ export interface UserListItem {
   doctorProfile?: DoctorProfile | null;
   adminProfile?: AdminProfile | null;
 }
+
+export type RoleProfile = Awaited<ReturnType<typeof UsersRepository.findById>>;
+
+export type AddressList = Awaited<
+  ReturnType<typeof UsersRepository.getAddresses>
+>;
+
+export type CreatedAddress = Awaited<
+  ReturnType<typeof UsersRepository.addAddress>
+>;
+
+export type UpdatedAdminStatus = Awaited<
+  ReturnType<typeof UsersRepository.updateAdminStatus>
+>;

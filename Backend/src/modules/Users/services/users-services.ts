@@ -9,6 +9,10 @@ import {
   JwtToken,
   RegisteredUser,
   UserListItem,
+  RoleProfile,
+  AddressList,
+  CreatedAddress,
+  UpdatedAdminStatus,
 } from "@/interfaces/users-interface";
 import { createToken, verifyRefreshToken } from "@/middlewares/jwt";
 import UsersRepository from "@/modules/Users/repositories/users-repositories";
@@ -113,7 +117,9 @@ export default class UserService {
     }
   }
 
-  static async getRoleProfile(userId: number): Promise<ResponseResult<any>> {
+  static async getRoleProfile(
+    userId: number,
+  ): Promise<ResponseResult<RoleProfile>> {
     try {
       const user = await UsersRepository.findById(userId);
       if (!user) return wrapper.error(new NotFoundError("User not found"));
@@ -127,7 +133,7 @@ export default class UserService {
   static async updatePassword(
     userId: number,
     payload: any,
-  ): Promise<ResponseResult<any>> {
+  ): Promise<ResponseResult<{ message: string }>> {
     try {
       const existingUser = await UsersRepository.findById(userId);
       if (!existingUser)
@@ -153,7 +159,7 @@ export default class UserService {
   static async updateProfile(
     userId: number,
     payload: any,
-  ): Promise<ResponseResult<any>> {
+  ): Promise<ResponseResult<RoleProfile>> {
     try {
       const existingUser = await UsersRepository.findById(userId);
       if (!existingUser)
@@ -183,7 +189,7 @@ export default class UserService {
   static async addAddress(
     userId: number,
     payload: any,
-  ): Promise<ResponseResult<any>> {
+  ): Promise<ResponseResult<CreatedAddress>> {
     try {
       const user = await UsersRepository.findById(userId);
       if (!user || !user.patientProfile)
@@ -205,7 +211,9 @@ export default class UserService {
     }
   }
 
-  static async getAddresses(userId: number): Promise<ResponseResult<any>> {
+  static async getAddresses(
+    userId: number,
+  ): Promise<ResponseResult<AddressList>> {
     try {
       const user = await UsersRepository.findById(userId);
       if (!user || !user.patientProfile)
@@ -224,7 +232,7 @@ export default class UserService {
   static async updateAdminStatus(
     adminProfileId: number,
     isSuperAdmin: boolean,
-  ): Promise<ResponseResult<any>> {
+  ): Promise<ResponseResult<UpdatedAdminStatus>> {
     try {
       const updated = await UsersRepository.updateAdminStatus(
         adminProfileId,
