@@ -1,4 +1,5 @@
 import express, { Application, Request, Response } from "express";
+import { createServer } from "http";
 import cookieParser from "cookie-parser";
 import cors, { CorsOptions } from "cors";
 import userRoutes from "@/routes/users";
@@ -7,8 +8,11 @@ import consultationsRoutes from "@/routes/consultations";
 import doctorsRoutes from "@/routes/doctors";
 import { config } from "@/helpers/infra/global-config";
 import { setupSwagger } from "@/docs/swagger";
+import { initSocket } from "@/helpers/utils/socket";
+import ConsultationsRepository from "@/modules/Consultations/repositories/consultations-repositories";
 
 const app: Application = express();
+const httpServer = createServer(app);
 const PORT = Number(config.express.port ?? "3000");
 const HOST = config.express.host ?? "localhost";
 
@@ -56,6 +60,19 @@ app.use("/api/v1/consultations", consultationsRoutes);
 app.use("/api/v1/doctors", doctorsRoutes);
 
 setupSwagger(app);
-app.listen(PORT, HOST, () => {
+initSocket(httpServer, corsOptions);
+
+// Clean up expired consultations on startup
+ConsultationsRepository.cancelExpiredConsultations()
+  .then((res) => {
+    if (res.count > 0) {
+      console.log(`Cleaned up ${res.count} expired requested consultations.`);
+    }
+  })
+  .catch((err) => {
+    console.error("Failed to clean up expired consultations on startup", err);
+  });
+
+httpServer.listen(PORT, HOST, () => {
   console.log(`Server running on http://${HOST}:${PORT}`);
 });

@@ -2,6 +2,8 @@ import { Router } from "express";
 import { verifyToken } from "@/middlewares/jwt";
 import { authorize } from "@/middlewares/authorization";
 import {
+  getAllProducts,
+  getAllCategories,
   createCategory,
   getProductsByCategory,
   createProduct,
@@ -47,6 +49,71 @@ const router = Router();
  *         $ref: '#/components/responses/InternalServerError'
  */
 // Category Routes
+/**
+ * @swagger
+ * /api/v1/pharmacy/categories:
+ *   get:
+ *     summary: Get all product categories
+ *     tags: [Pharmacy]
+ *     security: []
+ *     responses:
+ *       "200":
+ *         description: Categories fetched successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       id:
+ *                         type: integer
+ *                       name:
+ *                         type: string
+ *                       description:
+ *                         type: string
+ *       "500":
+ *         $ref: '#/components/responses/InternalServerError'
+ */
+router.get("/categories", getAllCategories);
+
+/**
+ * @swagger
+ * /api/v1/pharmacy/categories:
+ *   post:
+ *     summary: Create product category
+ *     tags: [Pharmacy]
+ *     security:
+ *       - bearerAuth: []
+ *       - cookieAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - name
+ *             properties:
+ *               name:
+ *                 type: string
+ *               description:
+ *                 type: string
+ *     responses:
+ *       "201":
+ *         description: Category created
+ *       "400":
+ *         $ref: '#/components/responses/ValidationError'
+ *       "401":
+ *         $ref: '#/components/responses/UnauthorizedError'
+ *       "403":
+ *         $ref: '#/components/responses/ForbiddenError'
+ *       "500":
+ *         $ref: '#/components/responses/InternalServerError'
+ */
 router.post("/categories", verifyToken, authorize(["ADMIN"]), createCategory);
 
 /**
@@ -71,7 +138,61 @@ router.post("/categories", verifyToken, authorize(["ADMIN"]), createCategory);
  *       "500":
  *         $ref: '#/components/responses/InternalServerError'
  */
+/**
+ * @swagger
+ * /api/v1/pharmacy/products:
+ *   get:
+ *     summary: Get all products with optional filters and sorting
+ *     tags: [Pharmacy]
+ *     security: []
+ *     parameters:
+ *       - in: query
+ *         name: categoryId
+ *         schema:
+ *           type: integer
+ *         description: Filter by category ID
+ *       - in: query
+ *         name: categoryName
+ *         schema:
+ *           type: string
+ *         description: Filter by category name
+ *       - in: query
+ *         name: minPrice
+ *         schema:
+ *           type: number
+ *         description: Minimum price
+ *       - in: query
+ *         name: maxPrice
+ *         schema:
+ *           type: number
+ *         description: Maximum price
+ *       - in: query
+ *         name: search
+ *         schema:
+ *           type: string
+ *         description: Search term for product name or description
+ *       - in: query
+ *         name: sortBy
+ *         schema:
+ *           type: string
+ *           enum: [price, name, createdAt, stock]
+ *         description: Field to sort by
+ *       - in: query
+ *         name: sortOrder
+ *         schema:
+ *           type: string
+ *           enum: [asc, desc]
+ *         description: Sort direction
+ *     responses:
+ *       "200":
+ *         description: Products fetched successfully
+ *       "400":
+ *         $ref: '#/components/responses/BadRequestError'
+ *       "500":
+ *         $ref: '#/components/responses/InternalServerError'
+ */
 // Product Routes
+router.get("/products", getAllProducts);
 router.get("/categories/:categoryId/products", getProductsByCategory);
 
 /**

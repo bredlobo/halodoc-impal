@@ -1,8 +1,20 @@
+import {
+  AdminProfile,
+  DoctorProfile,
+  PatientProfile,
+} from "@/generated/prisma";
+import UsersRepository from "@/modules/Users/repositories/users-repositories";
+
 export interface RegisterPayload {
-  username: string;
+  fullName: string;
   email: string;
   password: string;
-  signature?: string;
+  confirmPassword: string;
+  telephoneNumber: string;
+  dob: string;
+  gender?: "MALE" | "FEMALE" | "OTHER";
+  specializationId?: number;
+  strNumber?: string;
 }
 
 export interface ValidationResult<T> {
@@ -35,7 +47,21 @@ export interface UserListItem {
   telephoneNumber?: string | null;
   role: "PATIENT" | "DOCTOR" | "ADMIN";
   createdAt: Date;
-  patientProfile?: any;
-  doctorProfile?: any;
-  adminProfile?: any;
+  patientProfile?: PatientProfile | null;
+  doctorProfile?: DoctorProfile | null;
+  adminProfile?: AdminProfile | null;
 }
+
+export type RoleProfile = Awaited<ReturnType<typeof UsersRepository.findById>>;
+
+export type AddressList = Awaited<
+  ReturnType<typeof UsersRepository.getAddresses>
+>;
+
+export type CreatedAddress = Awaited<
+  ReturnType<typeof UsersRepository.addAddress>
+>;
+
+export type UpdatedAdminStatus = Awaited<
+  ReturnType<typeof UsersRepository.updateAdminStatus>
+>;

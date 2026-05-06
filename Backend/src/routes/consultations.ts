@@ -3,6 +3,7 @@ import { verifyToken } from "@/middlewares/jwt";
 import { authorize } from "@/middlewares/authorization";
 import {
   requestConsultation,
+  respondToConsultation,
   updateStatus,
   processPayment,
   getChatHistory,
@@ -54,6 +55,44 @@ router.post(
   verifyToken,
   authorize(["PATIENT"]),
   requestConsultation,
+);
+
+/**
+ * @swagger
+ * /api/v1/consultations/{id}/respond:
+ *   patch:
+ *     summary: Respond to a consultation request (Accept/Decline)
+ *     tags: [Consultations]
+ *     security:
+ *       - bearerAuth: []
+ *       - cookieAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - action
+ *             properties:
+ *               action:
+ *                 type: string
+ *                 enum: [ACCEPT, DECLINE]
+ *     responses:
+ *       "200":
+ *         description: Consultation responded to
+ */
+router.patch(
+  "/:id/respond",
+  verifyToken,
+  authorize(["DOCTOR"]),
+  respondToConsultation,
 );
 
 /**
