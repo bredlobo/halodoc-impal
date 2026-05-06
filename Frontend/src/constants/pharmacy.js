@@ -12,3 +12,6 @@ export const DEFAULT_SORT = "createdAt:desc";
 
 // ─── Debounce delay (ms) ──────────────────────────────────────────────────────
 export const SEARCH_DEBOUNCE_MS = 400;
+
+// ─── Pagination ───────────────────────────────────────────────────────────────
+export const DEFAULT_PAGE_SIZE = 12;

@@ -8,6 +8,8 @@ export interface GetAllProductsFilters {
   search?: string;
   sortBy?: "price" | "name" | "createdAt" | "stock";
   sortOrder?: "asc" | "desc";
+  page?: number;
+  limit?: number;
 }
 
 export type AllCategories = Awaited<
@@ -22,9 +24,15 @@ export type ProductList = Awaited<
   ReturnType<typeof PharmacyRepository.getProductsByCategory>
 >;
 
-export type AllProducts = Awaited<
-  ReturnType<typeof PharmacyRepository.getAllProducts>
->;
+export interface PaginatedProducts {
+  items: Awaited<ReturnType<typeof PharmacyRepository.getAllProducts>>["items"];
+  total: number;
+  page: number;
+  limit: number;
+  totalPages: number;
+}
+
+export type AllProducts = PaginatedProducts;
 
 export type CreatedProduct = Awaited<
   ReturnType<typeof PharmacyRepository.createProduct>

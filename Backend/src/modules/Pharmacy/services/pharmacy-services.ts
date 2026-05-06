@@ -19,8 +19,11 @@ export default class PharmacyService {
     filters?: GetAllProductsFilters,
   ): Promise<ResponseResult<AllProducts>> {
     try {
-      const products = await PharmacyRepository.getAllProducts(filters);
-      return wrapper.data(products);
+      const page = Math.max(1, filters?.page ?? 1);
+      const limit = Math.min(100, Math.max(1, filters?.limit ?? 12));
+      const { items, total } = await PharmacyRepository.getAllProducts(filters);
+      const totalPages = Math.ceil(total / limit);
+      return wrapper.data({ items, total, page, limit, totalPages });
     } catch (err) {
       const message = err instanceof Error ? err.message : String(err);
       return wrapper.error(new BadRequestError(message));

@@ -20,6 +20,8 @@ export const getAllProducts = async (
       search,
       sortBy,
       sortOrder,
+      page,
+      limit,
     } = req.query;
 
     const filters = {
@@ -30,6 +32,8 @@ export const getAllProducts = async (
       search: search as string | undefined,
       sortBy: sortBy as "price" | "name" | "createdAt" | "stock" | undefined,
       sortOrder: sortOrder as "asc" | "desc" | undefined,
+      page: page ? parseInt(page as string, 10) : undefined,
+      limit: limit ? parseInt(limit as string, 10) : undefined,
     };
 
     const result = await PharmacyService.getAllProducts(filters);

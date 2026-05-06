@@ -4,9 +4,12 @@ import {
   PRODUCT_SORT_OPTIONS,
   DEFAULT_SORT,
   SEARCH_DEBOUNCE_MS,
+  DEFAULT_PAGE_SIZE,
 } from "../../constants/pharmacy";
 import ProductCardFull from "./components/ProductCardFull";
 import ProductSkeleton from "./components/ProductSkeleton";
+import CategorySelect from "./components/CategorySelect";
+import Pagination from "./components/Pagination";
 
 function ProductPage() {
   const [search, setSearch] = useState("");
@@ -16,30 +19,43 @@ function ProductPage() {
   const [maxPrice, setMaxPrice] = useState("");
   const [sort, setSort] = useState(DEFAULT_SORT);
   const [filtersOpen, setFiltersOpen] = useState(false);
+  const [page, setPage] = useState(1);
 
-  // Debounce search input
+  // Debounce search input and reset to page 1
   const [searchTimer, setSearchTimer] = useState(null);
   const handleSearchChange = (e) => {
     const val = e.target.value;
     setSearch(val);
     if (searchTimer) clearTimeout(searchTimer);
-    const timer = setTimeout(() => setDebouncedSearch(val), SEARCH_DEBOUNCE_MS);
+    const timer = setTimeout(() => {
+      setDebouncedSearch(val);
+      setPage(1);
+    }, SEARCH_DEBOUNCE_MS);
     setSearchTimer(timer);
   };
+
+  // Reset to page 1 whenever a filter/sort changes
+  const handleCategoryChange = (val) => { setCategoryName(val); setPage(1); };
+  const handleMinPriceChange = (e) => { setMinPrice(e.target.value); setPage(1); };
+  const handleMaxPriceChange = (e) => { setMaxPrice(e.target.value); setPage(1); };
+  const handleSortChange = (e) => { setSort(e.target.value); setPage(1); };
 
   // Build sort params from combined "sortBy:sortOrder" value
   const [sortBy, sortOrder] = sort.split(":");
 
-  const { products, isLoading, isError, error, refetch } = useProducts({
-    search: debouncedSearch,
-    categoryName,
-    minPrice,
-    maxPrice,
-    sortBy,
-    sortOrder,
-  });
+  const { products, isLoading, isError, error, refetch, total, totalPages, currentPage } =
+    useProducts({
+      search: debouncedSearch,
+      categoryName,
+      minPrice,
+      maxPrice,
+      sortBy,
+      sortOrder,
+      page,
+      limit: DEFAULT_PAGE_SIZE,
+    });
 
-  const { categories } = useCategories();
+  const { categories, isLoading: isCategoriesLoading } = useCategories();
 
   const hasActiveFilters = debouncedSearch || categoryName || minPrice || maxPrice;
 
@@ -50,6 +66,7 @@ function ProductPage() {
     setMinPrice("");
     setMaxPrice("");
     setSort(DEFAULT_SORT);
+    setPage(1);
   };
 
   return (
@@ -97,6 +114,7 @@ function ProductPage() {
                 onClick={() => {
                   setSearch("");
                   setDebouncedSearch("");
+                  setPage(1);
                 }}
                 className="text-slate-400 transition-colors hover:text-slate-600"
                 aria-label="Hapus pencarian"
@@ -146,7 +164,9 @@ function ProductPage() {
 
             {/* Result count */}
             <p className="text-xs text-slate-500">
-              {isLoading ? "Memuat..." : `${products.length} produk ditemukan`}
+              {isLoading
+                ? "Memuat..."
+                : `${total} produk · halaman ${currentPage} / ${totalPages}`}
             </p>
 
             {/* Sort */}
@@ -160,7 +180,7 @@ function ProductPage() {
               <select
                 id="sort-select"
                 value={sort}
-                onChange={(e) => setSort(e.target.value)}
+                onChange={handleSortChange}
                 className="cursor-pointer rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-medium text-slate-700 shadow-none transition-colors outline-none hover:border-red-200"
               >
                 {PRODUCT_SORT_OPTIONS.map((opt) => (
@@ -180,19 +200,12 @@ function ProductPage() {
                 <label className="mb-1.5 block text-xs font-semibold tracking-wider text-slate-500 uppercase">
                   Kategori
                 </label>
-                <select
-                  id="filter-category"
+                <CategorySelect
+                  categories={categories}
                   value={categoryName}
-                  onChange={(e) => setCategoryName(e.target.value)}
-                  className="w-full cursor-pointer rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-800 transition-all outline-none focus:border-red-300 focus:ring-2 focus:ring-red-100"
-                >
-                  <option value="">Semua Kategori</option>
-                  {categories.map((cat) => (
-                    <option key={cat.id} value={cat.name}>
-                      {cat.name}
-                    </option>
-                  ))}
-                </select>
+                  onChange={handleCategoryChange}
+                  isLoading={isCategoriesLoading}
+                />
               </div>
 
               {/* Min price */}
@@ -205,7 +218,7 @@ function ProductPage() {
                   type="number"
                   min={0}
                   value={minPrice}
-                  onChange={(e) => setMinPrice(e.target.value)}
+                  onChange={handleMinPriceChange}
                   placeholder="0"
                   className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-800 placeholder-slate-400 transition-all outline-none focus:border-red-300 focus:ring-2 focus:ring-red-100"
                 />
@@ -221,7 +234,7 @@ function ProductPage() {
                   type="number"
                   min={0}
                   value={maxPrice}
-                  onChange={(e) => setMaxPrice(e.target.value)}
+                  onChange={handleMaxPriceChange}
                   placeholder="1.000.000"
                   className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-800 placeholder-slate-400 transition-all outline-none focus:border-red-300 focus:ring-2 focus:ring-red-100"
                 />
@@ -250,7 +263,7 @@ function ProductPage() {
           {/* Loading skeletons */}
           {isLoading && (
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 lg:gap-5 xl:grid-cols-4">
-              {Array.from({ length: 8 }).map((_, i) => (
+              {Array.from({ length: DEFAULT_PAGE_SIZE }).map((_, i) => (
                 <ProductSkeleton key={i} />
               ))}
             </div>
@@ -303,6 +316,18 @@ function ProductPage() {
                 <ProductCardFull key={product.id} product={product} />
               ))}
             </div>
+          )}
+
+          {/* Pagination */}
+          {!isError && (
+            <Pagination
+              currentPage={currentPage}
+              totalPages={totalPages}
+              total={total}
+              limit={DEFAULT_PAGE_SIZE}
+              onPageChange={setPage}
+              isLoading={isLoading}
+            />
           )}
         </div>
       </section>

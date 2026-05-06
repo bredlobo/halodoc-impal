@@ -37,18 +37,29 @@ export default class PharmacyRepository {
       orderByClause.createdAt = "desc";
     }
 
-    return prisma.product.findMany({
-      where: whereClause,
-      orderBy: orderByClause,
-      include: {
-        category: {
-          select: {
-            id: true,
-            name: true,
+    const page = Math.max(1, filters?.page ?? 1);
+    const limit = Math.min(100, Math.max(1, filters?.limit ?? 12));
+    const skip = (page - 1) * limit;
+
+    const [items, total] = await Promise.all([
+      prisma.product.findMany({
+        where: whereClause,
+        orderBy: orderByClause,
+        skip,
+        take: limit,
+        include: {
+          category: {
+            select: {
+              id: true,
+              name: true,
+            },
           },
         },
-      },
-    });
+      }),
+      prisma.product.count({ where: whereClause }),
+    ]);
+
+    return { items, total };
   }
 
   static async getAllCategories() {
