@@ -63,6 +63,42 @@ export const getAllProducts = async (
   }
 };
 
+export const getAllCategories = async (
+  req: Request,
+  res: Response,
+): Promise<void> => {
+  try {
+    const result = await PharmacyService.getAllCategories();
+    if (result.err) {
+      return wrapper.response(
+        res,
+        "fail",
+        result,
+        "Failed to fetch categories",
+        httpError.BAD_REQUEST,
+      );
+    }
+    return wrapper.response(
+      res,
+      "success",
+      result,
+      "Categories fetched successfully",
+      http.OK,
+    );
+  } catch (err: unknown) {
+    logger.error(
+      `Error fetching categories: ${err instanceof Error ? err.message : String(err)}`,
+    );
+    return wrapper.response(
+      res,
+      "fail",
+      wrapper.error(err instanceof Error ? err : new Error(String(err))),
+      "Internal Server Error",
+      httpError.INTERNAL_ERROR,
+    );
+  }
+};
+
 export const createCategory = async (
   req: Request,
   res: Response,

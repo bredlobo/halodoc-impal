@@ -10,6 +10,10 @@ export interface GetAllProductsFilters {
   sortOrder?: "asc" | "desc";
 }
 
+export type AllCategories = Awaited<
+  ReturnType<typeof PharmacyRepository.getAllCategories>
+>;
+
 export type CreatedCategory = Awaited<
   ReturnType<typeof PharmacyRepository.createCategory>
 >;

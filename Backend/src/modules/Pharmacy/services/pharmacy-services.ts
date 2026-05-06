@@ -4,6 +4,7 @@ import { ResponseResult } from "@/interfaces/wrapper-interface";
 import PharmacyRepository from "@/modules/Pharmacy/repositories/pharmacy-repositories";
 import {
   GetAllProductsFilters,
+  AllCategories,
   CreatedCategory,
   ProductList,
   AllProducts,
@@ -20,6 +21,16 @@ export default class PharmacyService {
     try {
       const products = await PharmacyRepository.getAllProducts(filters);
       return wrapper.data(products);
+    } catch (err) {
+      const message = err instanceof Error ? err.message : String(err);
+      return wrapper.error(new BadRequestError(message));
+    }
+  }
+
+  static async getAllCategories(): Promise<ResponseResult<AllCategories>> {
+    try {
+      const categories = await PharmacyRepository.getAllCategories();
+      return wrapper.data(categories);
     } catch (err) {
       const message = err instanceof Error ? err.message : String(err);
       return wrapper.error(new BadRequestError(message));

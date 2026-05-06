@@ -3,6 +3,7 @@ import { verifyToken } from "@/middlewares/jwt";
 import { authorize } from "@/middlewares/authorization";
 import {
   getAllProducts,
+  getAllCategories,
   createCategory,
   getProductsByCategory,
   createProduct,
@@ -48,6 +49,71 @@ const router = Router();
  *         $ref: '#/components/responses/InternalServerError'
  */
 // Category Routes
+/**
+ * @swagger
+ * /api/v1/pharmacy/categories:
+ *   get:
+ *     summary: Get all product categories
+ *     tags: [Pharmacy]
+ *     security: []
+ *     responses:
+ *       "200":
+ *         description: Categories fetched successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       id:
+ *                         type: integer
+ *                       name:
+ *                         type: string
+ *                       description:
+ *                         type: string
+ *       "500":
+ *         $ref: '#/components/responses/InternalServerError'
+ */
+router.get("/categories", getAllCategories);
+
+/**
+ * @swagger
+ * /api/v1/pharmacy/categories:
+ *   post:
+ *     summary: Create product category
+ *     tags: [Pharmacy]
+ *     security:
+ *       - bearerAuth: []
+ *       - cookieAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - name
+ *             properties:
+ *               name:
+ *                 type: string
+ *               description:
+ *                 type: string
+ *     responses:
+ *       "201":
+ *         description: Category created
+ *       "400":
+ *         $ref: '#/components/responses/ValidationError'
+ *       "401":
+ *         $ref: '#/components/responses/UnauthorizedError'
+ *       "403":
+ *         $ref: '#/components/responses/ForbiddenError'
+ *       "500":
+ *         $ref: '#/components/responses/InternalServerError'
+ */
 router.post("/categories", verifyToken, authorize(["ADMIN"]), createCategory);
 
 /**

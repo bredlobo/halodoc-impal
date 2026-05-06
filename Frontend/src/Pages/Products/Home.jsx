@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useProducts } from "../../hooks";
+import { useCategories, useProducts } from "../../hooks";
 import {
   PRODUCT_SORT_OPTIONS,
   DEFAULT_SORT,
@@ -38,6 +38,8 @@ function ProductPage() {
     sortBy,
     sortOrder,
   });
+
+  const { categories } = useCategories();
 
   const hasActiveFilters = debouncedSearch || categoryName || minPrice || maxPrice;
 
@@ -178,14 +180,19 @@ function ProductPage() {
                 <label className="mb-1.5 block text-xs font-semibold tracking-wider text-slate-500 uppercase">
                   Kategori
                 </label>
-                <input
+                <select
                   id="filter-category"
-                  type="text"
                   value={categoryName}
                   onChange={(e) => setCategoryName(e.target.value)}
-                  placeholder="mis. Vitamin, Obat Batuk..."
-                  className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-800 placeholder-slate-400 transition-all outline-none focus:border-red-300 focus:ring-2 focus:ring-red-100"
-                />
+                  className="w-full cursor-pointer rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-800 transition-all outline-none focus:border-red-300 focus:ring-2 focus:ring-red-100"
+                >
+                  <option value="">Semua Kategori</option>
+                  {categories.map((cat) => (
+                    <option key={cat.id} value={cat.name}>
+                      {cat.name}
+                    </option>
+                  ))}
+                </select>
               </div>
 
               {/* Min price */}

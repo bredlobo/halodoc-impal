@@ -51,6 +51,17 @@ export default class PharmacyRepository {
     });
   }
 
+  static async getAllCategories() {
+    return prisma.category.findMany({
+      orderBy: { name: "asc" },
+      select: {
+        id: true,
+        name: true,
+        description: true,
+      },
+    });
+  }
+
   static async createCategory(payload: { name: string; description?: string }) {
     return prisma.category.create({
       data: payload,
