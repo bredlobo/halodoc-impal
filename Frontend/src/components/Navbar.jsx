@@ -12,7 +12,6 @@ function Navbar() {
   const dropdownRef = useRef(null);
 
   useEffect(() => {
-    console.log("Current user:", user);
     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
         setIsDropdownMenuOpen(false);

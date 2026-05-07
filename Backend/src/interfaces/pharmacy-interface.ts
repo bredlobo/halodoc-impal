@@ -50,3 +50,7 @@ export type AvailabilityCheck = {
   isAvailable: boolean;
   currentStock: number;
 };
+
+export type ProductDetail = NonNullable<
+  Awaited<ReturnType<typeof PharmacyRepository.getProductById>>
+>;

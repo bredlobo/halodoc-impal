@@ -12,6 +12,7 @@ import {
   UpdatedStock,
   UpdatedPrice,
   AvailabilityCheck,
+  ProductDetail,
 } from "@/interfaces/pharmacy-interface";
 
 export default class PharmacyService {
@@ -117,6 +118,20 @@ export default class PharmacyService {
         newPrice,
       );
       return wrapper.data(updatedProduct);
+    } catch (err) {
+      const message = err instanceof Error ? err.message : String(err);
+      return wrapper.error(new BadRequestError(message));
+    }
+  }
+
+  static async getProductById(
+    productId: number,
+  ): Promise<ResponseResult<ProductDetail>> {
+    try {
+      const product = await PharmacyRepository.getProductById(productId);
+      if (!product)
+        return wrapper.error(new NotFoundError("Product not found"));
+      return wrapper.data(product);
     } catch (err) {
       const message = err instanceof Error ? err.message : String(err);
       return wrapper.error(new BadRequestError(message));

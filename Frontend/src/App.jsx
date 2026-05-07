@@ -5,6 +5,7 @@ import HomePage from "./Pages/Home/Home";
 import AuthPage from "./Pages/Auth/Auth";
 import NotFound from "./Pages/NotFound";
 import ProductPage from "./Pages/Products/Home";
+import ProductDetailPage from "./Pages/Products/ProductDetail/Home";
 
 const routes = createBrowserRouter([
   {
@@ -22,6 +23,10 @@ const routes = createBrowserRouter([
       {
         path: "products",
         element: <ProductPage />,
+      },
+      {
+        path: "products/:id",
+        element: <ProductDetailPage />,
       },
     ],
   },
