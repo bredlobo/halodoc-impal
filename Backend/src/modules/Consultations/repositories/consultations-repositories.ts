@@ -43,6 +43,20 @@ export default class ConsultationsRepository {
     });
   }
 
+  static async updateMidtransData(consultationId: number, token: string, url: string) {
+    return prisma.consultation.update({
+      where: { id: consultationId },
+      data: { midtransToken: token, midtransUrl: url },
+    });
+  }
+
+  static async updatePaymentStatus(consultationId: number, status: PaymentStatus) {
+    return prisma.consultation.update({
+      where: { id: consultationId },
+      data: { paymentStatus: status },
+    });
+  }
+
   static async getChatHistory(consultationId: number) {
     return prisma.message.findMany({
       where: { consultationId },

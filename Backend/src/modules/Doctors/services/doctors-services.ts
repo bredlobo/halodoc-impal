@@ -24,6 +24,16 @@ export default class DoctorsService {
     }
   }
 
+  static async getAllDoctors(): Promise<ResponseResult<any>> {
+    try {
+      const doctors = await DoctorsRepository.getAllDoctors();
+      return wrapper.data(doctors);
+    } catch (err) {
+      const message = err instanceof Error ? err.message : String(err);
+      return wrapper.error(new BadRequestError(message));
+    }
+  }
+
   static async createSpecialization(
     name: string,
     description?: string,

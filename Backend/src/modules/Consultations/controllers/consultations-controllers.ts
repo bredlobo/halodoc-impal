@@ -154,7 +154,7 @@ export const processPayment = async (
       res,
       "success",
       result,
-      "Payment processed",
+      "Payment URL generated",
       http.OK,
     );
   } catch (err: unknown) {
@@ -168,6 +168,67 @@ export const processPayment = async (
       "Internal Server Error",
       httpError.INTERNAL_ERROR,
     );
+  }
+};
+
+export const getConsultationById = async (
+  req: Request,
+  res: Response,
+): Promise<void> => {
+  try {
+    const consultationId = parseInt(req.params.id as string, 10);
+    const result = await ConsultationsService.getConsultationById(consultationId);
+
+    if (result.err) {
+      return wrapper.response(
+        res,
+        "fail",
+        result,
+        "Failed to get consultation",
+        httpError.BAD_REQUEST,
+      );
+    }
+    return wrapper.response(
+      res,
+      "success",
+      result,
+      "Consultation fetched",
+      http.OK,
+    );
+  } catch (err: unknown) {
+    logger.error(
+      `Error fetching consultation: ${err instanceof Error ? err.message : String(err)}`,
+    );
+    return wrapper.response(
+      res,
+      "fail",
+      wrapper.error(err instanceof Error ? err : new Error(String(err))),
+      "Internal Server Error",
+      httpError.INTERNAL_ERROR,
+    );
+  }
+};
+
+export const midtransWebhook = async (
+  req: Request,
+  res: Response,
+): Promise<void> => {
+  try {
+    const result = await ConsultationsService.handleMidtransWebhook(req.body);
+
+    if (result.err) {
+      // Return 200 even on error so Midtrans doesn't retry infinitely unless it's a critical error
+      logger.error(`Webhook error: ${result.err}`);
+      res.status(200).send("OK");
+      return;
+    }
+
+    res.status(200).send("OK");
+  } catch (err: unknown) {
+    logger.error(
+      `Error handling webhook: ${err instanceof Error ? err.message : String(err)}`,
+    );
+    res.status(200).send("OK");
   }
 };
 

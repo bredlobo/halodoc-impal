@@ -6,12 +6,14 @@ import {
   respondToConsultation,
   updateStatus,
   processPayment,
+  midtransWebhook,
   getChatHistory,
   sendMessage,
   generatePrescription,
   updatePrescriptionNotes,
   addPrescriptionItem,
   removePrescriptionItem,
+  getConsultationById,
 } from "@/modules/Consultations/controllers/consultations-controllers";
 
 const router = Router();
@@ -144,6 +146,32 @@ router.patch(
 
 /**
  * @swagger
+ * /api/v1/consultations/{id}:
+ *   get:
+ *     summary: Get consultation details by ID
+ *     tags: [Consultations]
+ *     security:
+ *       - bearerAuth: []
+ *       - cookieAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       "200":
+ *         description: Consultation details fetched
+ */
+router.get(
+  "/:id",
+  verifyToken,
+  authorize(["PATIENT", "DOCTOR", "ADMIN"]),
+  getConsultationById,
+);
+
+/**
+ * @swagger
  * /api/v1/consultations/{id}/payment:
  *   post:
  *     summary: Mark consultation payment as paid
@@ -176,6 +204,18 @@ router.post(
   authorize(["PATIENT"]),
   processPayment,
 );
+
+/**
+ * @swagger
+ * /api/v1/consultations/webhook:
+ *   post:
+ *     summary: Midtrans webhook handler
+ *     tags: [Consultations]
+ *     responses:
+ *       "200":
+ *         description: Webhook processed
+ */
+router.post("/webhook", midtransWebhook);
 
 /**
  * @swagger

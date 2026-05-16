@@ -5,6 +5,8 @@ import ConsultationsRepository from "@/modules/Consultations/repositories/consul
 import prisma from "@/helpers/db/prisma/client";
 import { ConsultationStatus } from "@/generated/prisma";
 import { getIO } from "@/helpers/utils/socket";
+import { snap, coreApi } from "@/helpers/utils/midtrans";
+import crypto from "crypto";
 import {
   RequestedConsultation,
   RespondedConsultation,
@@ -56,6 +58,19 @@ export default class ConsultationsService {
     if (job) {
       clearTimeout(job);
       ConsultationsService.timeoutJobs.delete(consultationId);
+    }
+  }
+
+  static async getConsultationById(consultationId: number): Promise<ResponseResult<any>> {
+    try {
+      const consultation = await ConsultationsRepository.getConsultationById(consultationId);
+      if (!consultation) {
+        return wrapper.error(new NotFoundError("Consultation not found"));
+      }
+      return wrapper.data(consultation);
+    } catch (err) {
+      const message = err instanceof Error ? err.message : String(err);
+      return wrapper.error(new BadRequestError(message));
     }
   }
 
@@ -201,16 +216,104 @@ export default class ConsultationsService {
 
   static async processPayment(
     consultationId: number,
-  ): Promise<ResponseResult<ProcessedPayment>> {
+  ): Promise<ResponseResult<any>> {
     try {
       const consultation =
         await ConsultationsRepository.getConsultationById(consultationId);
       if (!consultation)
         return wrapper.error(new NotFoundError("Consultation not found"));
+      
+      if (consultation.paymentStatus === "PAID") {
+        return wrapper.error(new BadRequestError("Consultation is already paid"));
+      }
 
-      const updated =
-        await ConsultationsRepository.processPayment(consultationId);
+      if (consultation.midtransToken && consultation.midtransUrl) {
+        return wrapper.data(consultation);
+      }
+
+      const patient = await prisma.user.findUnique({
+        where: { id: consultation.patientId },
+      });
+
+      const parameter = {
+        transaction_details: {
+          order_id: `CONS-${consultation.id}-${Date.now()}`,
+          gross_amount: consultation.fee,
+        },
+        customer_details: {
+          first_name: patient?.fullName || "Patient",
+          email: patient?.email,
+          phone: patient?.telephoneNumber,
+        },
+      };
+
+      const transaction = await snap.createTransaction(parameter);
+      const updated = await ConsultationsRepository.updateMidtransData(
+        consultationId,
+        transaction.token,
+        transaction.redirect_url,
+      );
       return wrapper.data(updated);
+    } catch (err) {
+      const message = err instanceof Error ? err.message : String(err);
+      return wrapper.error(new BadRequestError(message));
+    }
+  }
+
+  static async handleMidtransWebhook(body: any): Promise<ResponseResult<any>> {
+    try {
+      // In production, you might want to use coreApi.transaction.notification(body)
+      // but Midtrans sends the JSON body directly, so we can verify the signature here.
+      const statusResponse = body;
+      const orderId = statusResponse.order_id;
+      const transactionStatus = statusResponse.transaction_status;
+      const fraudStatus = statusResponse.fraud_status;
+
+      const signatureKey =
+        statusResponse.order_id +
+        statusResponse.status_code +
+        statusResponse.gross_amount +
+        (process.env.MIDTRANS_SERVER_KEY || "");
+      const hash = crypto
+        .createHash("sha512")
+        .update(signatureKey)
+        .digest("hex");
+
+      if (hash !== statusResponse.signature_key) {
+        return wrapper.error(new BadRequestError("Invalid signature key"));
+      }
+
+      const match = orderId.match(/^CONS-(\d+)-/);
+      if (!match)
+        return wrapper.error(new BadRequestError("Invalid order id format"));
+      const consultationId = parseInt(match[1], 10);
+
+      if (transactionStatus == "capture" || transactionStatus == "settlement") {
+        if (fraudStatus == "challenge") {
+          // Challenge state
+        } else if (fraudStatus == "accept" || !fraudStatus) {
+          await ConsultationsRepository.updatePaymentStatus(
+            consultationId,
+            "PAID",
+          );
+        }
+      } else if (
+        transactionStatus == "cancel" ||
+        transactionStatus == "deny" ||
+        transactionStatus == "expire"
+      ) {
+        await ConsultationsRepository.updatePaymentStatus(
+          consultationId,
+          "REFUNDED", // Or CANCELLED / failed state
+        );
+      } else if (transactionStatus == "pending") {
+        await ConsultationsRepository.updatePaymentStatus(
+          consultationId,
+          "PENDING",
+        );
+      }
+
+      return wrapper.data({ success: true });
     } catch (err) {
       const message = err instanceof Error ? err.message : String(err);
       return wrapper.error(new BadRequestError(message));

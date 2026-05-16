@@ -1,4 +1,5 @@
 import prisma from "../src/helpers/db/prisma/client";
+import bcrypt from "bcrypt";
 
 const specializations = [
   {
@@ -620,6 +621,43 @@ async function main() {
         });
         console.log(`Berhasil menambahkan obat/produk: ${prod.name}`);
       }
+    }
+  }
+
+  console.log(`Menyiapkan data seeding untuk Doctors...`);
+  const allSpecializations = await prisma.specialization.findMany();
+  const hashedPassword = await bcrypt.hash("password123", 10);
+  
+  let doctorCounter = 1;
+  for (const spec of allSpecializations) {
+    for (let i = 1; i <= 3; i++) {
+      const email = `doctor${doctorCounter}@halohealth.com`;
+      const fullName = `Dr. Specialist ${doctorCounter} (${spec.name})`;
+      const telephoneNumber = `081234567${doctorCounter.toString().padStart(3, '0')}`;
+      const strNumber = `STR-${spec.id}-${i}-${doctorCounter}`;
+      
+      const existingUser = await prisma.user.findUnique({ where: { email } });
+      if (existingUser) {
+        console.log(`Doctor ${fullName} sudah ada, dilewati.`);
+      } else {
+        await prisma.user.create({
+          data: {
+            email,
+            password: hashedPassword,
+            fullName,
+            telephoneNumber,
+            role: "DOCTOR",
+            doctorProfile: {
+              create: {
+                specializationId: spec.id,
+                strNumber,
+              }
+            }
+          }
+        });
+        console.log(`Berhasil menambahkan doctor: ${fullName}`);
+      }
+      doctorCounter++;
     }
   }
 

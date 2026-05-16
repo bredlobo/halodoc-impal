@@ -1,6 +1,6 @@
 export const navLinks = [
   { name: "Beranda", to: "/" },
-  { name: "Konsultasi", to: "/consultation" },
+  { name: "Konsultasi", to: "/consultations" },
   { name: "Toko", to: "/products" },
   { name: "Profil", to: "/profile" },
 ];

@@ -45,6 +45,42 @@ export const getAllSpecializations = async (
   }
 };
 
+export const getAllDoctors = async (
+  req: Request,
+  res: Response,
+): Promise<void> => {
+  try {
+    const result = await DoctorsService.getAllDoctors();
+
+    if (result.err)
+      return wrapper.response(
+        res,
+        "fail",
+        result,
+        "Failed to fetch doctors",
+        httpError.BAD_REQUEST,
+      );
+    return wrapper.response(
+      res,
+      "success",
+      result,
+      "Doctors fetched",
+      http.OK,
+    );
+  } catch (err: unknown) {
+    logger.error(
+      `Error fetching doctors: ${err instanceof Error ? err.message : String(err)}`,
+    );
+    return wrapper.response(
+      res,
+      "fail",
+      wrapper.error(err instanceof Error ? err : new Error(String(err))),
+      "Internal Server Error",
+      httpError.INTERNAL_ERROR,
+    );
+  }
+};
+
 export const createSpecialization = async (
   req: Request,
   res: Response,

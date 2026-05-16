@@ -8,9 +8,27 @@ import {
   updateCredentials,
   updatePhoto,
   getConsultationHistory,
+  getAllDoctors,
 } from "@/modules/Doctors/controllers/doctors-controllers";
 
 const router = Router();
+
+/**
+ * @swagger
+ * /api/v1/doctors:
+ *   get:
+ *     summary: Get all doctors
+ *     tags: [Doctors]
+ *     security: []
+ *     responses:
+ *       "200":
+ *         description: Doctors fetched
+ *       "400":
+ *         $ref: '#/components/responses/BadRequestError'
+ *       "500":
+ *         $ref: '#/components/responses/InternalServerError'
+ */
+router.get("/", getAllDoctors);
 
 /**
  * @swagger

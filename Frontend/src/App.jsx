@@ -6,6 +6,9 @@ import AuthPage from "./Pages/Auth/Auth";
 import NotFound from "./Pages/NotFound";
 import ProductPage from "./Pages/Products/Home";
 import ProductDetailPage from "./Pages/Products/ProductDetail/Home";
+import DoctorList from "./Pages/Consultations/DoctorList";
+import ConsultationPayment from "./Pages/Consultations/ConsultationPayment";
+import ConsultationSuccess from "./Pages/Consultations/Success";
 
 const routes = createBrowserRouter([
   {
@@ -27,6 +30,18 @@ const routes = createBrowserRouter([
       {
         path: "products/:id",
         element: <ProductDetailPage />,
+      },
+      {
+        path: "consultations",
+        element: <DoctorList />,
+      },
+      {
+        path: "consultations/:id/payment",
+        element: <ConsultationPayment />,
+      },
+      {
+        path: "consultations/success",
+        element: <ConsultationSuccess />,
       },
     ],
   },
