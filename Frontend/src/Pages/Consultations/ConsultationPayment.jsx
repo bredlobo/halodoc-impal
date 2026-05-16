@@ -1,30 +1,16 @@
 import { useState } from "react";
 import { useMidtrans } from "../../hooks/useMidtrans";
-import { apiFetch } from "../../lib/apiClient";
+import { useConsultationDetail, usePayConsultation } from "../../hooks/useConsultations";
 import { useParams, useNavigate } from "react-router-dom";
-import { useQuery, useMutation } from "@tanstack/react-query";
 
 export default function ConsultationPayment() {
   const { id } = useParams();
   const navigate = useNavigate();
   const { isLoaded, pay } = useMidtrans();
 
-  // Fetch consultation details
-  const { data: consultation, isLoading } = useQuery({
-    queryKey: ["consultation", id],
-    queryFn: async () => {
-      const res = await apiFetch(`/api/v1/consultations/${id}`);
-      return res;
-    },
-  });
+  const { data: consultation, isLoading } = useConsultationDetail(id);
 
-  const paymentMutation = useMutation({
-    mutationFn: async () => {
-      const res = await apiFetch(`/api/v1/consultations/${id}/payment`, {
-        method: "POST",
-      });
-      return res;
-    },
+  const paymentMutation = usePayConsultation(id, {
     onSuccess: (res) => {
       if (res.data.midtransToken) {
         pay(

@@ -1,35 +1,14 @@
 import { useState } from "react";
-import { apiFetch } from "../../lib/apiClient";
+import { useDoctors } from "../../hooks/useDoctors";
+import { useRequestConsultation } from "../../hooks/useConsultations";
 import { useNavigate } from "react-router-dom";
-import { useQuery, useMutation } from "@tanstack/react-query";
 
 export default function DoctorList() {
   const navigate = useNavigate();
 
-  const { data: doctors, isLoading } = useQuery({
-    queryKey: ["doctors"],
-    queryFn: async () => {
-      const res = await apiFetch("/api/v1/doctors");
-      // Map properties from the backend structure
-      return res.data.map((doc) => ({
-        id: doc.user.id,
-        name: doc.user.fullName,
-        specialization: doc.specialization.name,
-        experience: "Expert", // Fallback if not available
-        fee: 100000, // Standard fee
-        rating: 4.8,
-      }));
-    },
-  });
+  const { data: doctors, isLoading } = useDoctors();
 
-  const requestMutation = useMutation({
-    mutationFn: async (doctorId) => {
-      const res = await apiFetch("/api/v1/consultations/request", {
-        method: "POST",
-        body: { doctorId },
-      });
-      return res;
-    },
+  const requestMutation = useRequestConsultation({
     onSuccess: (res) => {
       alert("Consultation requested successfully!");
       // Redirect to payment page with the newly created consultation ID
@@ -114,7 +93,7 @@ export default function DoctorList() {
                 </div>
 
                 <button
-                  onClick={() => requestMutation.mutate(doctor.id)}
+                  onClick={() => requestMutation.mutate({ doctorId: doctor.id })}
                   disabled={requestMutation.isPending}
                   className="w-full rounded-xl bg-teal-50 py-3 font-semibold text-teal-700 transition-colors group-hover:bg-teal-600 group-hover:text-white disabled:opacity-50"
                 >
