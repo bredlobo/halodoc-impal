@@ -9,6 +9,7 @@ import {
   updatePhoto,
   getConsultationHistory,
   getAllDoctors,
+  getDoctorById,
 } from "@/modules/Doctors/controllers/doctors-controllers";
 
 const router = Router();
@@ -29,6 +30,30 @@ const router = Router();
  *         $ref: '#/components/responses/InternalServerError'
  */
 router.get("/", getAllDoctors);
+
+/**
+ * @swagger
+ * /api/v1/doctors/{id}:
+ *   get:
+ *     summary: Get doctor by id
+ *     tags: [Doctors]
+ *     security: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *           minimum: 1
+ *     responses:
+ *       "200":
+ *         description: Doctor fetched
+ *       "404":
+ *         $ref: '#/components/responses/NotFoundError'
+ *       "500":
+ *         $ref: '#/components/responses/InternalServerError'
+ */
+router.get("/:id", getDoctorById);
 
 /**
  * @swagger

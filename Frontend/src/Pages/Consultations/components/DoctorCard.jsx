@@ -1,4 +1,4 @@
-function DoctorCard({ doctor, onBook, isBooking }) {
+function DoctorCard({ doctor, onViewDetail }) {
   const formattedFee = new Intl.NumberFormat("id-ID", {
     style: "currency",
     currency: "IDR",
@@ -17,8 +17,10 @@ function DoctorCard({ doctor, onBook, isBooking }) {
       {/* Banner */}
       <div className="relative h-28 bg-gradient-to-br from-teal-500 to-cyan-400">
         {/* Avatar */}
-        <div className="absolute -bottom-9 left-5 h-18 w-18 rounded-full border-4 border-white bg-teal-100 shadow-md flex items-center justify-center"
-          style={{ width: "4.5rem", height: "4.5rem" }}>
+        <div
+          className="absolute -bottom-9 left-5 flex items-center justify-center rounded-full border-4 border-white bg-teal-100 shadow-md"
+          style={{ width: "4.5rem", height: "4.5rem" }}
+        >
           <span className="text-xl font-extrabold text-teal-700">{initials}</span>
         </div>
       </div>
@@ -51,12 +53,11 @@ function DoctorCard({ doctor, onBook, isBooking }) {
         <div className="mt-auto pt-4 flex items-center justify-between gap-2">
           <p className="text-base font-bold text-teal-600">{formattedFee}</p>
           <button
-            id={`book-doctor-${doctor.id}`}
-            onClick={() => onBook(doctor.id)}
-            disabled={isBooking}
-            className="rounded-full border border-slate-200 px-3 py-1.5 text-xs font-semibold text-slate-700 transition-all duration-200 hover:border-teal-300 hover:bg-teal-50 hover:text-teal-700 disabled:opacity-50 disabled:cursor-not-allowed"
+            id={`view-doctor-${doctor.id}`}
+            onClick={() => onViewDetail(doctor.id)}
+            className="rounded-full border border-slate-200 px-3 py-1.5 text-xs font-semibold text-slate-700 transition-all duration-200 hover:border-teal-300 hover:bg-teal-50 hover:text-teal-700"
           >
-            {isBooking ? "Booking..." : "Book Now →"}
+            Lihat Profil →
           </button>
         </div>
       </div>

@@ -6,7 +6,9 @@ import AuthPage from "./Pages/Auth/Auth";
 import NotFound from "./Pages/NotFound";
 import ProductPage from "./Pages/Products/Home";
 import ProductDetailPage from "./Pages/Products/ProductDetail/Home";
+import SpecializationSelect from "./Pages/Consultations/SpecializationSelect";
 import DoctorList from "./Pages/Consultations/DoctorList";
+import DoctorDetail from "./Pages/Consultations/DoctorDetail";
 import ConsultationPayment from "./Pages/Consultations/ConsultationPayment";
 import ConsultationSuccess from "./Pages/Consultations/Success";
 
@@ -33,7 +35,15 @@ const routes = createBrowserRouter([
       },
       {
         path: "consultations",
+        element: <SpecializationSelect />,
+      },
+      {
+        path: "consultations/doctors",
         element: <DoctorList />,
+      },
+      {
+        path: "consultations/doctors/:doctorId",
+        element: <DoctorDetail />,
       },
       {
         path: "consultations/:id/payment",

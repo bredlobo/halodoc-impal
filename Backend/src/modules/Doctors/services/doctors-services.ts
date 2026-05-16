@@ -34,6 +34,19 @@ export default class DoctorsService {
     }
   }
 
+  static async getDoctorById(id: number): Promise<ResponseResult<any>> {
+    try {
+      const doctor = await DoctorsRepository.getDoctorById(id);
+      if (!doctor) {
+        return wrapper.error(new NotFoundError("Doctor not found"));
+      }
+      return wrapper.data(doctor);
+    } catch (err) {
+      const message = err instanceof Error ? err.message : String(err);
+      return wrapper.error(new BadRequestError(message));
+    }
+  }
+
   static async createSpecialization(
     name: string,
     description?: string,

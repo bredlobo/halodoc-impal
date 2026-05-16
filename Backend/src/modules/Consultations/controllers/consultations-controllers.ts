@@ -16,7 +16,7 @@ export const requestConsultation = async (
 ): Promise<void> => {
   try {
     const patientId = req.user!.userId;
-    const { doctorId } = req.body;
+    const doctorId = parseInt(req.body.doctorId as string, 10);
     const result = await ConsultationsService.requestConsultation(
       patientId,
       doctorId,

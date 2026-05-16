@@ -85,4 +85,21 @@ export default class DoctorsRepository {
       where: { userId },
     });
   }
+
+  static async getDoctorById(userId: number) {
+    return prisma.doctorProfile.findUnique({
+      where: { userId },
+      include: {
+        user: {
+          select: {
+            id: true,
+            fullName: true,
+            email: true,
+            telephoneNumber: true,
+          },
+        },
+        specialization: true,
+      },
+    });
+  }
 }
