@@ -3,7 +3,6 @@ function ProductDetailInfo({
   formattedPrice,
   isLowStock,
   isOutOfStock,
-  onBack,
 }) {
   return (
     <div className="flex flex-col">

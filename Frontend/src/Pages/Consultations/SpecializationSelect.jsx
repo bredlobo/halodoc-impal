@@ -108,16 +108,20 @@ export default function SpecializationSelect() {
         {/* Decorative blobs */}
         <div
           className="pointer-events-none absolute -top-24 -right-24 h-72 w-72 rounded-full opacity-20 blur-3xl"
-          style={{ background: "radial-gradient(circle, #14b8a6, transparent)" }}
+          style={{
+            background: "radial-gradient(circle, #14b8a6, transparent)",
+          }}
         />
         <div
           className="pointer-events-none absolute -bottom-16 -left-16 h-56 w-56 rounded-full opacity-15 blur-3xl"
-          style={{ background: "radial-gradient(circle, #06b6d4, transparent)" }}
+          style={{
+            background: "radial-gradient(circle, #06b6d4, transparent)",
+          }}
         />
 
         <div className="relative mx-auto max-w-3xl px-4 text-center sm:px-6 lg:px-8">
           <span className="mb-4 inline-flex items-center gap-1.5 rounded-full bg-teal-100 px-4 py-1.5 text-xs font-semibold tracking-widest text-teal-700 uppercase ring-1 ring-teal-200">
-            <span className="h-1.5 w-1.5 rounded-full bg-teal-500 animate-pulse" />
+            <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-teal-500" />
             Konsultasi Online
           </span>
           <h1 className="mt-3 text-3xl font-extrabold text-slate-900 sm:text-5xl">
@@ -127,8 +131,8 @@ export default function SpecializationSelect() {
             </span>
           </h1>
           <p className="mx-auto mt-4 max-w-lg text-sm leading-relaxed text-slate-500 sm:text-base">
-            Temukan dokter yang tepat untuk kebutuhanmu. Pilih bidang spesialisasi
-            terlebih dahulu untuk melihat dokter yang tersedia.
+            Temukan dokter yang tepat untuk kebutuhanmu. Pilih bidang
+            spesialisasi terlebih dahulu untuk melihat dokter yang tersedia.
           </p>
         </div>
       </section>
@@ -136,7 +140,7 @@ export default function SpecializationSelect() {
       {/* ── Specialization Grid ───────────────────────────────────────── */}
       <section className="py-12 sm:py-16">
         <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 lg:gap-5">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 lg:gap-5 xl:grid-cols-4">
             {SPECIALIZATIONS.map((spec) => (
               <button
                 key={spec.name}
@@ -144,11 +148,6 @@ export default function SpecializationSelect() {
                 onClick={() => handleSelect(spec.name)}
                 className={`group relative flex flex-col items-start gap-3 rounded-2xl border bg-white p-5 text-left shadow-sm ring-1 ring-transparent transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:ring-2 ${spec.ring} focus:outline-none focus-visible:ring-2 ${spec.ring}`}
               >
-                {/* Gradient strip */}
-                <div
-                  className={`absolute inset-x-0 top-0 h-1 rounded-t-2xl bg-gradient-to-r ${spec.color} opacity-0 transition-opacity duration-300 group-hover:opacity-100`}
-                />
-
                 {/* Icon bubble */}
                 <div
                   className={`flex h-12 w-12 items-center justify-center rounded-xl ${spec.bg} text-2xl shadow-sm transition-transform duration-300 group-hover:scale-110`}
@@ -157,7 +156,7 @@ export default function SpecializationSelect() {
                 </div>
 
                 <div className="flex-1">
-                  <p className={`text-sm font-bold leading-snug ${spec.text}`}>
+                  <p className={`text-sm leading-snug font-bold ${spec.text}`}>
                     {spec.name}
                   </p>
                   <p className="mt-1 text-xs leading-relaxed text-slate-400">
@@ -167,7 +166,7 @@ export default function SpecializationSelect() {
 
                 {/* Arrow indicator */}
                 <div
-                  className={`ml-auto flex h-7 w-7 items-center justify-center rounded-full ${spec.bg} text-xs font-bold ${spec.text} opacity-0 transition-all duration-300 group-hover:opacity-100 group-hover:translate-x-1`}
+                  className={`ml-auto flex h-7 w-7 items-center justify-center rounded-full ${spec.bg} text-xs font-bold ${spec.text} opacity-0 transition-all duration-300 group-hover:translate-x-1 group-hover:opacity-100`}
                 >
                   →
                 </div>

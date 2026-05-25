@@ -235,15 +235,52 @@ export default class ConsultationsService {
         where: { id: consultation.patientId },
       });
 
+      // Build item_details: start with the consultation fee
+      const itemDetails: {
+        id: string;
+        price: number;
+        quantity: number;
+        name: string;
+      }[] = [
+        {
+          id: `CONS-FEE-${consultation.id}`,
+          price: consultation.fee,
+          quantity: 1,
+          name: "Biaya Konsultasi Dokter",
+        },
+      ];
+
+      // Add prescription items if available
+      const prescriptionItems = consultation.prescription?.items ?? [];
+      for (const item of prescriptionItems) {
+        itemDetails.push({
+          id: `PROD-${item.product.id}`,
+          price: item.product.price,
+          quantity: item.quantity,
+          name: item.product.name,
+        });
+      }
+
+      // Total gross amount = consultation fee + prescription items
+      const grossAmount =
+        itemDetails.reduce((sum, i) => sum + i.price * i.quantity, 0);
+
+      const frontendUrl =
+        process.env.FRONTEND_URL || "http://localhost:5173";
+
       const parameter = {
         transaction_details: {
           order_id: `CONS-${consultation.id}-${Date.now()}`,
-          gross_amount: consultation.fee,
+          gross_amount: grossAmount,
         },
+        item_details: itemDetails,
         customer_details: {
           first_name: patient?.fullName || "Patient",
           email: patient?.email,
           phone: patient?.telephoneNumber,
+        },
+        callbacks: {
+          finish: `${frontendUrl}/consultations/success`,
         },
       };
 

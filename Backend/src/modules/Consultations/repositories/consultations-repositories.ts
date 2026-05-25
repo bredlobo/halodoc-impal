@@ -133,7 +133,15 @@ export default class ConsultationsRepository {
   static async getConsultationById(id: number) {
     return prisma.consultation.findUnique({
       where: { id },
-      include: { prescription: true },
+      include: {
+        prescription: {
+          include: {
+            items: {
+              include: { product: true },
+            },
+          },
+        },
+      },
     });
   }
 }

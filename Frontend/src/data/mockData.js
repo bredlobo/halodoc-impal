@@ -1,13 +1,13 @@
 export const navLinks = [
-  { name: "Beranda", to: "/" },
-  { name: "Konsultasi", to: "/consultations" },
-  { name: "Toko", to: "/products" },
-  { name: "Profil", to: "/profile" },
-];
+  { name: 'Beranda', to: '/' },
+  { name: 'Konsultasi', to: '/consultations' },
+  { name: 'Toko', to: '/products' },
+  { name: 'Riwayat', to: '/history' },
+]
 
 export const features = [
   {
-    title: "Konsultasi Kapan Saja",
+    title: 'Konsultasi Kapan Saja',
     description:
       'Konsultasi chat, suara, atau video dengan dokter terverifikasi kapan pun kamu butuh saran medis cepat.',
     icon: '🩺',
