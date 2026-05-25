@@ -57,26 +57,26 @@ export default function ConsultationSuccess() {
 
             {/* CTA buttons */}
             <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:justify-center">
+              <Link
+                to="/my-consultations"
+                id="go-to-my-consultations"
+                className="rounded-xl bg-gradient-to-r from-teal-500 to-cyan-500 px-6 py-3 text-sm font-bold text-white shadow-md transition-all hover:shadow-lg"
+              >
+                📋 Lihat Status Konsultasi
+              </Link>
               {consultationId && (
                 <Link
                   to={`/consultations/${consultationId}/chat`}
                   id="go-to-chat"
-                  className="rounded-xl bg-gradient-to-r from-teal-500 to-cyan-500 px-6 py-3 text-sm font-bold text-white shadow-md transition-all hover:shadow-lg"
+                  className="rounded-xl border border-teal-200 bg-white px-6 py-3 text-sm font-bold text-teal-700 transition-colors hover:bg-teal-50"
                 >
                   💬 Buka Ruang Chat
                 </Link>
               )}
               <Link
-                to="/consultations"
-                id="back-to-doctors"
-                className="rounded-xl border border-teal-200 bg-white px-6 py-3 text-sm font-bold text-teal-700 transition-colors hover:bg-teal-50"
-              >
-                Lihat Dokter Lain
-              </Link>
-              <Link
                 to="/"
                 id="go-to-home"
-                className="rounded-xl bg-teal-600 px-6 py-3 text-sm font-bold text-white shadow-sm transition-colors hover:bg-teal-700"
+                className="rounded-xl border border-slate-200 bg-white px-6 py-3 text-sm font-bold text-slate-600 transition-colors hover:bg-slate-50"
               >
                 Ke Beranda
               </Link>

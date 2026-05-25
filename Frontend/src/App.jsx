@@ -14,6 +14,7 @@ import ConsultationSuccess from "./Pages/Consultations/Success";
 import ConsultationChat from "./Pages/Consultations/ConsultationChat";
 import DoctorDashboard from "./Pages/Consultations/DoctorDashboard";
 import DoctorRequests from "./Pages/Consultations/DoctorRequests";
+import MyConsultations from "./Pages/Consultations/MyConsultations";
 
 const routes = createBrowserRouter([
   {
@@ -53,16 +54,20 @@ const routes = createBrowserRouter([
         element: <ConsultationPayment />,
       },
       {
-        path: "consultations/:id/chat",
-        element: <ConsultationChat />,
-      },
-      {
         path: "consultations/success",
         element: <ConsultationSuccess />,
       },
+      {
+        path: "my-consultations",
+        element: <MyConsultations />,
+      },
     ],
   },
-  // ── Doctor routes — full-screen, no Navbar/Footer ─────────────────────
+  // ── Full-screen routes (no Navbar/Footer) ─────────────────────
+  {
+    path: "/consultations/:id/chat",
+    element: <ConsultationChat />,
+  },
   {
     path: "/doctor/dashboard",
     element: <DoctorDashboard />,
