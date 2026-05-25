@@ -9,6 +9,7 @@ import ConsultationsService from "@/modules/Consultations/services/consultations
 import ConsultationsRepository from "@/modules/Consultations/repositories/consultations-repositories";
 import { ConsultationStatus } from "@/generated/prisma";
 import { getIO, emitMessageSafely } from "@/helpers/utils/socket";
+import prisma from "@/helpers/db/prisma/client";
 
 export const requestConsultation = async (
   req: Request,
@@ -493,6 +494,67 @@ export const removePrescriptionItem = async (
   } catch (err: unknown) {
     logger.error(
       `Error removing prescription item: ${err instanceof Error ? err.message : String(err)}`,
+    );
+    return wrapper.response(
+      res,
+      "fail",
+      wrapper.error(err instanceof Error ? err : new Error(String(err))),
+      "Internal Server Error",
+      httpError.INTERNAL_ERROR,
+    );
+  }
+};
+
+/**
+ * GET /consultations/my
+ * Returns all consultations for the currently authenticated user.
+ * - PATIENT  → consultations where patientId = userId
+ * - DOCTOR   → consultations where doctorId  = userId
+ */
+export const getMyConsultations = async (
+  req: Request,
+  res: Response,
+): Promise<void> => {
+  try {
+    const userId = req.user!.userId;
+    const role   = req.user!.role;
+
+    const consultations = await prisma.consultation.findMany({
+      where: role === "DOCTOR"
+        ? { doctorId: userId }
+        : { patientId: userId },
+      include: {
+        prescription: {
+          include: { items: { include: { product: true } } },
+        },
+      },
+      orderBy: { createdAt: "desc" },
+    });
+
+    // For doctor: include patient name
+    let result: any[] = consultations;
+    if (role === "DOCTOR") {
+      result = await Promise.all(
+        consultations.map(async (c) => {
+          const patient = await prisma.user.findUnique({
+            where: { id: c.patientId },
+            select: { id: true, fullName: true, email: true },
+          });
+          return { ...c, patient };
+        }),
+      );
+    }
+
+    return wrapper.response(
+      res,
+      "success",
+      wrapper.data(result),
+      "Consultations fetched",
+      http.OK,
+    );
+  } catch (err: unknown) {
+    logger.error(
+      `Error fetching my consultations: ${err instanceof Error ? err.message : String(err)}`,
     );
     return wrapper.response(
       res,

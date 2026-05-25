@@ -1,5 +1,6 @@
 import { createContext, useContext, useState, useEffect } from "react";
 import http from "../lib/axios";
+import { destroySocket } from "../lib/socket";
 // eslint-disable-next-line react-refresh/only-export-components
 export const AuthContext = createContext(null);
 // eslint-disable-next-line react-refresh/only-export-components
@@ -39,6 +40,7 @@ export const AuthProvider = ({ children }) => {
     localStorage.removeItem("user");
     localStorage.removeItem("token");
     delete http.defaults.headers.common["Authorization"];
+    destroySocket(); // disconnect socket on logout
   };
 
   useEffect(() => {

@@ -98,6 +98,7 @@ export default class UserService {
           email: user.email,
           telephoneNumber: user.telephoneNumber,
           fullName: user.fullName,
+          role: user.role,
         },
       });
     } catch (err) {

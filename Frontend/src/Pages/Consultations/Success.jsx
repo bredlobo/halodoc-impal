@@ -1,6 +1,12 @@
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 
 export default function ConsultationSuccess() {
+  const [searchParams] = useSearchParams();
+  // Midtrans appends: ?order_id=CONS-{id}-{timestamp}&status_code=200&...
+  const orderId = searchParams.get("order_id") || "";
+  const match = orderId.match(/^CONS-(\d+)-/);
+  const consultationId = match ? match[1] : null;
+
   return (
     <div className="min-h-screen bg-slate-50">
       {/* ── Hero Banner ──────────────────────────────────────────────── */}
@@ -51,6 +57,15 @@ export default function ConsultationSuccess() {
 
             {/* CTA buttons */}
             <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:justify-center">
+              {consultationId && (
+                <Link
+                  to={`/consultations/${consultationId}/chat`}
+                  id="go-to-chat"
+                  className="rounded-xl bg-gradient-to-r from-teal-500 to-cyan-500 px-6 py-3 text-sm font-bold text-white shadow-md transition-all hover:shadow-lg"
+                >
+                  💬 Buka Ruang Chat
+                </Link>
+              )}
               <Link
                 to="/consultations"
                 id="back-to-doctors"

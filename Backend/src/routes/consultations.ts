@@ -14,6 +14,7 @@ import {
   addPrescriptionItem,
   removePrescriptionItem,
   getConsultationById,
+  getMyConsultations,
 } from "@/modules/Consultations/controllers/consultations-controllers";
 
 const router = Router();
@@ -163,6 +164,14 @@ router.patch(
  *       "200":
  *         description: Consultation details fetched
  */
+// Must be placed BEFORE /:id to avoid route collision
+router.get(
+  "/my",
+  verifyToken,
+  authorize(["PATIENT", "DOCTOR"]),
+  getMyConsultations,
+);
+
 router.get(
   "/:id",
   verifyToken,
