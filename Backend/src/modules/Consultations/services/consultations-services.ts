@@ -268,9 +268,11 @@ export default class ConsultationsService {
       const frontendUrl =
         process.env.FRONTEND_URL || "http://localhost:5173";
 
+      const orderId = `CONS-${consultationId}-${Date.now()}`;
+
       const parameter = {
         transaction_details: {
-          order_id: `CONS-${consultation.id}-${Date.now()}`,
+          order_id: orderId,
           gross_amount: grossAmount,
         },
         item_details: itemDetails,
@@ -289,6 +291,7 @@ export default class ConsultationsService {
         consultationId,
         transaction.token,
         transaction.redirect_url,
+        orderId, // ← save orderId so we can verify later
       );
       return wrapper.data(updated);
     } catch (err) {
@@ -351,6 +354,97 @@ export default class ConsultationsService {
       }
 
       return wrapper.data({ success: true });
+    } catch (err) {
+      const message = err instanceof Error ? err.message : String(err);
+      return wrapper.error(new BadRequestError(message));
+    }
+  }
+
+  /**
+   * Verify payment status by polling Midtrans transaction API.
+   * Called from frontend after redirect from Midtrans payment page.
+   * Essential for dev/sandbox where webhook cannot reach localhost.
+   */
+  static async verifyPaymentStatus(
+    consultationId: number,
+  ): Promise<ResponseResult<any>> {
+    try {
+      const consultation =
+        await ConsultationsRepository.getConsultationById(consultationId);
+
+      if (!consultation)
+        return wrapper.error(new NotFoundError("Consultation not found"));
+
+      // Already PAID — return immediately
+      if (consultation.paymentStatus === "PAID") {
+        return wrapper.data({
+          paymentStatus: "PAID",
+          consultationStatus: consultation.status,
+          alreadyPaid: true,
+        });
+      }
+
+      // midtransUrl now stores the order_id (set above)
+      const orderId = consultation.midtransUrl;
+      if (!orderId || !orderId.startsWith("CONS-")) {
+        return wrapper.error(
+          new BadRequestError("Payment has not been initiated yet"),
+        );
+      }
+
+      // Query Midtrans for transaction status
+      let transactionStatus: string | null = null;
+      let fraudStatus: string | null = null;
+
+      try {
+        const statusRes = await (coreApi as any).transaction.status(orderId);
+        transactionStatus = statusRes.transaction_status;
+        fraudStatus = statusRes.fraud_status;
+      } catch (midtransErr: any) {
+        // 404 means transaction not found / not completed yet
+        if (midtransErr?.httpStatusCode === 404 || midtransErr?.ApiResponse?.status_code === "404") {
+          return wrapper.data({
+            paymentStatus: "PENDING",
+            consultationStatus: consultation.status,
+            message: "Transaksi belum selesai di Midtrans",
+          });
+        }
+        throw midtransErr;
+      }
+
+      // Update payment status based on Midtrans response
+      if (
+        transactionStatus === "capture" ||
+        transactionStatus === "settlement"
+      ) {
+        if (!fraudStatus || fraudStatus === "accept") {
+          await ConsultationsRepository.updatePaymentStatus(
+            consultationId,
+            "PAID",
+          );
+          return wrapper.data({
+            paymentStatus: "PAID",
+            consultationStatus: consultation.status,
+          });
+        }
+      } else if (
+        transactionStatus === "cancel" ||
+        transactionStatus === "deny" ||
+        transactionStatus === "expire"
+      ) {
+        await ConsultationsRepository.updatePaymentStatus(
+          consultationId,
+          "REFUNDED",
+        );
+      }
+
+      const latest =
+        await ConsultationsRepository.getConsultationById(consultationId);
+      return wrapper.data({
+        paymentStatus: latest?.paymentStatus ?? consultation.paymentStatus,
+        consultationStatus: latest?.status ?? consultation.status,
+        transactionStatus,
+      });
     } catch (err) {
       const message = err instanceof Error ? err.message : String(err);
       return wrapper.error(new BadRequestError(message));

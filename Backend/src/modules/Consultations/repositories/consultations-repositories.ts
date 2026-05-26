@@ -47,10 +47,14 @@ export default class ConsultationsRepository {
     consultationId: number,
     token: string,
     url: string,
+    orderId?: string,
   ) {
     return prisma.consultation.update({
       where: { id: consultationId },
-      data: { midtransToken: token, midtransUrl: url },
+      data: {
+        midtransToken: token,
+        midtransUrl: orderId || url, // store orderId in midtransUrl if provided
+      },
     });
   }
 

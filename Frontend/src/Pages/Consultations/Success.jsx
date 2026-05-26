@@ -1,11 +1,37 @@
+import { useEffect, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
+import { useVerifyPayment } from "../../hooks/useConsultations";
+import { useQueryClient } from "@tanstack/react-query";
 
 export default function ConsultationSuccess() {
   const [searchParams] = useSearchParams();
-  // Midtrans appends: ?order_id=CONS-{id}-{timestamp}&status_code=200&...
+  const queryClient = useQueryClient();
+
+  // Midtrans appends: ?order_id=CONS-{id}-{timestamp}&status_code=200&transaction_status=settlement
   const orderId = searchParams.get("order_id") || "";
+  const transactionStatus = searchParams.get("transaction_status") || "";
   const match = orderId.match(/^CONS-(\d+)-/);
   const consultationId = match ? match[1] : null;
+
+  const [verifyDone, setVerifyDone] = useState(false);
+
+  // Verify payment status from Midtrans API right away
+  const { data: verifyData, isLoading: verifying, isError: verifyFailed } =
+    useVerifyPayment(consultationId);
+
+  // After verify completes, refresh my-consultations cache
+  useEffect(() => {
+    if (!verifying && verifyData && !verifyDone) {
+      setVerifyDone(true);
+      queryClient.invalidateQueries({ queryKey: ["my-consultations"] });
+      queryClient.invalidateQueries({ queryKey: ["consultation", consultationId] });
+    }
+  }, [verifying, verifyData, verifyDone, consultationId, queryClient]);
+
+  const isPaid =
+    verifyData?.data?.paymentStatus === "PAID" ||
+    transactionStatus === "settlement" ||
+    transactionStatus === "capture";
 
   return (
     <div className="min-h-screen bg-slate-50">
@@ -37,9 +63,29 @@ export default function ConsultationSuccess() {
 
             <h2 className="text-xl font-extrabold text-slate-900">Pembayaran Dikonfirmasi</h2>
             <p className="mt-3 text-sm text-slate-500 leading-relaxed">
-              Terima kasih telah menggunakan layanan kami. Dokter akan segera menghubungimu dan kamu
-              akan diarahkan ke ruang konsultasi.
+              Terima kasih telah menggunakan layanan kami. Dokter akan segera menghubungimu.
             </p>
+
+            {/* Payment status indicator */}
+            {verifying && (
+              <div className="mt-4 flex items-center justify-center gap-2 rounded-xl bg-blue-50 px-4 py-2.5">
+                <svg className="h-4 w-4 animate-spin text-blue-500" viewBox="0 0 24 24" fill="none">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" />
+                </svg>
+                <span className="text-xs font-semibold text-blue-700">
+                  Mengonfirmasi status pembayaran...
+                </span>
+              </div>
+            )}
+            {!verifying && isPaid && (
+              <div className="mt-4 flex items-center justify-center gap-2 rounded-xl bg-green-50 px-4 py-2.5">
+                <span className="text-green-600">✓</span>
+                <span className="text-xs font-semibold text-green-700">
+                  Status pembayaran: LUNAS
+                </span>
+              </div>
+            )}
 
             {/* Steps */}
             <div className="mt-8 grid gap-3 text-left">

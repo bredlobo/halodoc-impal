@@ -57,14 +57,27 @@ export function useRespondToConsultation(options = {}) {
   });
 }
 
-/**
- * Fetch all consultations for the currently logged-in doctor.
- * Backend should support ?role=doctor or similar filter.
- */
+/** Fetch all consultations for the currently logged-in user (patient or doctor). */
 export function useMyConsultations(options = {}) {
   return useApiQuery({
     queryKey: ["my-consultations"],
     url: "consultations/my",
+    ...options,
+  });
+}
+
+/**
+ * Verify payment status by polling Midtrans API.
+ * Call this after user returns from Midtrans payment page.
+ * Essential for dev/sandbox where webhooks cannot reach localhost.
+ */
+export function useVerifyPayment(consultationId, options = {}) {
+  return useApiQuery({
+    queryKey: ["verify-payment", consultationId],
+    url: `consultations/${consultationId}/verify-payment`,
+    enabled: !!consultationId,
+    staleTime: 0,         // always re-fetch fresh
+    refetchOnMount: true,
     ...options,
   });
 }

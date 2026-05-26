@@ -2,25 +2,10 @@ import { useEffect, useRef, useState, useCallback } from "react";
 import { getSocket } from "../lib/socket";
 
 /**
- * @typedef {Object} Message
- * @property {number}  id
- * @property {number}  consultationId
- * @property {number}  senderId
- * @property {string}  content
- * @property {string}  timestamp
- */
-
-/**
  * Custom hook that manages the full socket lifecycle for a single consultation room.
  *
  * @param {number|string|null} consultationId  - The active consultation ID (or null to stay disconnected)
- * @param {Message[]}          initialMessages - Pre-fetched chat history from the REST API
- * @returns {{
- *   messages: Message[],
- *   sendMessage: (content: string) => void,
- *   isConnected: boolean,
- *   connectionError: string|null,
- * }}
+ * @param {Array}              initialMessages - Pre-fetched chat history from the REST API
  */
 export function useConsultationChat(consultationId, initialMessages = []) {
   const [messages, setMessages] = useState(initialMessages);
@@ -33,17 +18,18 @@ export function useConsultationChat(consultationId, initialMessages = []) {
     consultationIdRef.current = consultationId;
   }, [consultationId]);
 
-  // Sync initialMessages when they change (e.g. REST history loaded)
+  // Sync initialMessages when they change (e.g. REST history loaded after mount)
   useEffect(() => {
     setMessages(initialMessages);
-  }, [initialMessages]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [JSON.stringify(initialMessages?.map((m) => m.id))]);
 
   useEffect(() => {
     if (!consultationId) return;
 
-    const socket = getSocket();
+    const socket = getSocket(); // always gets latest token via singleton
 
-    // ── connect / reconnect ──────────────────────────────────────────
+    // ── connect ───────────────────────────────────────────────────────
     if (!socket.connected) {
       socket.connect();
     }
@@ -57,23 +43,36 @@ export function useConsultationChat(consultationId, initialMessages = []) {
 
     const handleDisconnect = (reason) => {
       setIsConnected(false);
+      // Server forced disconnect (e.g. kicked out) — try to reconnect
       if (reason === "io server disconnect") {
-        // Server forcefully disconnected us → manual reconnect
-        socket.connect();
+        setTimeout(() => {
+          const s = getSocket();
+          if (!s.connected) s.connect();
+        }, 1000);
       }
     };
 
     const handleConnectError = (err) => {
-      setConnectionError(err.message || "Gagal terhubung ke server");
+      const msg = err?.message || "Gagal terhubung ke server";
+
+      // Token expired / invalid → refresh page as last resort
+      if (msg.includes("Invalid token") || msg.includes("Authentication error")) {
+        setConnectionError("Sesi habis — silakan refresh halaman");
+      } else {
+        setConnectionError(msg);
+      }
       setIsConnected(false);
     };
 
-    // ── incoming messages ────────────────────────────────────────────
+    const handleReconnect = () => {
+      setConnectionError(null);
+    };
+
+    // ── incoming messages ─────────────────────────────────────────────
     const handleReceiveMessage = (message) => {
-      // Only append if the message belongs to the current room
       if (
         message.consultationId === undefined ||
-        message.consultationId === consultationIdRef.current
+        String(message.consultationId) === String(consultationIdRef.current)
       ) {
         setMessages((prev) => {
           // Deduplicate by id
@@ -87,42 +86,31 @@ export function useConsultationChat(consultationId, initialMessages = []) {
     socket.on("connect", handleConnect);
     socket.on("disconnect", handleDisconnect);
     socket.on("connect_error", handleConnectError);
+    socket.on("reconnect", handleReconnect);
     socket.on("receive_message", handleReceiveMessage);
 
     // If already connected, join room immediately
     if (socket.connected) {
       setIsConnected(true);
+      setConnectionError(null);
       socket.emit("join_consultation", consultationId);
     }
 
-    // ── cleanup ──────────────────────────────────────────────────────
+    // ── cleanup ───────────────────────────────────────────────────────
     return () => {
       socket.off("connect", handleConnect);
       socket.off("disconnect", handleDisconnect);
       socket.off("connect_error", handleConnectError);
+      socket.off("reconnect", handleReconnect);
       socket.off("receive_message", handleReceiveMessage);
-      // Leave the room (best-effort; server will clean up on disconnect too)
-      socket.emit("leave_consultation", consultationId);
     };
   }, [consultationId]);
 
-  /**
-   * Send a message via the REST API.
-   * The response is broadcast by the backend via `emitMessageSafely`
-   * so we DON'T optimistically push here — we wait for the socket event.
-   *
-   * The caller (component) is responsible for making the REST call;
-   * this helper exists so components don't need to import socket directly.
-   */
-  const sendMessage = useCallback(
-    (content) => {
-      // No-op: actual send is done via REST in the component using useApiMutation.
-      // This hook only manages receiving.  Kept for API symmetry in case you
-      // want to switch to pure-socket messaging later.
-      void content;
-    },
-    [],
-  );
+  const sendMessage = useCallback((content) => {
+    // Actual send is done via REST (useApiMutation) in the component.
+    // This hook manages receiving only.
+    void content;
+  }, []);
 
   return { messages, sendMessage, isConnected, connectionError };
 }

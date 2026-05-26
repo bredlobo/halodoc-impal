@@ -15,6 +15,7 @@ import {
   removePrescriptionItem,
   getConsultationById,
   getMyConsultations,
+  verifyPayment,
 } from "@/modules/Consultations/controllers/consultations-controllers";
 
 const router = Router();
@@ -170,6 +171,14 @@ router.get(
   verifyToken,
   authorize(["PATIENT", "DOCTOR"]),
   getMyConsultations,
+);
+
+// Verify payment status via Midtrans API (used after payment redirect)
+router.get(
+  "/:id/verify-payment",
+  verifyToken,
+  authorize(["PATIENT"]),
+  verifyPayment,
 );
 
 router.get(
