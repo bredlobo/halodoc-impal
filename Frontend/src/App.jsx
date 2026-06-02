@@ -5,7 +5,7 @@ import HomePage from "./Pages/Home/Home";
 import AuthPage from "./Pages/Auth/Auth";
 import NotFound from "./Pages/NotFound";
 import ProductPage from "./Pages/Products/Home";
-
+//bred
 const routes = createBrowserRouter([
   {
     path: "/",
