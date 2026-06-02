@@ -3,16 +3,21 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { navLinks } from "../data/mockData";
 import { useAuth } from "../context/AuthContext";
 
+function decodeTokenRole(token) {
+  try { return JSON.parse(atob(token.split(".")[1])).role || null; }
+  catch { return null; }
+}
+
 function Navbar() {
   const { pathname, hash } = useLocation();
   const navigate = useNavigate();
   const isAuthPage = pathname === "/auth";
-  const { user, logout } = useAuth();
+  const { user, token, logout } = useAuth();
+  const role = user?.role || decodeTokenRole(token);
   const [isDropdownMenuOpen, setIsDropdownMenuOpen] = useState(false);
   const dropdownRef = useRef(null);
 
   useEffect(() => {
-    console.log("Current user:", user);
     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
         setIsDropdownMenuOpen(false);
@@ -102,7 +107,39 @@ function Navbar() {
             </button>
 
             {isDropdownMenuOpen && (
-              <div className="ring-opacity-5 absolute right-0 z-50 mt-2 w-48 origin-top-right rounded-xl border border-slate-200 bg-white py-1 shadow-lg ring-1 ring-black focus:outline-none">
+              <div className="ring-opacity-5 absolute right-0 z-50 mt-2 w-52 origin-top-right rounded-xl border border-slate-200 bg-white py-1 shadow-lg ring-1 ring-black focus:outline-none">
+                {/* Role-based links */}
+                {role === "PATIENT" && (
+                  <Link
+                    to="/my-consultations"
+                    onClick={() => setIsDropdownMenuOpen(false)}
+                    className="flex w-full items-center px-4 py-2 text-sm text-slate-700 transition-colors hover:bg-slate-50"
+                  >
+                    <span className="mr-2">🩺</span>
+                    Konsultasi Saya
+                  </Link>
+                )}
+                {role === "DOCTOR" && (
+                  <>
+                    <Link
+                      to="/doctor/dashboard"
+                      onClick={() => setIsDropdownMenuOpen(false)}
+                      className="flex w-full items-center px-4 py-2 text-sm text-slate-700 transition-colors hover:bg-slate-50"
+                    >
+                      <span className="mr-2">🏥</span>
+                      Dashboard Dokter
+                    </Link>
+                    <Link
+                      to="/doctor/requests"
+                      onClick={() => setIsDropdownMenuOpen(false)}
+                      className="flex w-full items-center px-4 py-2 text-sm text-slate-700 transition-colors hover:bg-slate-50"
+                    >
+                      <span className="mr-2">🔔</span>
+                      Permintaan Masuk
+                    </Link>
+                  </>
+                )}
+                <div className="my-1 border-t border-slate-100" />
                 <button
                   onClick={() => {
                     setIsDropdownMenuOpen(false);

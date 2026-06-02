@@ -3,6 +3,7 @@ import { verifyToken } from "@/middlewares/jwt";
 import { authorize } from "@/middlewares/authorization";
 import {
   getAllProducts,
+  getProductById,
   getAllCategories,
   createCategory,
   getProductsByCategory,
@@ -363,6 +364,60 @@ router.patch(
  *       "500":
  *         $ref: '#/components/responses/InternalServerError'
  */
+/**
+ * @swagger
+ * /api/v1/pharmacy/products/{productId}:
+ *   get:
+ *     summary: Get a single product by ID
+ *     tags: [Pharmacy]
+ *     security: []
+ *     parameters:
+ *       - in: path
+ *         name: productId
+ *         required: true
+ *         schema:
+ *           type: integer
+ *           minimum: 1
+ *         description: The product ID
+ *     responses:
+ *       "200":
+ *         description: Product fetched successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     id:
+ *                       type: integer
+ *                     name:
+ *                       type: string
+ *                     description:
+ *                       type: string
+ *                     price:
+ *                       type: number
+ *                     stock:
+ *                       type: integer
+ *                     imageUrl:
+ *                       type: string
+ *                     category:
+ *                       type: object
+ *                       properties:
+ *                         id:
+ *                           type: integer
+ *                         name:
+ *                           type: string
+ *       "400":
+ *         $ref: '#/components/responses/BadRequestError'
+ *       "404":
+ *         $ref: '#/components/responses/NotFoundError'
+ *       "500":
+ *         $ref: '#/components/responses/InternalServerError'
+ */
+router.get("/products/:productId", getProductById);
+
 router.get("/products/:productId/availability", checkAvailability);
 
 /**

@@ -6,12 +6,16 @@ import {
   respondToConsultation,
   updateStatus,
   processPayment,
+  midtransWebhook,
   getChatHistory,
   sendMessage,
   generatePrescription,
   updatePrescriptionNotes,
   addPrescriptionItem,
   removePrescriptionItem,
+  getConsultationById,
+  getMyConsultations,
+  verifyPayment,
 } from "@/modules/Consultations/controllers/consultations-controllers";
 
 const router = Router();
@@ -144,6 +148,48 @@ router.patch(
 
 /**
  * @swagger
+ * /api/v1/consultations/{id}:
+ *   get:
+ *     summary: Get consultation details by ID
+ *     tags: [Consultations]
+ *     security:
+ *       - bearerAuth: []
+ *       - cookieAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       "200":
+ *         description: Consultation details fetched
+ */
+// Must be placed BEFORE /:id to avoid route collision
+router.get(
+  "/my",
+  verifyToken,
+  authorize(["PATIENT", "DOCTOR"]),
+  getMyConsultations,
+);
+
+// Verify payment status via Midtrans API (used after payment redirect)
+router.get(
+  "/:id/verify-payment",
+  verifyToken,
+  authorize(["PATIENT"]),
+  verifyPayment,
+);
+
+router.get(
+  "/:id",
+  verifyToken,
+  authorize(["PATIENT", "DOCTOR", "ADMIN"]),
+  getConsultationById,
+);
+
+/**
+ * @swagger
  * /api/v1/consultations/{id}/payment:
  *   post:
  *     summary: Mark consultation payment as paid
@@ -176,6 +222,18 @@ router.post(
   authorize(["PATIENT"]),
   processPayment,
 );
+
+/**
+ * @swagger
+ * /api/v1/consultations/webhook:
+ *   post:
+ *     summary: Midtrans webhook handler
+ *     tags: [Consultations]
+ *     responses:
+ *       "200":
+ *         description: Webhook processed
+ */
+router.post("/webhook", midtransWebhook);
 
 /**
  * @swagger

@@ -11,7 +11,7 @@ export const CreateProductSchema = z.object({
   description: z.string().optional(),
   price: z.number().positive("Price must be greater than 0"),
   stock: z.number().int().nonnegative("Stock cannot be negative"),
-  imageUrl: z.string().url("Invalid image URL").optional(),
+  imageUrl: z.string().url("Invalid URL").optional(),
 });
 
 export const UpdateProductStockSchema = z.object({

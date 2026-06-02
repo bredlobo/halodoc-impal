@@ -42,7 +42,7 @@ export const createToken = (data: TokenData): TokenResponse => {
       role: data.role,
     },
     jwtSecret,
-    { expiresIn: "15m" }, // short-lived access token
+    { expiresIn: "7d" }, // long enough for active sessions
   );
 
   const refreshToken: string = jwt.sign(

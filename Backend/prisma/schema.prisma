@@ -175,6 +175,8 @@ model Consultation {
   // Pricing & Payment
   fee           Float         @default(0.0)
   paymentStatus PaymentStatus @default(PENDING)
+  midtransToken String?
+  midtransUrl   String?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

@@ -1,3 +1,5 @@
+import { Link } from "react-router-dom";
+
 function ProductCardFull({ product }) {
   const formattedPrice = new Intl.NumberFormat("id-ID", {
     style: "currency",
@@ -60,12 +62,12 @@ function ProductCardFull({ product }) {
 
         <div className="mt-auto pt-4 flex items-center justify-between gap-2">
           <p className="text-base font-bold text-red-500">{formattedPrice}</p>
-          <button
-            disabled={isOutOfStock}
-            className="rounded-full border border-slate-200 px-3 py-1.5 text-xs font-semibold text-slate-700 transition-all duration-200 hover:border-red-200 hover:bg-red-500/10 hover:text-red-600 disabled:cursor-not-allowed disabled:opacity-40"
+          <Link
+            to={`/products/${product.id}`}
+            className="rounded-full border border-slate-200 px-3 py-1.5 text-xs font-semibold text-slate-700 transition-all duration-200 hover:border-red-200 hover:bg-red-500/10 hover:text-red-600"
           >
-            + Keranjang
-          </button>
+            Lihat Detail →
+          </Link>
         </div>
       </div>
     </article>

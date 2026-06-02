@@ -62,6 +62,14 @@ http.interceptors.response.use(
         if (newToken) {
           localStorage.setItem("token", newToken);
 
+          // Also update the socket singleton so it uses the new token on next connect
+          try {
+            const { updateSocketToken } = await import("./socket");
+            updateSocketToken(newToken);
+          } catch (_) {
+            // socket lib may not be loaded yet — safe to ignore
+          }
+
           originalRequest.headers = originalRequest.headers ?? {};
           originalRequest.headers.Authorization = `Bearer ${newToken}`;
 

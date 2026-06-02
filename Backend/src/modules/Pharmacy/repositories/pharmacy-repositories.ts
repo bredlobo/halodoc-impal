@@ -115,6 +115,14 @@ export default class PharmacyRepository {
   static async getProductById(productId: number) {
     return prisma.product.findUnique({
       where: { id: productId },
+      include: {
+        category: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
+      },
     });
   }
 }

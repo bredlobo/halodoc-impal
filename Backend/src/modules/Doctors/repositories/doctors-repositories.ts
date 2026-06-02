@@ -16,6 +16,22 @@ export default class DoctorsRepository {
     });
   }
 
+  static async getAllDoctors() {
+    return prisma.doctorProfile.findMany({
+      include: {
+        user: {
+          select: {
+            id: true,
+            fullName: true,
+            email: true,
+            telephoneNumber: true,
+          },
+        },
+        specialization: true,
+      },
+    });
+  }
+
   static async getDoctorsBySpecialization(specializationId: number) {
     return prisma.doctorProfile.findMany({
       where: { specializationId },
@@ -67,6 +83,23 @@ export default class DoctorsRepository {
   static async findDoctorProfileByUserId(userId: number) {
     return prisma.doctorProfile.findUnique({
       where: { userId },
+    });
+  }
+
+  static async getDoctorById(userId: number) {
+    return prisma.doctorProfile.findUnique({
+      where: { userId },
+      include: {
+        user: {
+          select: {
+            id: true,
+            fullName: true,
+            email: true,
+            telephoneNumber: true,
+          },
+        },
+        specialization: true,
+      },
     });
   }
 }

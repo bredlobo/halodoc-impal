@@ -67,6 +67,52 @@ export const getAllProducts = async (
   }
 };
 
+export const getProductById = async (
+  req: Request,
+  res: Response,
+): Promise<void> => {
+  try {
+    const productId = parseInt(req.params.productId as string, 10);
+    if (isNaN(productId)) {
+      return wrapper.response(
+        res,
+        "fail",
+        wrapper.error(new Error("Invalid product ID")),
+        "Invalid product ID",
+        httpError.BAD_REQUEST,
+      );
+    }
+    const result = await PharmacyService.getProductById(productId);
+    if (result.err) {
+      return wrapper.response(
+        res,
+        "fail",
+        result,
+        "Product not found",
+        httpError.NOT_FOUND,
+      );
+    }
+    return wrapper.response(
+      res,
+      "success",
+      result,
+      "Product fetched successfully",
+      http.OK,
+    );
+  } catch (err: unknown) {
+    logger.error(
+      `Error fetching product by ID: ${err instanceof Error ? err.message : String(err)}`,
+    );
+    return wrapper.response(
+      res,
+      "fail",
+      wrapper.error(err instanceof Error ? err : new Error(String(err))),
+      "Internal Server Error",
+      httpError.INTERNAL_ERROR,
+    );
+  }
+};
+
 export const getAllCategories = async (
   req: Request,
   res: Response,
@@ -147,6 +193,7 @@ export const getProductsByCategory = async (
   try {
     const categoryId = parseInt(req.params.categoryId as string, 10);
     const result = await PharmacyService.getProductsByCategory(categoryId);
+
     if (result.err) {
       return wrapper.response(
         res,
@@ -156,6 +203,7 @@ export const getProductsByCategory = async (
         httpError.BAD_REQUEST,
       );
     }
+
     return wrapper.response(
       res,
       "success",
