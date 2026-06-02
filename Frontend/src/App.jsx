@@ -58,7 +58,7 @@ const routes = createBrowserRouter([
         element: <ConsultationSuccess />,
       },
       {
-        path: "my-consultations",
+        path: "history",
         element: <MyConsultations />,
       },
     ],
