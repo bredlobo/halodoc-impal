@@ -53,12 +53,9 @@ function Navbar() {
             <span className="inline-flex h-9 w-9 items-center justify-center rounded-xl bg-primary text-sm font-bold text-white">
               H+
             </span>
-            <div>
-              <p className="text-[14px] font-bold tracking-tight text-text-primary">
-                HaloHealth
-              </p>
-              <p className="text-[11px] text-text-secondary">Kesehatan jadi lebih mudah</p>
-            </div>
+            <span className="text-[16px] font-extrabold tracking-tight text-text-primary">
+              HaloHealth
+            </span>
           </Link>
         </div>
 

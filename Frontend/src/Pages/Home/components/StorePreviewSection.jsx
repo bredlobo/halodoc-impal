@@ -7,8 +7,8 @@ function StorePreviewSection() {
     <section id="store" className="bg-surface py-[55px]">
       <div className="mx-auto w-full max-w-[1152px] px-4 sm:px-6 lg:px-8">
         <SectionHeader
-          title="Produk kesehatan terpercaya"
-          description="Belanja obat dan produk kesehatan dengan pengalaman checkout sederhana dan alur pembayaran yang jelas."
+          title="Informasi obat & produk kesehatan"
+          description="Cari informasi obat dan produk kesehatan dengan mudah, akurat, dan terpercaya."
         />
 
         <div className="grid gap-[21px] sm:grid-cols-2 lg:grid-cols-3">
