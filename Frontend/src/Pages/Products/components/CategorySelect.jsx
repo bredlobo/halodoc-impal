@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from "react";
+import { ChevronDown, Check } from "lucide-react";
 
 /**
  * Custom styled category dropdown.
@@ -49,13 +50,13 @@ function CategorySelect({ categories = [], value, onChange, isLoading = false })
         id="filter-category"
         type="button"
         onClick={() => setOpen((v) => !v)}
-        className={`flex w-full items-center justify-between rounded-xl border px-3 py-2 text-sm font-medium transition-all duration-200 outline-none
+        className={`flex w-full items-center justify-between rounded-xl border px-3 py-2 text-[14px] font-medium transition-all duration-200 outline-none
           ${
             open
-              ? "border-red-300 bg-white ring-2 ring-red-100 text-slate-800"
+              ? "border-primary bg-background shadow-[0_0_0_3px_rgba(255,92,138,0.1)] text-text-primary"
               : value
-              ? "border-red-200 bg-red-50 text-red-700"
-              : "border-slate-200 bg-slate-50 text-slate-600 hover:border-red-200 hover:bg-white"
+              ? "border-primary bg-primary-light text-primary"
+              : "border-border bg-surface text-text-secondary hover:border-primary hover:bg-background"
           }`}
         aria-haspopup="listbox"
         aria-expanded={open}
@@ -64,33 +65,27 @@ function CategorySelect({ categories = [], value, onChange, isLoading = false })
           {/* Dot indicator */}
           <span
             className={`inline-block h-2 w-2 shrink-0 rounded-full transition-colors ${
-              value ? "bg-red-500" : "bg-slate-300"
+              value ? "bg-primary" : "bg-border"
             }`}
           />
           <span className="truncate">{selectedLabel}</span>
         </span>
 
         {/* Chevron */}
-        <svg
-          className={`h-4 w-4 shrink-0 text-slate-400 transition-transform duration-200 ${
-            open ? "rotate-180 text-red-500" : ""
-          }`}
-          xmlns="http://www.w3.org/2000/svg"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
+        <ChevronDown
+          size={16}
           strokeWidth={2.5}
-        >
-          <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
-        </svg>
+          className={`shrink-0 text-text-secondary transition-transform duration-200 ${
+            open ? "rotate-180 text-primary" : ""
+          }`}
+        />
       </button>
 
       {/* Dropdown panel */}
       {open && (
         <div
           role="listbox"
-          className="absolute left-0 z-30 mt-1.5 w-full overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-xl animate-in fade-in slide-in-from-top-2 duration-150"
-          style={{ animationDuration: "150ms" }}
+          className="absolute left-0 z-30 mt-1.5 w-full overflow-hidden rounded-xl border border-border bg-background shadow-lg"
         >
           {/* All categories option */}
           <div className="px-2 pt-2">
@@ -99,38 +94,30 @@ function CategorySelect({ categories = [], value, onChange, isLoading = false })
               role="option"
               aria-selected={value === ""}
               onClick={() => handleSelect("")}
-              className={`flex w-full items-center gap-2.5 rounded-xl px-3 py-2 text-sm font-semibold transition-colors duration-150
+              className={`flex w-full items-center gap-2.5 rounded-xl px-3 py-2 text-[14px] font-semibold transition-colors duration-150
                 ${
                   value === ""
-                    ? "bg-red-50 text-red-600"
-                    : "text-slate-600 hover:bg-slate-50"
+                    ? "bg-primary-light text-primary"
+                    : "text-text-secondary hover:bg-surface"
                 }`}
             >
-              <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-lg bg-slate-100 text-xs">
+              <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-lg bg-surface text-[13px]">
                 ✦
               </span>
               Semua Kategori
               {value === "" && (
-                <svg
-                  className="ml-auto h-4 w-4 text-red-500"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                  strokeWidth={2.5}
-                >
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-                </svg>
+                <Check size={16} strokeWidth={2.5} className="ml-auto text-primary" />
               )}
             </button>
           </div>
 
           {/* Divider */}
           {categories.length > 0 && (
-            <div className="mx-4 my-1.5 border-t border-slate-100" />
+            <div className="mx-4 my-1.5 border-t border-border" />
           )}
 
           {/* Category list */}
-          <div className="max-h-52 overflow-y-auto px-2 pb-2 scrollbar-thin scrollbar-track-transparent scrollbar-thumb-slate-200">
+          <div className="max-h-52 overflow-y-auto px-2 pb-2 scrollbar-thin">
             {isLoading ? (
               // Skeleton rows
               Array.from({ length: 4 }).map((_, i) => (
@@ -138,25 +125,16 @@ function CategorySelect({ categories = [], value, onChange, isLoading = false })
                   key={i}
                   className="mb-1 flex items-center gap-2.5 rounded-xl px-3 py-2"
                 >
-                  <div className="h-6 w-6 animate-pulse rounded-lg bg-slate-200" />
+                  <div className="h-6 w-6 animate-pulse rounded-lg bg-surface" />
                   <div
-                    className="h-3.5 animate-pulse rounded bg-slate-200"
+                    className="h-3.5 animate-pulse rounded bg-surface"
                     style={{ width: `${50 + i * 15}%` }}
                   />
                 </div>
               ))
             ) : (
-              categories.map((cat, i) => {
+              categories.map((cat) => {
                 const isSelected = value === cat.name;
-                // Soft colour palette cycling through a few red-adjacent hues
-                const palettes = [
-                  "bg-red-100 text-red-600",
-                  "bg-rose-100 text-rose-600",
-                  "bg-orange-100 text-orange-600",
-                  "bg-pink-100 text-pink-600",
-                  "bg-amber-100 text-amber-600",
-                ];
-                const palette = palettes[i % palettes.length];
                 const initial = cat.name.charAt(0).toUpperCase();
 
                 return (
@@ -166,16 +144,16 @@ function CategorySelect({ categories = [], value, onChange, isLoading = false })
                     role="option"
                     aria-selected={isSelected}
                     onClick={() => handleSelect(cat.name)}
-                    className={`mb-0.5 flex w-full items-center gap-2.5 rounded-xl px-3 py-2 text-sm transition-all duration-150
+                    className={`mb-0.5 flex w-full items-center gap-2.5 rounded-xl px-3 py-2 text-[14px] transition-all duration-150
                       ${
                         isSelected
-                          ? "bg-red-50 font-semibold text-red-600"
-                          : "font-medium text-slate-700 hover:bg-slate-50"
+                          ? "bg-primary-light font-semibold text-primary"
+                          : "font-medium text-text-primary hover:bg-surface"
                       }`}
                   >
                     {/* Avatar initial */}
                     <span
-                      className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-lg text-xs font-bold ${palette}`}
+                      className="flex h-6 w-6 shrink-0 items-center justify-center rounded-lg bg-primary-light text-[13px] font-bold text-primary"
                     >
                       {initial}
                     </span>
@@ -183,15 +161,7 @@ function CategorySelect({ categories = [], value, onChange, isLoading = false })
                     <span className="truncate">{cat.name}</span>
 
                     {isSelected && (
-                      <svg
-                        className="ml-auto h-4 w-4 shrink-0 text-red-500"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                        strokeWidth={2.5}
-                      >
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-                      </svg>
+                      <Check size={16} strokeWidth={2.5} className="ml-auto shrink-0 text-primary" />
                     )}
                   </button>
                 );
