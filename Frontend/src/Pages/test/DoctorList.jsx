@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { useNavigate, useSearchParams, Link } from "react-router-dom";
-import { useDoctors } from "../../../hooks/useDoctors";
-import DoctorCard from "../components/DoctorCard";
-import DoctorSkeleton from "../components/DoctorSkeleton";
+import { useDoctors } from "../../hooks/useDoctors";
+import DoctorCard from "./components/DoctorCard";
+import DoctorSkeleton from "./components/DoctorSkeleton";
 import { Search, X, ArrowLeft, AlertTriangle } from "lucide-react";
 
 export default function DoctorList() {

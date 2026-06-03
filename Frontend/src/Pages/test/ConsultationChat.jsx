@@ -1,14 +1,14 @@
 import { useState, useEffect, useRef } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
-import { useAuth } from "../../../context/AuthContext";
+import { useAuth } from "../../context/AuthContext";
 import {
   useConsultationDetail,
   useSendMessage,
   useChatHistory,
-} from "../../../hooks/useConsultations";
-import { useConsultationChat } from "../../../hooks/useConsultationChat";
+} from "../../hooks/useConsultations";
+import { useConsultationChat } from "../../hooks/useConsultationChat";
 import { useQueryClient } from "@tanstack/react-query";
-import { getSocket } from "../../../lib/socket";
+import { getSocket } from "../../lib/socket";
 import { ArrowLeft, Send, Loader2, Clock, CheckCircle2, XCircle, MessageSquare } from "lucide-react";
 
 /* ─── Helpers ────────────────────────────────────────────────────────── */

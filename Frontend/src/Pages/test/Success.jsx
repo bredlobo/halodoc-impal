@@ -1,6 +1,6 @@
 import { useEffect, useRef } from "react";
 import { Link, useSearchParams } from "react-router-dom";
-import { useVerifyPayment } from "../../../hooks/useConsultations";
+import { useVerifyPayment } from "../../hooks/useConsultations";
 import { useQueryClient } from "@tanstack/react-query";
 import { CheckCircle2, Loader2, ClipboardList, MessageSquare, Check, Bell } from "lucide-react";
 
