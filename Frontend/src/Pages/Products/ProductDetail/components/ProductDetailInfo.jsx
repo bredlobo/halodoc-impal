@@ -8,54 +8,54 @@ function ProductDetailInfo({
     <div className="flex flex-col">
       {/* Category */}
       {product.category?.name && (
-        <span className="mb-3 inline-flex w-fit rounded-full bg-red-50 px-3 py-1 text-xs font-semibold text-red-600 ring-1 ring-red-100">
+        <span className="mb-3 inline-flex w-fit rounded-full bg-primary-light px-3 py-1 text-[11px] font-semibold text-primary">
           {product.category.name}
         </span>
       )}
 
       {/* Name */}
-      <h1 className="text-2xl leading-tight font-extrabold text-slate-900 sm:text-3xl">
+      <h1 className="text-[24px] font-bold leading-[1.30] tracking-[-0.01em] text-text-primary sm:text-[32px] sm:leading-[1.25]">
         {product.name}
       </h1>
 
       {/* Price */}
-      <p className="mt-4 text-3xl font-bold text-red-500">{formattedPrice}</p>
+      <p className="mt-4 text-[32px] font-bold text-primary">{formattedPrice}</p>
 
       {/* Stock info */}
       <div className="mt-3 flex items-center gap-2">
         {isOutOfStock ? (
-          <span className="inline-flex items-center gap-1.5 rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-500">
-            <span className="h-2 w-2 rounded-full bg-slate-400" />
+          <span className="inline-flex items-center gap-1.5 rounded-full bg-surface px-3 py-1 text-[13px] font-semibold text-text-secondary">
+            <span className="h-2 w-2 rounded-full bg-text-secondary" />
             Stok Habis
           </span>
         ) : isLowStock ? (
-          <span className="inline-flex items-center gap-1.5 rounded-full bg-amber-50 px-3 py-1 text-xs font-semibold text-amber-600 ring-1 ring-amber-200">
-            <span className="h-2 w-2 rounded-full bg-amber-400" />
+          <span className="inline-flex items-center gap-1.5 rounded-full bg-warning-light px-3 py-1 text-[13px] font-semibold text-warning">
+            <span className="h-2 w-2 rounded-full bg-warning" />
             Sisa {product.stock} unit
           </span>
         ) : (
-          <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-600 ring-1 ring-emerald-200">
-            <span className="h-2 w-2 rounded-full bg-emerald-400" />
+          <span className="inline-flex items-center gap-1.5 rounded-full bg-success-light px-3 py-1 text-[13px] font-semibold text-success">
+            <span className="h-2 w-2 rounded-full bg-success" />
             Tersedia · {product.stock} unit
           </span>
         )}
       </div>
 
       {/* Divider */}
-      <div className="my-6 border-t border-slate-100" />
+      <div className="my-6 border-t border-border" />
 
       {/* Description */}
       {product.description ? (
         <div>
-          <h2 className="mb-2 text-xs font-semibold tracking-widest text-slate-400 uppercase">
+          <h2 className="mb-2 text-[13px] font-semibold tracking-widest text-text-secondary uppercase">
             Deskripsi Produk
           </h2>
-          <p className="text-sm leading-relaxed text-slate-600">
+          <p className="text-[14px] leading-[1.55] text-text-secondary">
             {product.description}
           </p>
         </div>
       ) : (
-        <p className="text-sm text-slate-400 italic">
+        <p className="text-[14px] italic text-text-secondary">
           Deskripsi produk tidak tersedia.
         </p>
       )}
@@ -63,21 +63,21 @@ function ProductDetailInfo({
       {/* Additional info */}
       <div className="mt-6 grid grid-cols-2 gap-4">
         {product.unit && (
-          <div className="rounded-2xl border border-slate-100 bg-white p-4 shadow-sm">
-            <p className="text-xs font-semibold tracking-widest text-slate-400 uppercase">
+          <div className="rounded-xl bg-background p-4 shadow-[0_4px_6px_-1px_rgba(0,0,0,0.05),0_2px_4px_-1px_rgba(0,0,0,0.03)]">
+            <p className="text-[13px] font-semibold tracking-widest text-text-secondary uppercase">
               Satuan
             </p>
-            <p className="mt-1 text-sm font-bold text-slate-800">
+            <p className="mt-1 text-[14px] font-semibold text-text-primary">
               {product.unit}
             </p>
           </div>
         )}
         {product.expiryDate && (
-          <div className="rounded-2xl border border-slate-100 bg-white p-4 shadow-sm">
-            <p className="text-xs font-semibold tracking-widest text-slate-400 uppercase">
+          <div className="rounded-xl bg-background p-4 shadow-[0_4px_6px_-1px_rgba(0,0,0,0.05),0_2px_4px_-1px_rgba(0,0,0,0.03)]">
+            <p className="text-[13px] font-semibold tracking-widest text-text-secondary uppercase">
               Kadaluarsa
             </p>
-            <p className="mt-1 text-sm font-bold text-slate-800">
+            <p className="mt-1 text-[14px] font-semibold text-text-primary">
               {new Date(product.expiryDate).toLocaleDateString("id-ID", {
                 day: "numeric",
                 month: "long",

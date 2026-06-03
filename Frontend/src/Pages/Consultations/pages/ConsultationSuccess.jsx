@@ -2,6 +2,7 @@ import { useEffect, useRef } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import { useVerifyPayment } from "../../../hooks";
 import { useQueryClient } from "@tanstack/react-query";
+import { CheckCircle2, Loader2, ClipboardList, MessageSquare, Check, Bell } from "lucide-react";
 
 export default function ConsultationSuccess() {
   const [searchParams] = useSearchParams();
@@ -35,28 +36,34 @@ export default function ConsultationSuccess() {
     transactionStatus === "capture";
 
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div className="min-h-screen bg-surface">
       {/* ── Hero Banner ──────────────────────────────────────────────── */}
-      <section className="border-b border-slate-200 bg-gradient-to-br from-teal-50 via-white to-cyan-50 py-10 sm:py-12">
-        <div className="mx-auto max-w-6xl px-4 text-center sm:px-6 lg:px-8">
-          <span className="mb-3 inline-flex rounded-full bg-green-100 px-3 py-1 text-xs font-semibold tracking-widest text-green-700 uppercase">
+      <section className="border-b border-border bg-background py-[34px] sm:py-[55px]">
+        <div className="mx-auto max-w-[1152px] px-4 text-center sm:px-6 lg:px-8">
+          <span className="mb-3 inline-flex rounded-full bg-success-light px-3 py-1 text-[11px] font-semibold tracking-widest text-success uppercase">
             Pembayaran Berhasil
           </span>
-          <h1 className="mt-2 text-3xl font-extrabold text-slate-900 sm:text-4xl">
-            Konsultasimu Terdaftar!
+          <h1 className="mt-2 text-[32px] font-bold leading-[1.25] tracking-[-0.01em] text-text-primary">
+            Konsultasi Terdaftar
           </h1>
+<<<<<<< HEAD:Frontend/src/Pages/Consultations/pages/ConsultationSuccess.jsx
           <p className="mx-auto mt-4 max-w-lg text-sm leading-relaxed text-slate-500">
             Pembayaran berhasil diproses. Dokter akan segera bergabung di ruang
             konsultasi.
+=======
+          <p className="mx-auto mt-4 max-w-lg text-[14px] leading-[1.55] text-text-secondary">
+            Pembayaran berhasil diproses. Dokter akan segera bergabung di ruang konsultasi.
+>>>>>>> 6097824eca4d3edbffc762d34c876ab2e1ca0b57:Frontend/src/Pages/Consultations/Success.jsx
           </p>
         </div>
       </section>
 
       {/* ── Success Card ─────────────────────────────────────────────── */}
-      <section className="py-12">
+      <section className="py-[34px] sm:py-[55px]">
         <div className="mx-auto max-w-lg px-4 text-center sm:px-6">
-          <div className="rounded-2xl border border-slate-200 bg-white p-10 shadow-sm">
+          <div className="rounded-[21px] bg-background p-10 shadow-[0_4px_6px_-1px_rgba(0,0,0,0.05),0_2px_4px_-1px_rgba(0,0,0,0.03)]">
             {/* Icon */}
+<<<<<<< HEAD:Frontend/src/Pages/Consultations/pages/ConsultationSuccess.jsx
             <div className="mx-auto mb-6 flex h-24 w-24 items-center justify-center rounded-full bg-green-100">
               <svg
                 className="h-12 w-12 text-green-600"
@@ -79,10 +86,20 @@ export default function ConsultationSuccess() {
             <p className="mt-3 text-sm leading-relaxed text-slate-500">
               Terima kasih telah menggunakan layanan kami. Dokter akan segera
               menghubungimu.
+=======
+            <div className="mx-auto mb-6 flex h-24 w-24 items-center justify-center rounded-full bg-success-light">
+              <CheckCircle2 size={48} strokeWidth={1.5} className="text-success" />
+            </div>
+
+            <h2 className="text-[18px] font-semibold text-text-primary">Pembayaran Dikonfirmasi</h2>
+            <p className="mt-3 text-[14px] leading-[1.55] text-text-secondary">
+              Terima kasih telah menggunakan layanan kami. Dokter akan segera menghubungi Anda.
+>>>>>>> 6097824eca4d3edbffc762d34c876ab2e1ca0b57:Frontend/src/Pages/Consultations/Success.jsx
             </p>
 
             {/* Payment status indicator */}
             {verifying && (
+<<<<<<< HEAD:Frontend/src/Pages/Consultations/pages/ConsultationSuccess.jsx
               <div className="mt-4 flex items-center justify-center gap-2 rounded-xl bg-blue-50 px-4 py-2.5">
                 <svg
                   className="h-4 w-4 animate-spin text-blue-500"
@@ -104,14 +121,19 @@ export default function ConsultationSuccess() {
                   />
                 </svg>
                 <span className="text-xs font-semibold text-blue-700">
+=======
+              <div className="mt-4 flex items-center justify-center gap-2 rounded-xl bg-warning-light px-4 py-2.5">
+                <Loader2 size={16} className="animate-spin text-warning" />
+                <span className="text-[13px] font-semibold text-warning">
+>>>>>>> 6097824eca4d3edbffc762d34c876ab2e1ca0b57:Frontend/src/Pages/Consultations/Success.jsx
                   Mengonfirmasi status pembayaran...
                 </span>
               </div>
             )}
             {!verifying && isPaid && (
-              <div className="mt-4 flex items-center justify-center gap-2 rounded-xl bg-green-50 px-4 py-2.5">
-                <span className="text-green-600">✓</span>
-                <span className="text-xs font-semibold text-green-700">
+              <div className="mt-4 flex items-center justify-center gap-2 rounded-xl bg-success-light px-4 py-2.5">
+                <Check size={16} strokeWidth={2.5} className="text-success" />
+                <span className="text-[13px] font-semibold text-success">
                   Status pembayaran: LUNAS
                 </span>
               </div>
@@ -120,10 +142,11 @@ export default function ConsultationSuccess() {
             {/* Steps */}
             <div className="mt-8 grid gap-3 text-left">
               {[
-                { icon: "✓", label: "Pembayaran diterima" },
-                { icon: "📋", label: "Dokter mendapat notifikasi" },
-                { icon: "💬", label: "Sesi konsultasi akan segera dimulai" },
+                { Icon: Check, label: "Pembayaran diterima" },
+                { Icon: Bell, label: "Dokter mendapat notifikasi" },
+                { Icon: MessageSquare, label: "Sesi konsultasi akan segera dimulai" },
               ].map((step, i) => (
+<<<<<<< HEAD:Frontend/src/Pages/Consultations/pages/ConsultationSuccess.jsx
                 <div
                   key={i}
                   className="flex items-center gap-3 rounded-xl bg-slate-50 px-4 py-3"
@@ -132,6 +155,11 @@ export default function ConsultationSuccess() {
                   <span className="text-sm font-medium text-slate-700">
                     {step.label}
                   </span>
+=======
+                <div key={i} className="flex items-center gap-3 rounded-xl bg-surface px-4 py-3">
+                  <step.Icon size={18} strokeWidth={1.75} className="text-primary" />
+                  <span className="text-[14px] font-medium text-text-primary">{step.label}</span>
+>>>>>>> 6097824eca4d3edbffc762d34c876ab2e1ca0b57:Frontend/src/Pages/Consultations/Success.jsx
                 </div>
               ))}
             </div>
@@ -141,23 +169,23 @@ export default function ConsultationSuccess() {
               <Link
                 to="/history"
                 id="go-to-my-consultations"
-                className="rounded-xl bg-gradient-to-r from-teal-500 to-cyan-500 px-6 py-3 text-sm font-bold text-white shadow-md transition-all hover:shadow-lg"
+                className="rounded-xl bg-primary px-6 py-3 text-[14px] font-semibold text-white transition-all hover:bg-primary-hover"
               >
-                📋 Lihat Status Konsultasi
+                Lihat Status Konsultasi
               </Link>
               {consultationId && (
                 <Link
                   to={`/consultations/${consultationId}/chat`}
                   id="go-to-chat"
-                  className="rounded-xl border border-teal-200 bg-white px-6 py-3 text-sm font-bold text-teal-700 transition-colors hover:bg-teal-50"
+                  className="rounded-xl border border-border bg-background px-6 py-3 text-[14px] font-semibold text-text-primary transition-colors hover:bg-primary-light hover:text-primary"
                 >
-                  💬 Buka Ruang Chat
+                  Buka Ruang Chat
                 </Link>
               )}
               <Link
                 to="/"
                 id="go-to-home"
-                className="rounded-xl border border-slate-200 bg-white px-6 py-3 text-sm font-bold text-slate-600 transition-colors hover:bg-slate-50"
+                className="rounded-xl bg-surface px-6 py-3 text-[14px] font-semibold text-text-secondary transition-colors hover:bg-border hover:text-text-primary"
               >
                 Ke Beranda
               </Link>

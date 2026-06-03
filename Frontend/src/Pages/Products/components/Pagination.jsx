@@ -1,3 +1,5 @@
+import { ChevronLeft, ChevronRight } from "lucide-react";
+
 /**
  * Pagination component.
  *
@@ -45,22 +47,22 @@ function Pagination({
   const endItem = Math.min(currentPage * limit, total);
 
   const btnBase =
-    "flex h-9 min-w-[2.25rem] items-center justify-center rounded-xl px-3 text-sm font-semibold transition-all duration-200 select-none";
+    "flex h-9 min-w-[2.25rem] items-center justify-center rounded-xl px-3 text-[14px] font-semibold transition-all duration-200 select-none";
 
   return (
     <div
-      className={`mt-10 flex flex-col items-center gap-4 sm:flex-row sm:justify-between transition-opacity duration-200 ${
+      className={`mt-[34px] flex flex-col items-center gap-4 sm:flex-row sm:justify-between transition-opacity duration-200 ${
         isLoading ? "opacity-50 pointer-events-none" : ""
       }`}
     >
       {/* Info text */}
-      <p className="text-xs text-slate-500">
+      <p className="text-[13px] text-text-secondary">
         Menampilkan{" "}
-        <span className="font-semibold text-slate-700">
+        <span className="font-semibold text-text-primary">
           {startItem}–{endItem}
         </span>{" "}
         dari{" "}
-        <span className="font-semibold text-slate-700">{total}</span> produk
+        <span className="font-semibold text-text-primary">{total}</span> produk
       </p>
 
       {/* Page controls */}
@@ -70,17 +72,9 @@ function Pagination({
           onClick={() => onPageChange(currentPage - 1)}
           disabled={currentPage <= 1}
           aria-label="Halaman sebelumnya"
-          className={`${btnBase} border border-slate-200 bg-white text-slate-600 hover:border-red-200 hover:bg-red-50 hover:text-red-600 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:border-slate-200 disabled:hover:bg-white disabled:hover:text-slate-600`}
+          className={`${btnBase} border border-border bg-background text-text-secondary hover:border-primary hover:bg-primary-light hover:text-primary disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:border-border disabled:hover:bg-background disabled:hover:text-text-secondary`}
         >
-          <svg
-            className="h-4 w-4"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-            strokeWidth={2.5}
-          >
-            <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
-          </svg>
+          <ChevronLeft size={16} strokeWidth={2.5} />
         </button>
 
         {/* Page numbers */}
@@ -88,7 +82,7 @@ function Pagination({
           page === "..." ? (
             <span
               key={`ellipsis-${idx}`}
-              className="flex h-9 w-8 items-center justify-center text-sm text-slate-400"
+              className="flex h-9 w-8 items-center justify-center text-[14px] text-text-secondary"
             >
               ···
             </span>
@@ -99,8 +93,8 @@ function Pagination({
               aria-current={page === currentPage ? "page" : undefined}
               className={`${btnBase} ${
                 page === currentPage
-                  ? "bg-red-500 text-white shadow-sm shadow-red-200 hover:bg-red-600"
-                  : "border border-slate-200 bg-white text-slate-600 hover:border-red-200 hover:bg-red-50 hover:text-red-600"
+                  ? "bg-primary text-white shadow-sm hover:bg-primary-hover"
+                  : "border border-border bg-background text-text-secondary hover:border-primary hover:bg-primary-light hover:text-primary"
               }`}
             >
               {page}
@@ -113,17 +107,9 @@ function Pagination({
           onClick={() => onPageChange(currentPage + 1)}
           disabled={currentPage >= totalPages}
           aria-label="Halaman berikutnya"
-          className={`${btnBase} border border-slate-200 bg-white text-slate-600 hover:border-red-200 hover:bg-red-50 hover:text-red-600 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:border-slate-200 disabled:hover:bg-white disabled:hover:text-slate-600`}
+          className={`${btnBase} border border-border bg-background text-text-secondary hover:border-primary hover:bg-primary-light hover:text-primary disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:border-border disabled:hover:bg-background disabled:hover:text-text-secondary`}
         >
-          <svg
-            className="h-4 w-4"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-            strokeWidth={2.5}
-          >
-            <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
-          </svg>
+          <ChevronRight size={16} strokeWidth={2.5} />
         </button>
       </nav>
     </div>

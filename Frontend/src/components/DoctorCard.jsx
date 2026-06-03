@@ -1,20 +1,25 @@
+import { Star } from "lucide-react";
+
 function DoctorCard({ doctor }) {
   return (
-    <article className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-      <div className="aspect-poster mb-4 overflow-hidden rounded-xl border border-slate-200 bg-slate-100">
-        <div className="flex h-full w-full items-center justify-center bg-linear-to-b from-slate-100 to-slate-200 text-sm font-medium text-slate-500">
+    <article className="rounded-xl bg-background p-5 shadow-[0_4px_6px_-1px_rgba(0,0,0,0.05),0_2px_4px_-1px_rgba(0,0,0,0.03)] transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md">
+      <div className="aspect-poster mb-4 overflow-hidden rounded-xl bg-surface">
+        <div className="flex h-full w-full items-center justify-center text-[13px] font-medium text-text-secondary">
           Foto Dokter
         </div>
       </div>
       <div>
-        <h3 className="text-sm font-semibold text-slate-900">{doctor.name}</h3>
-        <p className="text-xs text-slate-500">{doctor.specialization}</p>
+        <h3 className="text-[14px] font-semibold text-text-primary">{doctor.name}</h3>
+        <p className="text-[13px] text-text-secondary">{doctor.specialization}</p>
       </div>
-      <div className="mb-4 flex items-center justify-between text-sm text-slate-600">
-        <p>⭐ {doctor.rating}</p>
+      <div className="mb-4 flex items-center justify-between text-[14px] text-text-secondary">
+        <p className="flex items-center gap-1">
+          <Star size={14} strokeWidth={1.75} className="fill-warning text-warning" />
+          {doctor.rating}
+        </p>
         <p>{doctor.experience}</p>
       </div>
-      <button className="w-full rounded-full border border-red-200 bg-red-50 px-4 py-2 text-sm font-semibold text-red-600 transition-all duration-300 ease-out hover:bg-red-500/10 hover:text-red-500 hover:shadow-none">
+      <button className="w-full rounded-xl bg-primary-light px-4 py-2.5 text-[14px] font-semibold text-primary transition-all duration-150 hover:bg-primary hover:text-white">
         Konsultasi Sekarang
       </button>
     </article>

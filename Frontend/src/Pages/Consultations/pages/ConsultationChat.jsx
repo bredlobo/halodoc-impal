@@ -8,12 +8,136 @@ import {
   useConsultationChat,
 } from "../../../hooks";
 import { useQueryClient } from "@tanstack/react-query";
+<<<<<<< HEAD:Frontend/src/Pages/Consultations/pages/ConsultationChat.jsx
 import { getSocket } from "../../../lib/socket";
 import { formatDate } from "../helpers/formatters";
 import ChatBubble from "../components/ChatBubble";
 import WaitingScreen from "../components/WaitingScreen";
 import StatusScreen from "../components/StatusScreen";
 
+=======
+import { getSocket } from "../../lib/socket";
+import { ArrowLeft, Send, Loader2, Clock, CheckCircle2, XCircle, MessageSquare } from "lucide-react";
+
+/* ─── Helpers ────────────────────────────────────────────────────────── */
+function formatTime(ts) {
+  if (!ts) return "";
+  return new Date(ts).toLocaleTimeString("id-ID", {
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+}
+
+function formatDate(ts) {
+  if (!ts) return "";
+  return new Date(ts).toLocaleDateString("id-ID", {
+    weekday: "long",
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  });
+}
+
+/* ─── Chat Bubble (DESIGN.md §11) ────────────────────────────────────── */
+function ChatBubble({ message, isMine }) {
+  return (
+    <div className={`flex ${isMine ? "justify-end" : "justify-start"} mb-2`}>
+      <div
+        className={`max-w-[75%] px-4 py-2.5 text-[14px] leading-[1.55] ${
+          isMine
+            ? "rounded-2xl rounded-br-[4px] bg-primary-light text-text-primary"
+            : "rounded-2xl rounded-bl-[4px] bg-[#F3F4F6] text-text-primary"
+        }`}
+      >
+        <p>{message.content}</p>
+        <p
+          className={`mt-1 text-[11px] text-right text-text-secondary`}
+        >
+          {formatTime(message.timestamp)}
+        </p>
+      </div>
+    </div>
+  );
+}
+
+/* ─── Waiting Screen (REQUESTED + PAID) ─────────────────────────────── */
+function WaitingScreen({ consultationId, onStatusChange }) {
+  return (
+    <div className="flex h-full flex-col items-center justify-center bg-surface px-6 text-center">
+      {/* Pulsing ring animation */}
+      <div className="relative mb-8">
+        <div className="absolute inset-0 animate-ping rounded-full bg-primary opacity-10" />
+        <div className="absolute inset-2 animate-ping rounded-full bg-primary opacity-10" style={{ animationDelay: "150ms" }} />
+        <div className="relative flex h-24 w-24 items-center justify-center rounded-full bg-primary-light">
+          <Clock size={40} strokeWidth={1.75} className="text-primary" />
+        </div>
+      </div>
+
+      <h2 className="text-[18px] font-semibold text-text-primary">
+        Menunggu Dokter
+      </h2>
+      <p className="mt-2 max-w-sm text-[14px] leading-[1.55] text-text-secondary">
+        Permintaan konsultasi Anda sudah dibayar. Dokter sedang memproses
+        permintaan — halaman ini akan otomatis terbuka saat dokter menerima.
+      </p>
+
+      {/* Animated dots */}
+      <div className="mt-6 flex items-center gap-1.5">
+        {[0, 1, 2].map((i) => (
+          <span
+            key={i}
+            className="h-2 w-2 animate-bounce rounded-full bg-primary"
+            style={{ animationDelay: `${i * 0.15}s` }}
+          />
+        ))}
+      </div>
+
+      <p className="mt-4 text-[11px] text-text-secondary">
+        Konsultasi #{consultationId} · Auto-refresh setiap 10 detik
+      </p>
+
+      <Link
+        to="/history"
+        className="mt-8 text-[13px] font-semibold text-primary hover:underline"
+      >
+        Kembali ke Daftar Konsultasi
+      </Link>
+    </div>
+  );
+}
+
+/* ─── Completed/Cancelled Screen ────────────────────────────────────── */
+function StatusScreen({ status, consultationId }) {
+  const isCompleted = status === "COMPLETED";
+  return (
+    <div className="flex h-full flex-col items-center justify-center bg-surface px-6 text-center">
+      {isCompleted ? (
+        <CheckCircle2 size={64} strokeWidth={1.5} className="mb-4 text-success" />
+      ) : (
+        <XCircle size={64} strokeWidth={1.5} className="mb-4 text-error" />
+      )}
+      <h2 className="text-[18px] font-semibold text-text-primary">
+        {isCompleted ? "Konsultasi Selesai" : "Konsultasi Dibatalkan"}
+      </h2>
+      <p className="mt-2 max-w-sm text-[14px] text-text-secondary">
+        {isCompleted
+          ? "Sesi konsultasi ini telah berakhir."
+          : "Konsultasi ini telah dibatalkan."}
+      </p>
+      <Link
+        to="/history"
+        className="mt-6 rounded-xl bg-primary px-6 py-2.5 text-[14px] font-semibold text-white hover:bg-primary-hover"
+      >
+        Kembali ke Konsultasi Saya
+      </Link>
+    </div>
+  );
+}
+
+/* ══════════════════════════════════════════════════════════════════════ */
+/*  MAIN CHAT PAGE                                                         */
+/* ══════════════════════════════════════════════════════════════════════ */
+>>>>>>> 6097824eca4d3edbffc762d34c876ab2e1ca0b57:Frontend/src/Pages/Consultations/ConsultationChat.jsx
 export default function ConsultationChat() {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -98,13 +222,18 @@ export default function ConsultationChat() {
   /* ── Loading ──────────────────────────────────────────────────────── */
   if (loadingConsult || loadingHistory) {
     return (
-      <div className="flex h-screen items-center justify-center bg-slate-50">
+      <div className="flex h-screen items-center justify-center bg-surface">
         <div className="flex flex-col items-center gap-3">
+<<<<<<< HEAD:Frontend/src/Pages/Consultations/pages/ConsultationChat.jsx
           <svg className="h-8 w-8 animate-spin text-teal-500" viewBox="0 0 24 24" fill="none">
             <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
             <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" />
           </svg>
           <p className="text-sm text-slate-500">Memuat sesi konsultasi...</p>
+=======
+          <Loader2 size={32} strokeWidth={2} className="animate-spin text-primary" />
+          <p className="text-[14px] text-text-secondary">Memuat sesi konsultasi...</p>
+>>>>>>> 6097824eca4d3edbffc762d34c876ab2e1ca0b57:Frontend/src/Pages/Consultations/ConsultationChat.jsx
         </div>
       </div>
     );
@@ -113,16 +242,29 @@ export default function ConsultationChat() {
   /* ── Waiting for doctor to accept ────────────────────────────────── */
   if (consult?.status === "REQUESTED" && consult?.paymentStatus === "PAID") {
     return (
+<<<<<<< HEAD:Frontend/src/Pages/Consultations/pages/ConsultationChat.jsx
       <div className="flex h-screen flex-col bg-slate-50">
         <header className="flex items-center gap-3 border-b border-slate-200 bg-white px-4 py-3 shadow-sm">
+=======
+      <div className="flex h-screen flex-col bg-surface">
+        {/* Header */}
+        <header className="flex items-center gap-3 border-b border-border bg-background px-4 py-3">
+>>>>>>> 6097824eca4d3edbffc762d34c876ab2e1ca0b57:Frontend/src/Pages/Consultations/ConsultationChat.jsx
           <button
-            onClick={() => navigate("/my-consultations")}
-            className="flex h-9 w-9 items-center justify-center rounded-full text-slate-400 hover:bg-slate-100"
+            onClick={() => navigate("/history")}
+            className="flex h-9 w-9 items-center justify-center rounded-full text-text-secondary hover:bg-surface"
           >
-            ←
+            <ArrowLeft size={20} strokeWidth={2} />
           </button>
+<<<<<<< HEAD:Frontend/src/Pages/Consultations/pages/ConsultationChat.jsx
           <p className="text-sm font-bold text-slate-800">Konsultasi #{id}</p>
           <span className="ml-auto rounded-full bg-blue-50 px-2.5 py-0.5 text-xs font-semibold text-blue-600 ring-1 ring-blue-200">
+=======
+          <p className="text-[14px] font-semibold text-text-primary">
+            Konsultasi #{id}
+          </p>
+          <span className="ml-auto rounded-full bg-warning-light px-2.5 py-0.5 text-[11px] font-semibold text-warning">
+>>>>>>> 6097824eca4d3edbffc762d34c876ab2e1ca0b57:Frontend/src/Pages/Consultations/ConsultationChat.jsx
             Menunggu
           </span>
         </header>
@@ -134,29 +276,29 @@ export default function ConsultationChat() {
   /* ── Completed / Cancelled ────────────────────────────────────────── */
   if (consult && (consult.status === "COMPLETED" || consult.status === "CANCELLED")) {
     return (
-      <div className="flex h-screen flex-col bg-slate-50">
-        <header className="flex items-center gap-3 border-b border-slate-200 bg-white px-4 py-3 shadow-sm">
+      <div className="flex h-screen flex-col bg-surface">
+        <header className="flex items-center gap-3 border-b border-border bg-background px-4 py-3">
           <button
-            onClick={() => navigate("/my-consultations")}
-            className="flex h-9 w-9 items-center justify-center rounded-full text-slate-400 hover:bg-slate-100"
+            onClick={() => navigate("/history")}
+            className="flex h-9 w-9 items-center justify-center rounded-full text-text-secondary hover:bg-surface"
           >
-            ←
+            <ArrowLeft size={20} strokeWidth={2} />
           </button>
-          <p className="text-sm font-bold text-slate-800">Konsultasi #{id}</p>
+          <p className="text-[14px] font-semibold text-text-primary">Konsultasi #{id}</p>
           <span
-            className={`ml-auto rounded-full px-2.5 py-0.5 text-xs font-semibold ring-1 ${
+            className={`ml-auto rounded-full px-2.5 py-0.5 text-[11px] font-semibold ${
               consult.status === "COMPLETED"
-                ? "bg-green-50 text-green-700 ring-green-200"
-                : "bg-red-50 text-red-600 ring-red-200"
+                ? "bg-success-light text-success"
+                : "bg-error-light text-error"
             }`}
           >
-            {consult.status}
+            {consult.status === "COMPLETED" ? "Selesai" : "Dibatalkan"}
           </span>
         </header>
 
         {history.length > 0 ? (
           <div className="flex flex-1 flex-col overflow-hidden">
-            <div className="flex-1 overflow-y-auto px-4 py-4">
+            <div className="mx-auto w-full max-w-[720px] flex-1 overflow-y-auto px-4 py-4">
               {history.map((msg, i) => (
                 <ChatBubble
                   key={msg.id ?? i}
@@ -165,7 +307,7 @@ export default function ConsultationChat() {
                 />
               ))}
             </div>
-            <div className="border-t border-slate-200 bg-slate-50 p-4 text-center text-xs text-slate-400">
+            <div className="border-t border-border bg-surface p-4 text-center text-[11px] text-text-secondary">
               Riwayat chat — konsultasi telah{" "}
               {consult.status === "COMPLETED" ? "selesai" : "dibatalkan"}
             </div>
@@ -179,34 +321,44 @@ export default function ConsultationChat() {
 
   /* ── ONGOING: Main Chat UI ────────────────────────────────────────── */
   return (
-    <div className="flex h-screen flex-col bg-slate-50">
+    <div className="flex h-screen flex-col bg-surface">
       {/* Header */}
-      <header className="flex items-center gap-3 border-b border-slate-200 bg-white px-4 py-3 shadow-sm">
+      <header className="flex items-center gap-3 border-b border-border bg-background px-4 py-3">
         <button
           id="chat-back-btn"
-          onClick={() => navigate("/my-consultations")}
-          className="flex h-9 w-9 items-center justify-center rounded-full text-slate-400 transition hover:bg-slate-100"
+          onClick={() => navigate("/history")}
+          className="flex h-9 w-9 items-center justify-center rounded-full text-text-secondary transition hover:bg-surface"
         >
-          ←
+          <ArrowLeft size={20} strokeWidth={2} />
         </button>
 
-        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-teal-500 to-cyan-400 text-sm font-bold text-white shadow">
+        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary-light text-[14px] font-bold text-primary">
           Dr
         </div>
 
+<<<<<<< HEAD:Frontend/src/Pages/Consultations/pages/ConsultationChat.jsx
         <div className="min-w-0 flex-1">
           <p className="truncate text-sm font-bold text-slate-800">
+=======
+        <div className="flex-1 min-w-0">
+          <p className="truncate text-[14px] font-semibold text-text-primary">
+>>>>>>> 6097824eca4d3edbffc762d34c876ab2e1ca0b57:Frontend/src/Pages/Consultations/ConsultationChat.jsx
             Konsultasi #{id}
           </p>
           <div className="flex items-center gap-2">
-            <span className="inline-flex items-center gap-1 rounded-full bg-green-50 px-2 py-0.5 text-[11px] font-semibold text-green-700 ring-1 ring-green-200">
-              <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-green-500" />
+            <span className="inline-flex items-center gap-1 rounded-full bg-success-light px-2 py-0.5 text-[11px] font-semibold text-success">
+              <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-success" />
               Sedang Berlangsung
             </span>
+<<<<<<< HEAD:Frontend/src/Pages/Consultations/pages/ConsultationChat.jsx
             <span className="flex items-center gap-1 text-[11px] text-slate-400">
+=======
+            {/* Socket status */}
+            <span className="flex items-center gap-1 text-[11px] text-text-secondary">
+>>>>>>> 6097824eca4d3edbffc762d34c876ab2e1ca0b57:Frontend/src/Pages/Consultations/ConsultationChat.jsx
               <span
                 className={`h-1.5 w-1.5 rounded-full ${
-                  isConnected ? "animate-pulse bg-green-400" : "bg-slate-300"
+                  isConnected ? "animate-pulse bg-success" : "bg-border"
                 }`}
               />
               {connectionError
@@ -219,8 +371,9 @@ export default function ConsultationChat() {
         </div>
       </header>
 
-      {/* Messages */}
+      {/* Messages — constrained to 720px for readability per DESIGN.md §11 */}
       <main className="flex-1 overflow-y-auto px-4 py-6">
+<<<<<<< HEAD:Frontend/src/Pages/Consultations/pages/ConsultationChat.jsx
         {messages.length === 0 && (
           <div className="flex flex-col items-center justify-center py-20 text-center">
             <span className="mb-3 text-5xl">💬</span>
@@ -247,20 +400,53 @@ export default function ConsultationChat() {
                 </div>
               )}
               <ChatBubble message={msg} isMine={msg.senderId === user?.id} />
+=======
+        <div className="mx-auto max-w-[720px]">
+          {messages.length === 0 && (
+            <div className="flex flex-col items-center justify-center py-20 text-center">
+              <MessageSquare size={40} strokeWidth={1.5} className="mb-3 text-text-secondary opacity-40" />
+              <p className="text-[14px] font-medium text-text-primary">Belum ada pesan</p>
+              <p className="mt-1 text-[13px] text-text-secondary">
+                Mulai percakapan dengan dokter Anda
+              </p>
+>>>>>>> 6097824eca4d3edbffc762d34c876ab2e1ca0b57:Frontend/src/Pages/Consultations/ConsultationChat.jsx
             </div>
-          );
-        })}
-        <div ref={bottomRef} />
+          )}
+          {messages.map((msg, i) => {
+            const prevMsg = messages[i - 1];
+            const showDate =
+              !prevMsg ||
+              formatDate(msg.timestamp) !== formatDate(prevMsg?.timestamp);
+            return (
+              <div key={msg.id ?? i}>
+                {showDate && (
+                  <div className="my-4 flex items-center gap-3">
+                    <div className="flex-1 border-t border-border" />
+                    <span className="text-[11px] font-medium text-text-secondary">
+                      {formatDate(msg.timestamp)}
+                    </span>
+                    <div className="flex-1 border-t border-border" />
+                  </div>
+                )}
+                <ChatBubble
+                  message={msg}
+                  isMine={msg.senderId === user?.id}
+                />
+              </div>
+            );
+          })}
+          <div ref={bottomRef} />
+        </div>
       </main>
 
       {/* Input bar */}
-      <footer className="border-t border-slate-200 bg-white px-4 py-3">
+      <footer className="border-t border-border bg-background px-4 py-3">
         {connectionError && (
-          <p className="mb-2 text-center text-xs text-red-500">
-            ⚠ {connectionError} — pesan mungkin tidak terkirim secara real-time
+          <p className="mb-2 text-center text-[11px] text-error">
+            {connectionError} — pesan mungkin tidak terkirim secara real-time
           </p>
         )}
-        <form onSubmit={handleSend} className="flex items-end gap-3">
+        <form onSubmit={handleSend} className="mx-auto flex max-w-[720px] items-end gap-3">
           <textarea
             id="chat-input"
             rows={1}
@@ -272,16 +458,22 @@ export default function ConsultationChat() {
                 handleSend();
               }
             }}
+<<<<<<< HEAD:Frontend/src/Pages/Consultations/pages/ConsultationChat.jsx
             placeholder="Ketik pesan... (Enter untuk kirim)"
             className="flex-1 resize-none rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-800 placeholder-slate-400 transition outline-none focus:border-teal-400 focus:bg-white focus:ring-2 focus:ring-teal-100"
+=======
+            placeholder="Tuliskan gejala yang Anda rasakan..."
+            className="flex-1 resize-none rounded-xl border border-border bg-surface px-4 py-3 text-[14px] text-text-primary placeholder-text-secondary outline-none transition focus:border-primary focus:bg-background focus:shadow-[0_0_0_3px_rgba(255,92,138,0.1)]"
+>>>>>>> 6097824eca4d3edbffc762d34c876ab2e1ca0b57:Frontend/src/Pages/Consultations/ConsultationChat.jsx
           />
           <button
             id="send-message-btn"
             type="submit"
             disabled={!input.trim() || sendMutation.isPending}
-            className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-teal-500 to-cyan-500 text-white shadow-md transition-all hover:scale-105 hover:shadow-lg disabled:opacity-50"
+            className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-primary text-white transition-all hover:bg-primary-hover disabled:bg-border disabled:text-[#9CA3AF]"
           >
             {sendMutation.isPending ? (
+<<<<<<< HEAD:Frontend/src/Pages/Consultations/pages/ConsultationChat.jsx
               <svg className="h-4 w-4 animate-spin" viewBox="0 0 24 24" fill="none">
                 <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
                 <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" />
@@ -290,6 +482,11 @@ export default function ConsultationChat() {
               <svg className="h-4 w-4 translate-x-0.5" viewBox="0 0 24 24" fill="currentColor">
                 <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" />
               </svg>
+=======
+              <Loader2 size={16} className="animate-spin" />
+            ) : (
+              <Send size={16} strokeWidth={2} className="translate-x-0.5" />
+>>>>>>> 6097824eca4d3edbffc762d34c876ab2e1ca0b57:Frontend/src/Pages/Consultations/ConsultationChat.jsx
             )}
           </button>
         </form>

@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { Pill } from "lucide-react";
 
 function ProductCardFull({ product }) {
   const formattedPrice = new Intl.NumberFormat("id-ID", {
@@ -11,9 +12,9 @@ function ProductCardFull({ product }) {
   const isOutOfStock = product.stock === 0;
 
   return (
-    <article className="group relative flex flex-col rounded-2xl border border-slate-200 bg-white shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-lg overflow-hidden">
+    <article className="group relative flex flex-col overflow-hidden rounded-xl bg-background shadow-[0_4px_6px_-1px_rgba(0,0,0,0.05),0_2px_4px_-1px_rgba(0,0,0,0.03)] transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md">
       {/* Product Image */}
-      <div className="relative aspect-[4/3] w-full overflow-hidden bg-gradient-to-br from-slate-100 to-slate-200">
+      <div className="relative aspect-[4/3] w-full overflow-hidden bg-surface">
         {product.imageUrl ? (
           <img
             src={product.imageUrl}
@@ -22,20 +23,20 @@ function ProductCardFull({ product }) {
           />
         ) : (
           <div className="flex h-full w-full items-center justify-center">
-            <span className="text-5xl opacity-30">💊</span>
+            <Pill size={40} strokeWidth={1.5} className="text-text-secondary opacity-30" />
           </div>
         )}
 
         {/* Stock Badge */}
         {isOutOfStock && (
-          <div className="absolute inset-0 flex items-center justify-center bg-slate-900/50">
-            <span className="rounded-full bg-slate-800 px-3 py-1 text-xs font-bold text-white">
+          <div className="absolute inset-0 flex items-center justify-center bg-text-primary/50">
+            <span className="rounded-full bg-text-primary px-3 py-1 text-[13px] font-semibold text-white">
               Stok Habis
             </span>
           </div>
         )}
         {isLowStock && !isOutOfStock && (
-          <div className="absolute top-3 right-3 rounded-full bg-amber-500 px-2.5 py-1 text-xs font-bold text-white shadow">
+          <div className="absolute top-3 right-3 rounded-full bg-warning px-2.5 py-1 text-[11px] font-semibold text-white">
             Sisa {product.stock}
           </div>
         )}
@@ -45,28 +46,28 @@ function ProductCardFull({ product }) {
       <div className="flex flex-1 flex-col p-4">
         {/* Category Badge */}
         {product.category?.name && (
-          <span className="mb-2 inline-flex w-fit rounded-full bg-red-50 px-3 py-0.5 text-xs font-semibold text-red-600 ring-1 ring-red-100">
+          <span className="mb-2 inline-flex w-fit rounded-full bg-primary-light px-3 py-0.5 text-[11px] font-semibold text-primary">
             {product.category.name}
           </span>
         )}
 
-        <h3 className="text-sm font-semibold leading-snug text-slate-900 line-clamp-2">
+        <h3 className="text-[14px] font-semibold leading-snug text-text-primary line-clamp-2">
           {product.name}
         </h3>
 
         {product.description && (
-          <p className="mt-1.5 text-xs leading-relaxed text-slate-500 line-clamp-2">
+          <p className="mt-1.5 text-[13px] leading-relaxed text-text-secondary line-clamp-2">
             {product.description}
           </p>
         )}
 
-        <div className="mt-auto pt-4 flex items-center justify-between gap-2">
-          <p className="text-base font-bold text-red-500">{formattedPrice}</p>
+        <div className="mt-auto flex items-center justify-between gap-2 pt-4">
+          <p className="text-[16px] font-bold text-primary">{formattedPrice}</p>
           <Link
             to={`/products/${product.id}`}
-            className="rounded-full border border-slate-200 px-3 py-1.5 text-xs font-semibold text-slate-700 transition-all duration-200 hover:border-red-200 hover:bg-red-500/10 hover:text-red-600"
+            className="rounded-xl bg-surface px-3 py-1.5 text-[13px] font-semibold text-text-primary transition-all duration-150 hover:bg-primary-light hover:text-primary"
           >
-            Lihat Detail →
+            Lihat Detail
           </Link>
         </div>
       </div>
