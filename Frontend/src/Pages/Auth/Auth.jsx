@@ -90,32 +90,36 @@ function AuthPage() {
     }
   };
 
+  const inputBaseClass = "w-full rounded-xl border bg-surface px-3 py-2.5 text-[14px] text-text-primary transition outline-none placeholder:text-[#9CA3AF]";
+  const inputDefaultClass = `${inputBaseClass} border-border focus:border-primary focus:shadow-[0_0_0_3px_rgba(255,92,138,0.1)]`;
+  const inputErrorClass = `${inputBaseClass} border-error focus:border-error`;
+
   return (
-    <div className="bg-auth-gradient flex min-h-screen items-center justify-center px-4 py-10 sm:px-6 lg:px-8">
-      <div className="mx-auto w-full max-w-lg rounded-3xl border border-slate-200 bg-white p-5 shadow-xl sm:p-7">
-        <div className="mb-6 rounded-2xl bg-slate-100 p-1">
+    <div className="flex min-h-screen items-center justify-center bg-surface px-4 py-10 sm:px-6 lg:px-8">
+      <div className="mx-auto w-full max-w-[445px] rounded-[21px] bg-background p-5 shadow-xl sm:p-7">
+        <div className="mb-6 rounded-xl bg-surface p-1">
           <div className="grid grid-cols-2 gap-1">
             <button
               type="button"
               onClick={() => setActiveTab("login")}
-              className={`rounded-xl px-3 py-2 text-sm font-semibold transition ${
+              className={`rounded-xl px-3 py-2.5 text-[14px] font-semibold transition ${
                 activeTab === "login"
-                  ? "bg-white text-slate-900 shadow-sm"
-                  : "text-slate-600 hover:text-slate-900"
+                  ? "bg-background text-text-primary shadow-sm"
+                  : "text-text-secondary hover:text-text-primary"
               }`}
             >
-              Login
+              Masuk
             </button>
             <button
               type="button"
               onClick={() => setActiveTab("register")}
-              className={`rounded-xl px-3 py-2 text-sm font-semibold transition ${
+              className={`rounded-xl px-3 py-2.5 text-[14px] font-semibold transition ${
                 activeTab === "register"
-                  ? "bg-white text-slate-900 shadow-sm"
-                  : "text-slate-600 hover:text-slate-900"
+                  ? "bg-background text-text-primary shadow-sm"
+                  : "text-text-secondary hover:text-text-primary"
               }`}
             >
-              Register
+              Daftar
             </button>
           </div>
         </div>
@@ -123,41 +127,41 @@ function AuthPage() {
         {activeTab === "login" ? (
           <form className="space-y-4" onSubmit={handleLogin}>
             {loginError && loginError instanceof Error && (
-              <div className="rounded-xl bg-red-50 p-3 text-sm text-red-600">
+              <div className="rounded-xl bg-error-light p-3 text-[14px] text-error">
                 {loginError.message}
               </div>
             )}
             <div className="block">
-              <label className="mb-1 block text-sm font-medium text-slate-700">
+              <label className="mb-1 block text-[14px] font-medium text-text-primary">
                 Email
               </label>
               <input
                 name="email"
                 placeholder="Masukkan email"
-                className={`w-full rounded-xl border px-3 py-2.5 text-sm text-slate-900 transition outline-none ${getFieldError(loginError, "email") ? "border-red-500 focus:border-red-500" : "border-slate-200 focus:border-red-400"}`}
+                className={getFieldError(loginError, "email") ? inputErrorClass : inputDefaultClass}
                 value={loginForm.email}
                 onChange={handleLoginChange}
               />
               {getFieldError(loginError, "email") && (
-                <span className="mt-1 block text-xs text-red-500">
+                <span className="mt-1 block text-[11px] text-error">
                   {getFieldError(loginError, "email")}
                 </span>
               )}
             </div>
             <div className="block">
-              <label className="mb-1 block text-sm font-medium text-slate-700">
+              <label className="mb-1 block text-[14px] font-medium text-text-primary">
                 Password
               </label>
               <input
                 type="password"
                 name="password"
                 placeholder="Masukkan password"
-                className={`w-full rounded-xl border px-3 py-2.5 text-sm text-slate-900 transition outline-none ${getFieldError(loginError, "password") ? "border-red-500 focus:border-red-500" : "border-slate-200 focus:border-red-400"}`}
+                className={getFieldError(loginError, "password") ? inputErrorClass : inputDefaultClass}
                 value={loginForm.password}
                 onChange={handleLoginChange}
               />
               {getFieldError(loginError, "password") && (
-                <span className="mt-1 block text-xs text-red-500">
+                <span className="mt-1 block text-[11px] text-error">
                   {getFieldError(loginError, "password")}
                 </span>
               )}
@@ -165,11 +169,11 @@ function AuthPage() {
             <button
               type="submit"
               disabled={isLoginPending}
-              className="w-full rounded-xl bg-red-500 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-red-600 disabled:opacity-70"
+              className="w-full rounded-xl bg-primary px-4 py-3 text-[14px] font-semibold text-white transition-all duration-150 hover:bg-primary-hover disabled:bg-border disabled:text-[#9CA3AF] disabled:cursor-not-allowed"
             >
               {isLoginPending ? "Memproses..." : "Masuk Sekarang"}
             </button>
-            <p className="text-center text-xs text-slate-500">
+            <p className="text-center text-[11px] text-text-secondary">
               Lupa password? Hubungi support HaloHealth.
             </p>
           </form>
@@ -177,90 +181,90 @@ function AuthPage() {
           <form className="space-y-4" onSubmit={handleRegister}>
             {((registerError && registerError instanceof Error) ||
               registerFormError) && (
-              <div className="rounded-xl bg-red-50 p-3 text-sm text-red-600">
+              <div className="rounded-xl bg-error-light p-3 text-[14px] text-error">
                 {registerFormError || registerError?.message}
               </div>
             )}
             <div className="block">
-              <label className="mb-1 block text-sm font-medium text-slate-700">
+              <label className="mb-1 block text-[14px] font-medium text-text-primary">
                 Nama Lengkap
               </label>
               <input
                 type="text"
                 name="fullName"
                 placeholder="Masukkan nama lengkap"
-                className={`w-full rounded-xl border px-3 py-2.5 text-sm text-slate-900 transition outline-none ${getFieldError(registerError, "fullName") ? "border-red-500 focus:border-red-500" : "border-slate-200 focus:border-red-400"}`}
+                className={getFieldError(registerError, "fullName") ? inputErrorClass : inputDefaultClass}
                 value={registerForm.fullName}
                 onChange={handleRegisterChange}
               />
               {getFieldError(registerError, "fullName") && (
-                <span className="mt-1 block text-xs text-red-500">
+                <span className="mt-1 block text-[11px] text-error">
                   {getFieldError(registerError, "fullName")}
                 </span>
               )}
             </div>
             <div className="block">
-              <label className="mb-1 block text-sm font-medium text-slate-700">
+              <label className="mb-1 block text-[14px] font-medium text-text-primary">
                 Email
               </label>
               <input
                 type="email"
                 name="email"
                 placeholder="nama@email.com"
-                className={`w-full rounded-xl border px-3 py-2.5 text-sm text-slate-900 transition outline-none ${getFieldError(registerError, "email") ? "border-red-500 focus:border-red-500" : "border-slate-200 focus:border-red-400"}`}
+                className={getFieldError(registerError, "email") ? inputErrorClass : inputDefaultClass}
                 value={registerForm.email}
                 onChange={handleRegisterChange}
               />
               {getFieldError(registerError, "email") && (
-                <span className="mt-1 block text-xs text-red-500">
+                <span className="mt-1 block text-[11px] text-error">
                   {getFieldError(registerError, "email")}
                 </span>
               )}
             </div>
             <div className="grid grid-cols-2 gap-3">
               <div className="block">
-                <label className="mb-1 block text-sm font-medium text-slate-700">
+                <label className="mb-1 block text-[14px] font-medium text-text-primary">
                   No. Telepon
                 </label>
                 <input
                   type="tel"
                   name="telephoneNumber"
-                  placeholder="Contoh: 08123456789"
-                  className={`w-full rounded-xl border px-3 py-2.5 text-sm text-slate-900 transition outline-none ${getFieldError(registerError, "telephoneNumber") ? "border-red-500 focus:border-red-500" : "border-slate-200 focus:border-red-400"}`}
+                  placeholder="08123456789"
+                  className={getFieldError(registerError, "telephoneNumber") ? inputErrorClass : inputDefaultClass}
                   value={registerForm.telephoneNumber}
                   onChange={handleRegisterChange}
                 />
                 {getFieldError(registerError, "telephoneNumber") && (
-                  <span className="mt-1 block text-xs text-red-500">
+                  <span className="mt-1 block text-[11px] text-error">
                     {getFieldError(registerError, "telephoneNumber")}
                   </span>
                 )}
               </div>
               <div className="block">
-                <label className="mb-1 block text-sm font-medium text-slate-700">
+                <label className="mb-1 block text-[14px] font-medium text-text-primary">
                   Tanggal Lahir
                 </label>
                 <input
                   type="date"
                   name="dob"
-                  className={`w-full rounded-xl border px-3 py-2.5 text-sm text-slate-900 transition outline-none ${getFieldError(registerError, "dob") ? "border-red-500 focus:border-red-500" : "border-slate-200 focus:border-red-400"}`}
+                  className={getFieldError(registerError, "dob") ? inputErrorClass : inputDefaultClass}
                   value={registerForm.dob}
                   onChange={handleRegisterChange}
                 />
                 {getFieldError(registerError, "dob") && (
-                  <span className="mt-1 block text-xs text-red-500">
+                  <span className="mt-1 block text-[11px] text-error">
                     {getFieldError(registerError, "dob")}
                   </span>
                 )}
               </div>
             </div>
             <div className="block">
-              <label className="mb-1 block text-sm font-medium text-slate-700">
+              <label className="mb-1 block text-[14px] font-medium text-text-primary">
                 Jenis Kelamin
               </label>
               <select
                 name="gender"
-                className={`w-full rounded-xl border bg-white px-3 py-2.5 text-sm text-slate-900 transition outline-none ${getFieldError(registerError, "gender") ? "border-red-500 focus:border-red-500" : "border-slate-200 focus:border-red-400"}`}
+                className={`${getFieldError(registerError, "gender") ? inputErrorClass : inputDefaultClass} bg-surface`}
                 value={registerForm.gender}
                 onChange={handleRegisterChange}
               >
@@ -268,44 +272,44 @@ function AuthPage() {
                 <option value="FEMALE">Perempuan</option>
               </select>
               {getFieldError(registerError, "gender") && (
-                <span className="mt-1 block text-xs text-red-500">
+                <span className="mt-1 block text-[11px] text-error">
                   {getFieldError(registerError, "gender")}
                 </span>
               )}
             </div>
             <div className="grid grid-cols-2 gap-3">
               <div className="block">
-                <label className="mb-1 block text-sm font-medium text-slate-700">
+                <label className="mb-1 block text-[14px] font-medium text-text-primary">
                   Password
                 </label>
                 <input
                   type="password"
                   name="password"
                   placeholder="Buat password"
-                  className={`w-full rounded-xl border px-3 py-2.5 text-sm text-slate-900 transition outline-none ${getFieldError(registerError, "password") ? "border-red-500 focus:border-red-500" : "border-slate-200 focus:border-red-400"}`}
+                  className={getFieldError(registerError, "password") ? inputErrorClass : inputDefaultClass}
                   value={registerForm.password}
                   onChange={handleRegisterChange}
                 />
                 {getFieldError(registerError, "password") && (
-                  <span className="mt-1 block text-xs text-red-500">
+                  <span className="mt-1 block text-[11px] text-error">
                     {getFieldError(registerError, "password")}
                   </span>
                 )}
               </div>
               <div className="block">
-                <label className="mb-1 block text-sm font-medium text-slate-700">
+                <label className="mb-1 block text-[14px] font-medium text-text-primary">
                   Konfirmasi Password
                 </label>
                 <input
                   type="password"
                   name="confirmPassword"
                   placeholder="Ulangi password"
-                  className={`w-full rounded-xl border px-3 py-2.5 text-sm text-slate-900 transition outline-none ${getFieldError(registerError, "confirmPassword") ? "border-red-500 focus:border-red-500" : "border-slate-200 focus:border-red-400"}`}
+                  className={getFieldError(registerError, "confirmPassword") ? inputErrorClass : inputDefaultClass}
                   value={registerForm.confirmPassword}
                   onChange={handleRegisterChange}
                 />
                 {getFieldError(registerError, "confirmPassword") && (
-                  <span className="mt-1 block text-xs text-red-500">
+                  <span className="mt-1 block text-[11px] text-error">
                     {getFieldError(registerError, "confirmPassword")}
                   </span>
                 )}
@@ -314,12 +318,12 @@ function AuthPage() {
             <button
               type="submit"
               disabled={isRegisterPending}
-              className="w-full rounded-xl bg-red-500 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-red-600 disabled:opacity-70"
+              className="w-full rounded-xl bg-primary px-4 py-3 text-[14px] font-semibold text-white transition-all duration-150 hover:bg-primary-hover disabled:bg-border disabled:text-[#9CA3AF] disabled:cursor-not-allowed"
             >
               {isRegisterPending ? "Memproses..." : "Buat Akun"}
             </button>
-            <p className="text-center text-xs text-slate-500">
-              Dengan mendaftar, kamu setuju dengan syarat layanan.
+            <p className="text-center text-[11px] text-text-secondary">
+              Dengan mendaftar, Anda setuju dengan syarat layanan.
             </p>
           </form>
         )}
