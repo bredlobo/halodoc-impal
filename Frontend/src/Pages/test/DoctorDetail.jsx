@@ -1,6 +1,6 @@
 import { useNavigate, useParams, Link } from "react-router-dom";
-import { useDoctorById } from "../../../hooks/useDoctors";
-import { useRequestConsultation } from "../../../hooks/useConsultations";
+import { useDoctorById } from "../../hooks/useDoctors";
+import { useRequestConsultation } from "../../hooks/useConsultations";
 import { Star, Clock, Users, Award, Check, AlertTriangle, Loader2 } from "lucide-react";
 
 function DetailSkeleton() {

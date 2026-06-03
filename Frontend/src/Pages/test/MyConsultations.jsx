@@ -161,7 +161,9 @@ function ConsultationCard({ consultation }) {
   );
 }
 
-/* ─── Main Page ──────────────────────────────────────────────────────── */
+/* ══════════════════════════════════════════════════════════════════════ */
+/*  MAIN PAGE                                                              */
+/* ══════════════════════════════════════════════════════════════════════ */
 export default function MyConsultations() {
   const { token } = useAuth();
   const queryClient = useQueryClient();

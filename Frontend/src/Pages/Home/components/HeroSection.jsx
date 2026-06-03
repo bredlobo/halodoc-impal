@@ -29,27 +29,27 @@ function HeroSection() {
       className="relative overflow-hidden"
       style={{ height: `calc(100dvh - ${navbarHeight}px)` }}
     >
-      <div className="mx-auto grid h-full w-full max-w-[1152px] items-center gap-10 px-4 pt-3 pb-0 sm:px-6 lg:grid-cols-2 lg:gap-[34px] lg:px-8 lg:pt-6 lg:pb-0">
+      <div className="bg-primary-light mx-auto grid h-full w-full max-w-[1152px] items-center gap-10 px-4 pt-3 pb-0 sm:px-6 lg:grid-cols-2 lg:gap-[34px] lg:px-8 lg:pt-6 lg:pb-0">
         <div>
-          <h1 className="text-[32px] font-bold leading-[1.25] tracking-[-0.01em] text-text-primary sm:text-[40px] lg:text-[52px] lg:leading-[1.15] lg:tracking-[-0.02em]">
+          <h1 className="text-text-primary text-[32px] leading-[1.25] font-bold tracking-[-0.01em] sm:text-[40px] lg:text-[52px] lg:leading-[1.15] lg:tracking-[-0.02em]">
             Akses layanan kesehatan jadi lebih cepat, aman, dan nyaman.
           </h1>
-          <p className="mt-[21px] max-w-xl text-[14px] leading-[1.55] text-text-secondary sm:text-[18px] sm:leading-[1.50]">
+          <p className="text-text-secondary mt-[21px] max-w-xl text-[14px] leading-[1.55] sm:text-[18px] sm:leading-[1.50]">
             Konsultasi online, tebus resep digital, dan belanja kebutuhan
             kesehatan dalam satu platform dengan alur yang sederhana untuk semua
             usia.
           </p>
           <div className="mt-[34px] flex flex-wrap items-center gap-[13px]">
-            <button className="rounded-xl bg-primary px-[21px] py-[13px] text-[14px] font-semibold leading-[1] tracking-[0.01em] text-white transition-all duration-150 hover:bg-primary-hover">
+            <button className="bg-primary hover:bg-primary-hover rounded-xl px-[21px] py-[13px] text-[14px] leading-[1] font-semibold tracking-[0.01em] text-white transition-all duration-150">
               Mulai Konsultasi
             </button>
-            <button className="rounded-xl bg-surface px-[21px] py-[13px] text-[14px] font-semibold leading-[1] tracking-[0.01em] text-text-primary transition-all duration-150 hover:bg-border">
+            <button className="bg-surface text-text-primary hover:bg-border rounded-xl px-[21px] py-[13px] text-[14px] leading-[1] font-semibold tracking-[0.01em] transition-all duration-150">
               Lihat Dokter
             </button>
           </div>
         </div>
 
-        <div className="relative flex items-end justify-center self-end overflow-hidden rounded-3xl bg-primary-light px-4 pt-8 pb-2 sm:px-6 lg:px-8 lg:pt-10">
+        <div className="relative flex items-end justify-center self-end overflow-hidden rounded-3xl px-4 pt-8 pb-2 sm:px-6 lg:px-8 lg:pt-10">
           <img
             src={heroDoctor}
             alt="Dokter HaloHealth"

@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "../../../context/AuthContext";
-import { useMyConsultations, useRespondToConsultation } from "../../../hooks/useConsultations";
+import { useAuth } from "../../context/AuthContext";
+import { useMyConsultations, useRespondToConsultation } from "../../hooks/useConsultations";
 import { useQueryClient } from "@tanstack/react-query";
-import { getSocket } from "../../../lib/socket";
+import { getSocket } from "../../lib/socket";
 import {
   ArrowLeft, RefreshCw, LogOut, Clock, Check, X,
   Loader2, AlertTriangle, PartyPopper,
@@ -170,7 +170,9 @@ function RequestCard({ consultation, onAccept, onDecline, isLoading }) {
   );
 }
 
-/* ─── Main Page ──────────────────────────────────────────────────────── */
+/* ══════════════════════════════════════════════════════════════════════ */
+/*  MAIN PAGE                                                              */
+/* ══════════════════════════════════════════════════════════════════════ */
 export default function DoctorRequests() {
   const { user, token, logout } = useAuth();
   const navigate = useNavigate();
