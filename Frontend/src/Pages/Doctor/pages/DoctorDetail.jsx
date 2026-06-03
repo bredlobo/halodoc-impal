@@ -1,6 +1,5 @@
 import { useNavigate, useParams, Link } from "react-router-dom";
-import { useDoctorById } from "../../hooks/useDoctors";
-import { useRequestConsultation } from "../../hooks/useConsultations";
+import { useDoctorById, useRequestConsultation } from "../../../hooks";
 
 function DetailSkeleton() {
   return (
@@ -79,7 +78,7 @@ export default function DoctorDetail() {
     .toUpperCase();
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white">
+    <div className="min-h-screen bg-linear-to-br from-slate-50 to-white">
       {/* ── Breadcrumb ────────────────────────────────────────────────── */}
       <div className="border-b border-slate-100 bg-white">
         <div className="mx-auto max-w-4xl px-4 py-3 sm:px-6 lg:px-8">
@@ -104,18 +103,15 @@ export default function DoctorDetail() {
       </div>
 
       {/* ── Profile Hero ──────────────────────────────────────────────── */}
-      <section className="relative overflow-hidden border-b border-slate-200 bg-gradient-to-br from-teal-50 via-white to-cyan-50 pt-12 pb-10 sm:pt-16">
-        {/* Blobs */}
+      <section className="relative overflow-hidden border-b border-slate-200 bg-linear-to-br from-teal-50 via-white to-cyan-50 pt-12 pb-10 sm:pt-16">
         <div
           className="pointer-events-none absolute -top-20 -right-20 h-64 w-64 rounded-full opacity-20 blur-3xl"
           style={{
             background: "radial-gradient(circle, #14b8a6, transparent)",
           }}
         />
-
         <div className="relative mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col items-center gap-6 sm:flex-row sm:items-end">
-            {/* Avatar */}
             <div className="relative">
               <div className="flex h-28 w-28 items-center justify-center rounded-2xl bg-gradient-to-br from-teal-500 to-cyan-400 shadow-lg sm:h-32 sm:w-32">
                 <span className="text-4xl font-extrabold text-white sm:text-5xl">
@@ -127,7 +123,6 @@ export default function DoctorDetail() {
               </span>
             </div>
 
-            {/* Info */}
             <div className="flex-1 text-center sm:text-left">
               <span className="inline-flex rounded-full bg-teal-100 px-3 py-1 text-xs font-semibold text-teal-700 ring-1 ring-teal-200">
                 {doctor?.specialization}
@@ -177,20 +172,16 @@ export default function DoctorDetail() {
           <div className="grid gap-6 lg:grid-cols-3">
             {/* Left: Info cards */}
             <div className="space-y-5 lg:col-span-2">
-              {/* About */}
               <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
                 <h2 className="mb-3 text-sm font-bold tracking-wider text-slate-500 uppercase">
                   Tentang Dokter
                 </h2>
                 <p className="text-sm leading-relaxed text-slate-600">
                   {doctor?.bio ??
-                    `${doctor?.name} adalah dokter spesialis berpengalaman di bidang ${doctor?.specialization}. 
-                    Dengan dedikasi tinggi dalam memberikan pelayanan kesehatan terbaik, beliau siap membantu 
-                    Anda berkonsultasi secara online dengan nyaman dan aman.`}
+                    `${doctor?.name} adalah dokter spesialis berpengalaman di bidang ${doctor?.specialization}. Dengan dedikasi tinggi dalam memberikan pelayanan kesehatan terbaik, beliau siap membantu Anda berkonsultasi secara online dengan nyaman dan aman.`}
                 </p>
               </div>
 
-              {/* Keahlian */}
               <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
                 <h2 className="mb-4 text-sm font-bold tracking-wider text-slate-500 uppercase">
                   Keahlian & Layanan
@@ -217,7 +208,6 @@ export default function DoctorDetail() {
                 </ul>
               </div>
 
-              {/* Info tambahan */}
               <div className="grid grid-cols-3 gap-4">
                 {[
                   { label: "Pasien", value: "500+", icon: "👥" },
@@ -253,7 +243,6 @@ export default function DoctorDetail() {
                   Mulai Konsultasi
                 </h2>
 
-                {/* Fee */}
                 <div className="mb-5 rounded-xl bg-teal-50 px-4 py-4 text-center">
                   <p className="text-xs font-semibold text-teal-600">
                     Biaya Konsultasi
@@ -263,7 +252,6 @@ export default function DoctorDetail() {
                   </p>
                 </div>
 
-                {/* Features */}
                 <ul className="mb-6 space-y-2">
                   {[
                     "Chat langsung dengan dokter",

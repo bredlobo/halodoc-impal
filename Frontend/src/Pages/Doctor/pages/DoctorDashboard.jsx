@@ -1,65 +1,17 @@
 import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "../../context/AuthContext";
+import { useAuth } from "../../../context/AuthContext";
 import {
   useMyConsultations,
   useSendMessage,
   useChatHistory,
-  useRespondToConsultation,
-} from "../../hooks/useConsultations";
-import { useConsultationChat } from "../../hooks/useConsultationChat";
+  useConsultationChat,
+} from "../../../hooks";
 import { useQueryClient } from "@tanstack/react-query";
-import { getSocket } from "../../lib/socket";
-
-/* ─── JWT Decode ─────────────────────────────────────────────────────── */
-function decodeTokenRole(token) {
-  try {
-    return JSON.parse(atob(token.split(".")[1])).role || null;
-  } catch {
-    return null;
-  }
-}
-
-function decodeTokenUserId(token) {
-  try {
-    return JSON.parse(atob(token.split(".")[1])).userId || null;
-  } catch {
-    return null;
-  }
-}
-
-/* ─── Helpers ────────────────────────────────────────────────────────── */
-function formatTime(ts) {
-  if (!ts) return "";
-  return new Date(ts).toLocaleTimeString("id-ID", {
-    hour: "2-digit",
-    minute: "2-digit",
-  });
-}
-
-/* ─── Chat Bubble ────────────────────────────────────────────────────── */
-function ChatBubble({ message, isMine }) {
-  return (
-    <div className={`flex ${isMine ? "justify-end" : "justify-start"} mb-2`}>
-      <div
-        className={`max-w-[75%] rounded-2xl px-4 py-2.5 text-sm leading-relaxed shadow-sm ${
-          isMine
-            ? "rounded-br-sm bg-gradient-to-br from-teal-500 to-cyan-500 text-white"
-            : "rounded-bl-sm bg-white text-slate-700 ring-1 ring-slate-100"
-        }`}
-      >
-        <p>{message.content}</p>
-        <p
-          className={`mt-1 text-[10px] text-right ${
-            isMine ? "text-teal-100" : "text-slate-400"
-          }`}
-        >
-          {formatTime(message.timestamp)}
-        </p>
-      </div>
-    </div>
-  );
-}
+import { getSocket } from "../../../lib/socket";
+import { decodeTokenRole, decodeTokenUserId } from "../../Consultations/helpers/formatters";
+import ChatBubble from "../../Consultations/components/ChatBubble";
+import PatientItem from "../components/PatientItem";
 
 /* ─── Empty State ────────────────────────────────────────────────────── */
 function EmptyState({ emoji = "💬", title, sub }) {
@@ -105,24 +57,9 @@ function ChatWindow({ consultationId, currentUserId }) {
   if (isLoading) {
     return (
       <div className="flex h-full items-center justify-center bg-slate-50">
-        <svg
-          className="h-7 w-7 animate-spin text-teal-500"
-          viewBox="0 0 24 24"
-          fill="none"
-        >
-          <circle
-            className="opacity-25"
-            cx="12"
-            cy="12"
-            r="10"
-            stroke="currentColor"
-            strokeWidth="4"
-          />
-          <path
-            className="opacity-75"
-            fill="currentColor"
-            d="M4 12a8 8 0 018-8v8H4z"
-          />
+        <svg className="h-7 w-7 animate-spin text-teal-500" viewBox="0 0 24 24" fill="none">
+          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" />
         </svg>
       </div>
     );
@@ -169,10 +106,7 @@ function ChatWindow({ consultationId, currentUserId }) {
 
       {/* Input bar */}
       <div className="border-t border-slate-200 bg-white px-4 py-3">
-        <form
-          onSubmit={handleSend}
-          className="flex items-end gap-3"
-        >
+        <form onSubmit={handleSend} className="flex items-end gap-3">
           <textarea
             id={`doctor-chat-input-${consultationId}`}
             rows={1}
@@ -193,61 +127,13 @@ function ChatWindow({ consultationId, currentUserId }) {
             disabled={!input.trim() || sendMutation.isPending}
             className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-teal-500 to-cyan-500 text-white shadow transition hover:scale-105 hover:shadow-md disabled:opacity-50"
           >
-            <svg
-              className="h-4 w-4 translate-x-0.5"
-              viewBox="0 0 24 24"
-              fill="currentColor"
-            >
+            <svg className="h-4 w-4 translate-x-0.5" viewBox="0 0 24 24" fill="currentColor">
               <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" />
             </svg>
           </button>
         </form>
       </div>
     </div>
-  );
-}
-
-/* ─── Patient List Item (ONGOING only) ──────────────────────────────── */
-function PatientItem({ consultation, isActive, onClick }) {
-  const patient = consultation.patient;
-  const initials =
-    patient?.fullName
-      ?.split(" ")
-      .slice(0, 2)
-      .map((n) => n[0])
-      .join("")
-      .toUpperCase() || "P";
-
-  return (
-    <button
-      id={`patient-item-${consultation.id}`}
-      onClick={onClick}
-      className={`w-full rounded-xl p-3 text-left transition-all duration-200 ${
-        isActive
-          ? "bg-teal-50 ring-2 ring-teal-400 shadow-sm"
-          : "bg-white hover:bg-slate-50 ring-1 ring-slate-100"
-      }`}
-    >
-      <div className="flex items-center gap-3">
-        {/* Avatar */}
-        <div className="relative flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-teal-500 to-cyan-400 text-sm font-bold text-white shadow-sm">
-          {initials}
-          {/* Online dot */}
-          <span className="absolute -right-0.5 -bottom-0.5 h-3 w-3 rounded-full border-2 border-white bg-green-400" />
-        </div>
-        <div className="min-w-0 flex-1">
-          <p className="truncate text-sm font-bold text-slate-800">
-            {patient?.fullName || `Pasien #${consultation.patientId}`}
-          </p>
-          <p className="text-[11px] text-slate-400">
-            Konsultasi #{consultation.id}
-          </p>
-        </div>
-        {isActive && (
-          <span className="shrink-0 text-sm text-teal-500">●</span>
-        )}
-      </div>
-    </button>
   );
 }
 
@@ -265,7 +151,7 @@ export default function DoctorDashboard() {
   const role = user?.role || decodeTokenRole(token);
   const currentUserId = user?.id || decodeTokenUserId(token);
 
-  /* Fetch consultations — only ONGOING for the dashboard */
+  /* Fetch consultations — hanya ONGOING untuk dashboard */
   const { data: raw, isLoading, isError, error, refetch } = useMyConsultations();
   const allConsultations = Array.isArray(raw?.data)
     ? raw.data
@@ -296,7 +182,6 @@ export default function DoctorDashboard() {
     if (!socket.connected) socket.connect();
 
     const handleNewRequest = () => {
-      // Refresh list when a new request comes in
       queryClient.invalidateQueries({ queryKey: ["my-consultations"] });
     };
 
@@ -314,40 +199,22 @@ export default function DoctorDashboard() {
   if (!role) {
     return (
       <div className="flex h-screen items-center justify-center bg-slate-50">
-        <svg
-          className="h-7 w-7 animate-spin text-teal-500"
-          viewBox="0 0 24 24"
-          fill="none"
-        >
-          <circle
-            className="opacity-25"
-            cx="12"
-            cy="12"
-            r="10"
-            stroke="currentColor"
-            strokeWidth="4"
-          />
-          <path
-            className="opacity-75"
-            fill="currentColor"
-            d="M4 12a8 8 0 018-8v8H4z"
-          />
+        <svg className="h-7 w-7 animate-spin text-teal-500" viewBox="0 0 24 24" fill="none">
+          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" />
         </svg>
       </div>
     );
   }
 
-  /* ── Pending requests count (for badge) ─────────────────────────── */
   const pendingCount = allConsultations.filter(
     (c) => c.status === "REQUESTED"
   ).length;
 
   return (
-    /* Full-screen, no navbar/footer */
     <div className="flex h-screen flex-col overflow-hidden bg-slate-100">
       {/* ══ TOP HEADER ═══════════════════════════════════════════════ */}
       <header className="flex shrink-0 items-center justify-between border-b border-slate-200 bg-white px-5 py-3 shadow-sm">
-        {/* Brand + doctor info */}
         <div className="flex items-center gap-3">
           <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-teal-500 to-cyan-400 text-sm font-extrabold text-white shadow">
             Dr
@@ -362,9 +229,7 @@ export default function DoctorDashboard() {
           </div>
         </div>
 
-        {/* Actions */}
         <div className="flex items-center gap-2">
-          {/* Request notifications button */}
           <button
             id="view-requests-btn"
             onClick={() => navigate("/doctor/requests")}
@@ -381,7 +246,6 @@ export default function DoctorDashboard() {
             )}
           </button>
 
-          {/* Logout */}
           <button
             id="doctor-logout-btn"
             onClick={() => {
@@ -412,10 +276,7 @@ export default function DoctorDashboard() {
             {isLoading && (
               <div className="space-y-2">
                 {[1, 2, 3].map((i) => (
-                  <div
-                    key={i}
-                    className="h-16 animate-pulse rounded-xl bg-slate-100"
-                  />
+                  <div key={i} className="h-16 animate-pulse rounded-xl bg-slate-100" />
                 ))}
               </div>
             )}

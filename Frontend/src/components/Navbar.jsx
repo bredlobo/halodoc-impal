@@ -111,7 +111,7 @@ function Navbar() {
                 {/* Role-based links */}
                 {role === "PATIENT" && (
                   <Link
-                    to="/my-consultations"
+                    to="/history"
                     onClick={() => setIsDropdownMenuOpen(false)}
                     className="flex w-full items-center px-4 py-2 text-sm text-slate-700 transition-colors hover:bg-slate-50"
                   >
