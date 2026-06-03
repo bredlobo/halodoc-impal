@@ -1,14 +1,14 @@
 import { useState, useEffect, useRef } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
-import { useAuth } from "../../context/AuthContext";
+import { useAuth } from "../../../context/AuthContext";
 import {
   useConsultationDetail,
   useSendMessage,
   useChatHistory,
-} from "../../hooks/useConsultations";
-import { useConsultationChat } from "../../hooks/useConsultationChat";
+} from "../../../hooks/useConsultations";
+import { useConsultationChat } from "../../../hooks/useConsultationChat";
 import { useQueryClient } from "@tanstack/react-query";
-import { getSocket } from "../../lib/socket";
+import { getSocket } from "../../../lib/socket";
 import { ArrowLeft, Send, Loader2, Clock, CheckCircle2, XCircle, MessageSquare } from "lucide-react";
 
 /* ─── Helpers ────────────────────────────────────────────────────────── */
@@ -53,7 +53,7 @@ function ChatBubble({ message, isMine }) {
 }
 
 /* ─── Waiting Screen (REQUESTED + PAID) ─────────────────────────────── */
-function WaitingScreen({ consultationId, onStatusChange }) {
+function WaitingScreen({ consultationId }) {
   return (
     <div className="flex h-full flex-col items-center justify-center bg-surface px-6 text-center">
       {/* Pulsing ring animation */}
@@ -99,7 +99,7 @@ function WaitingScreen({ consultationId, onStatusChange }) {
 }
 
 /* ─── Completed/Cancelled Screen ────────────────────────────────────── */
-function StatusScreen({ status, consultationId }) {
+function StatusScreen({ status }) {
   const isCompleted = status === "COMPLETED";
   return (
     <div className="flex h-full flex-col items-center justify-center bg-surface px-6 text-center">
@@ -183,7 +183,7 @@ export default function ConsultationChat() {
     const socket = getSocket();
     if (!socket.connected) socket.connect();
 
-    const handleAccepted = (data) => {
+    const handleAccepted = () => {
       // Refresh the consultation data when doctor accepts
       queryClient.invalidateQueries({ queryKey: ["consultation", id] });
       queryClient.invalidateQueries({ queryKey: ["chat", id] });
@@ -290,7 +290,7 @@ export default function ConsultationChat() {
             </div>
           </div>
         ) : (
-          <StatusScreen status={consult.status} consultationId={id} />
+          <StatusScreen status={consult.status} />
         )}
       </div>
     );

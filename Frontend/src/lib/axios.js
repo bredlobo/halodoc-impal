@@ -66,7 +66,7 @@ http.interceptors.response.use(
           try {
             const { updateSocketToken } = await import("./socket");
             updateSocketToken(newToken);
-          } catch (_) {
+          } catch {
             // socket lib may not be loaded yet — safe to ignore
           }
 

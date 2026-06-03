@@ -1,15 +1,14 @@
 import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "../../context/AuthContext";
+import { useAuth } from "../../../context/AuthContext";
 import {
   useMyConsultations,
   useSendMessage,
   useChatHistory,
-  useRespondToConsultation,
-} from "../../hooks/useConsultations";
-import { useConsultationChat } from "../../hooks/useConsultationChat";
+} from "../../../hooks/useConsultations";
+import { useConsultationChat } from "../../../hooks/useConsultationChat";
 import { useQueryClient } from "@tanstack/react-query";
-import { getSocket } from "../../lib/socket";
+import { getSocket } from "../../../lib/socket";
 import { Bell, LogOut, Send, Loader2, MessageSquare, Stethoscope } from "lucide-react";
 
 /* ─── JWT Decode ─────────────────────────────────────────────────────── */
@@ -60,9 +59,10 @@ function ChatBubble({ message, isMine }) {
 
 /* ─── Empty State ────────────────────────────────────────────────────── */
 function EmptyState({ Icon = MessageSquare, title, sub }) {
+  const IconComp = Icon;
   return (
     <div className="flex h-full flex-col items-center justify-center p-8 text-center">
-      <Icon size={40} strokeWidth={1.5} className="mb-3 text-text-secondary opacity-40" />
+      {IconComp && <IconComp size={40} strokeWidth={1.5} className="mb-3 text-text-secondary opacity-40" />}
       <p className="font-medium text-text-primary">{title}</p>
       {sub && <p className="mt-1 text-[14px] text-text-secondary">{sub}</p>}
     </div>

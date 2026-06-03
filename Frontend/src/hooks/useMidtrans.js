@@ -1,12 +1,11 @@
 import { useState, useEffect } from "react";
 
 export const useMidtrans = () => {
-  const [isLoaded, setIsLoaded] = useState(false);
+  const [isLoaded, setIsLoaded] = useState(() => !!window.snap);
 
   useEffect(() => {
     // If already loaded
     if (window.snap) {
-      setIsLoaded(true);
       return;
     }
 

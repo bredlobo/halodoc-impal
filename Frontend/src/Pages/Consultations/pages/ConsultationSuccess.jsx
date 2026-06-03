@@ -1,6 +1,6 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef } from "react";
 import { Link, useSearchParams } from "react-router-dom";
-import { useVerifyPayment } from "../../hooks/useConsultations";
+import { useVerifyPayment } from "../../../hooks/useConsultations";
 import { useQueryClient } from "@tanstack/react-query";
 import { CheckCircle2, Loader2, ClipboardList, MessageSquare, Check, Bell } from "lucide-react";
 
@@ -14,20 +14,20 @@ export default function ConsultationSuccess() {
   const match = orderId.match(/^CONS-(\d+)-/);
   const consultationId = match ? match[1] : null;
 
-  const [verifyDone, setVerifyDone] = useState(false);
+  const verifyDoneRef = useRef(false);
 
   // Verify payment status from Midtrans API right away
-  const { data: verifyData, isLoading: verifying, isError: verifyFailed } =
+  const { data: verifyData, isLoading: verifying } =
     useVerifyPayment(consultationId);
 
   // After verify completes, refresh my-consultations cache
   useEffect(() => {
-    if (!verifying && verifyData && !verifyDone) {
-      setVerifyDone(true);
+    if (!verifying && verifyData && !verifyDoneRef.current) {
+      verifyDoneRef.current = true;
       queryClient.invalidateQueries({ queryKey: ["my-consultations"] });
       queryClient.invalidateQueries({ queryKey: ["consultation", consultationId] });
     }
-  }, [verifying, verifyData, verifyDone, consultationId, queryClient]);
+  }, [verifying, verifyData, consultationId, queryClient]);
 
   const isPaid =
     verifyData?.data?.paymentStatus === "PAID" ||

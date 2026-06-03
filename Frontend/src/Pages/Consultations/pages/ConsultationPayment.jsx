@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { useParams } from "react-router-dom";
-import { useMidtrans } from "../../hooks/useMidtrans";
-import { useConsultationDetail, usePayConsultation } from "../../hooks/useConsultations";
+import { useMidtrans } from "../../../hooks/useMidtrans";
+import { useConsultationDetail, usePayConsultation } from "../../../hooks/useConsultations";
 import { AlertTriangle, Check, Loader2 } from "lucide-react";
 
 const STATUS_STYLES = {

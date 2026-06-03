@@ -1,9 +1,9 @@
 import { useEffect } from "react";
 import { Link } from "react-router-dom";
-import { useAuth } from "../../context/AuthContext";
-import { useMyConsultations } from "../../hooks/useConsultations";
+import { useAuth } from "../../../context/AuthContext";
+import { useMyConsultations } from "../../../hooks/useConsultations";
 import { useQueryClient } from "@tanstack/react-query";
-import { getSocket } from "../../lib/socket";
+import { getSocket } from "../../../lib/socket";
 import {
   Clock, MessageSquare, Check, X, Plus, Loader2,
   AlertTriangle, Stethoscope, CreditCard, ClipboardList, ArrowRight,
@@ -161,7 +161,9 @@ function ConsultationCard({ consultation }) {
   );
 }
 
-/* ─── Main Page ──────────────────────────────────────────────────────── */
+/* ══════════════════════════════════════════════════════════════════════ */
+/*  MAIN PAGE                                                              */
+/* ══════════════════════════════════════════════════════════════════════ */
 export default function MyConsultations() {
   const { token } = useAuth();
   const queryClient = useQueryClient();
