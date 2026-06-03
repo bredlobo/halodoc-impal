@@ -1,18 +1,20 @@
 import { Link } from "react-router-dom";
+import { ArrowLeft } from "lucide-react";
 
 function NotFound() {
   return (
-    <section className="grid min-h-screen place-items-center bg-slate-950 px-4 text-white">
-      <div className="w-full max-w-md rounded-3xl border border-white/20 bg-white/5 p-8 text-center shadow-2xl backdrop-blur">
-        <p className="text-sm tracking-widest text-slate-300 uppercase">404</p>
-        <h1 className="mt-2 text-3xl font-bold">Halaman tidak ditemukan</h1>
-        <p className="mt-3 text-sm text-slate-300">
+    <section className="grid min-h-screen place-items-center bg-surface px-4">
+      <div className="w-full max-w-md rounded-[21px] bg-background p-8 text-center shadow-xl">
+        <p className="text-[11px] font-semibold tracking-widest text-primary uppercase">404</p>
+        <h1 className="mt-2 text-[32px] font-bold text-text-primary">Halaman tidak ditemukan</h1>
+        <p className="mt-3 text-[14px] text-text-secondary">
           Tautan yang kamu buka tidak tersedia atau sudah dipindahkan.
         </p>
         <Link
           to="/"
-          className="mt-6 inline-flex rounded-full bg-white px-5 py-2.5 text-sm font-semibold text-slate-900 transition hover:bg-slate-200"
+          className="mt-6 inline-flex items-center gap-2 rounded-xl bg-primary px-5 py-2.5 text-[14px] font-semibold text-white transition hover:bg-primary-hover"
         >
+          <ArrowLeft size={16} strokeWidth={2} />
           Kembali ke Beranda
         </Link>
       </div>

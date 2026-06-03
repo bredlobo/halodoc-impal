@@ -4,14 +4,14 @@ import SectionHeader from "../../../components/SectionHeader";
 
 function FeaturesSection() {
   return (
-    <section className="bg-slate-50 py-14 sm:py-16">
-      <div className="mx-auto w-full max-w-6xl px-4 sm:px-6 lg:px-8">
+    <section className="bg-surface py-[55px]">
+      <div className="mx-auto w-full max-w-[1152px] px-4 sm:px-6 lg:px-8">
         <SectionHeader
           title="Semua kebutuhan kesehatan, dalam satu alur yang ringkas"
-          description="Dirancang mengikuti flow inti aplikasi: konsultasi, resep digital, pembelian obat, hingga pembayaran yang aman."
+          description="Dirancang mengikuti alur inti layanan: konsultasi, resep digital, pembelian obat, hingga pembayaran yang aman."
         />
 
-        <div className="grid gap-4 sm:grid-cols-2 lg:gap-5">
+        <div className="grid gap-[21px] sm:grid-cols-2">
           {features.map((feature) => (
             <FeatureCard key={feature.title} feature={feature} />
           ))}

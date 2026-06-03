@@ -1,14 +1,14 @@
 function ProductSkeleton() {
   return (
-    <div className="rounded-2xl border border-slate-200 bg-white overflow-hidden animate-pulse">
-      <div className="aspect-[4/3] w-full bg-slate-200" />
-      <div className="p-4 space-y-3">
-        <div className="h-4 w-20 rounded-full bg-slate-200" />
-        <div className="h-4 w-full rounded bg-slate-200" />
-        <div className="h-3 w-3/4 rounded bg-slate-100" />
-        <div className="pt-2 flex items-center justify-between">
-          <div className="h-5 w-24 rounded bg-slate-200" />
-          <div className="h-7 w-20 rounded-full bg-slate-200" />
+    <div className="animate-pulse overflow-hidden rounded-xl bg-background shadow-[0_4px_6px_-1px_rgba(0,0,0,0.05),0_2px_4px_-1px_rgba(0,0,0,0.03)]">
+      <div className="aspect-[4/3] w-full bg-surface" />
+      <div className="space-y-3 p-4">
+        <div className="h-4 w-20 rounded-full bg-surface" />
+        <div className="h-4 w-full rounded bg-surface" />
+        <div className="h-3 w-3/4 rounded bg-surface" />
+        <div className="flex items-center justify-between pt-2">
+          <div className="h-5 w-24 rounded bg-surface" />
+          <div className="h-7 w-20 rounded-xl bg-surface" />
         </div>
       </div>
     </div>

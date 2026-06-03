@@ -4,7 +4,7 @@ import Navbar from "../components/Navbar";
 
 function PublicLayout() {
   return (
-    <div className="bg-public-gradient min-h-screen">
+    <div className="min-h-screen bg-background">
       <Navbar />
       <main>
         <Outlet />

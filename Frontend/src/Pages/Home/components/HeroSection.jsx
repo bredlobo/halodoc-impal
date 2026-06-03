@@ -29,40 +29,30 @@ function HeroSection() {
       className="relative overflow-hidden"
       style={{ height: `calc(100dvh - ${navbarHeight}px)` }}
     >
-      <div className="mx-auto grid h-full w-full max-w-6xl items-center gap-10 px-4 pt-3 pb-0 sm:px-6 lg:grid-cols-2 lg:gap-14 lg:px-8 lg:pt-6 lg:pb-0">
+      <div className="mx-auto grid h-full w-full max-w-[1152px] items-center gap-10 px-4 pt-3 pb-0 sm:px-6 lg:grid-cols-2 lg:gap-[34px] lg:px-8 lg:pt-6 lg:pb-0">
         <div>
-          <h1 className="text-3xl leading-tight font-extrabold text-slate-900 sm:text-4xl lg:text-5xl">
+          <h1 className="text-[32px] font-bold leading-[1.25] tracking-[-0.01em] text-text-primary sm:text-[40px] lg:text-[52px] lg:leading-[1.15] lg:tracking-[-0.02em]">
             Akses layanan kesehatan jadi lebih cepat, aman, dan nyaman.
           </h1>
-          <p className="mt-5 max-w-xl text-sm leading-relaxed text-slate-600 sm:text-base">
+          <p className="mt-[21px] max-w-xl text-[14px] leading-[1.55] text-text-secondary sm:text-[18px] sm:leading-[1.50]">
             Konsultasi online, tebus resep digital, dan belanja kebutuhan
-            kesehatan dalam satu aplikasi dengan alur yang sederhana untuk semua
+            kesehatan dalam satu platform dengan alur yang sederhana untuk semua
             usia.
           </p>
-          <div className="mt-8 flex flex-wrap items-center gap-3">
-            <button className="rounded-full bg-red-500 px-6 py-3 text-sm font-semibold text-white shadow-sm transition-all duration-300 ease-out hover:bg-red-600 hover:shadow-none">
+          <div className="mt-[34px] flex flex-wrap items-center gap-[13px]">
+            <button className="rounded-xl bg-primary px-[21px] py-[13px] text-[14px] font-semibold leading-[1] tracking-[0.01em] text-white transition-all duration-150 hover:bg-primary-hover">
               Mulai Konsultasi
             </button>
-            <button className="rounded-full border border-slate-300 bg-white px-6 py-3 text-sm font-semibold text-slate-700 transition-all duration-300 ease-out hover:border-red-200 hover:bg-red-500/10 hover:text-red-500 hover:shadow-none">
+            <button className="rounded-xl bg-surface px-[21px] py-[13px] text-[14px] font-semibold leading-[1] tracking-[0.01em] text-text-primary transition-all duration-150 hover:bg-border">
               Lihat Dokter
             </button>
           </div>
         </div>
 
-        <div className="relative flex items-end justify-center self-end overflow-hidden rounded-4xl px-4 pt-8 pb-2 sm:px-6 lg:px-8 lg:pt-10">
-          <div className="absolute top-6 left-4 h-32 w-32 rounded-full border-10 border-red-100/90" />
-          <div className="absolute top-24 left-10 h-16 w-16 rotate-12 rounded-3xl bg-red-400/25 ring-8 ring-red-100/70" />
-          <div className="hero-halo-shadow absolute top-8 right-4 h-24 w-24 rounded-full bg-red-500/20" />
-          <div className="absolute top-32 right-8 h-14 w-14 rotate-45 rounded-2xl bg-rose-200/80 ring-4 ring-rose-100/70" />
-          <div className="absolute bottom-10 -left-6 h-40 w-40 rounded-full border-16 border-red-50/90" />
-          <div className="absolute bottom-16 left-1/2 h-12 w-44 -translate-x-1/2 rounded-full bg-red-100/80" />
-          <div className="absolute right-8 bottom-5 h-20 w-20 -rotate-12 rounded-3xl border-10 border-rose-100/90" />
-          <div className="absolute top-14 left-1/2 h-10 w-24 -translate-x-1/2 rounded-full bg-red-200/70" />
-          <div className="absolute bottom-24 left-1/3 h-12 w-12 rounded-full bg-rose-300/70" />
-          <div className="absolute right-1/3 bottom-28 h-8 w-8 rounded-full bg-red-500/80" />
+        <div className="relative flex items-end justify-center self-end overflow-hidden rounded-3xl bg-primary-light px-4 pt-8 pb-2 sm:px-6 lg:px-8 lg:pt-10">
           <img
             src={heroDoctor}
-            alt="Dokter Halodoc"
+            alt="Dokter HaloHealth"
             className="relative z-10 mx-auto h-auto w-full max-w-md object-contain object-center sm:max-w-lg lg:max-w-xl"
           />
         </div>

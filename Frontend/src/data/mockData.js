@@ -9,26 +9,26 @@ export const features = [
   {
     title: 'Konsultasi Kapan Saja',
     description:
-      'Konsultasi chat, suara, atau video dengan dokter terverifikasi kapan pun kamu butuh saran medis cepat.',
-    icon: '🩺',
+      'Konsultasi chat dengan dokter terverifikasi kapan pun Anda membutuhkan saran medis.',
+    icon: 'Stethoscope',
   },
   {
     title: 'Toko Obat',
     description:
       'Telusuri obat terpercaya dan produk kesehatan dengan pencarian serta checkout yang sederhana.',
-    icon: '💊',
+    icon: 'Pill',
   },
   {
     title: 'Resep Digital',
     description:
-      'Terima resep secara digital dan hubungkan langsung ke pemesanan obat dalam satu alur tanpa hambatan.',
-    icon: '📄',
+      'Terima resep secara digital dan hubungkan langsung ke pemesanan obat dalam satu alur.',
+    icon: 'FileText',
   },
   {
     title: 'Pembayaran Aman',
     description:
-      'Lihat detail tagihan, pilih metode pembayaran, dan pantau status pembayaran dengan konfirmasi yang jelas.',
-    icon: '💳',
+      'Lihat detail tagihan, pilih metode pembayaran, dan pantau status pembayaran dengan jelas.',
+    icon: 'CreditCard',
   },
 ]
 

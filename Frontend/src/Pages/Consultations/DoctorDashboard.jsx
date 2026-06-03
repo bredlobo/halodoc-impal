@@ -10,6 +10,7 @@ import {
 import { useConsultationChat } from "../../hooks/useConsultationChat";
 import { useQueryClient } from "@tanstack/react-query";
 import { getSocket } from "../../lib/socket";
+import { Bell, LogOut, Send, Loader2, MessageSquare, Stethoscope } from "lucide-react";
 
 /* ─── JWT Decode ─────────────────────────────────────────────────────── */
 function decodeTokenRole(token) {
@@ -42,18 +43,14 @@ function ChatBubble({ message, isMine }) {
   return (
     <div className={`flex ${isMine ? "justify-end" : "justify-start"} mb-2`}>
       <div
-        className={`max-w-[75%] rounded-2xl px-4 py-2.5 text-sm leading-relaxed shadow-sm ${
+        className={`max-w-[75%] px-4 py-2.5 text-[14px] leading-[1.55] ${
           isMine
-            ? "rounded-br-sm bg-gradient-to-br from-teal-500 to-cyan-500 text-white"
-            : "rounded-bl-sm bg-white text-slate-700 ring-1 ring-slate-100"
+            ? "rounded-2xl rounded-br-[4px] bg-primary-light text-text-primary"
+            : "rounded-2xl rounded-bl-[4px] bg-[#F3F4F6] text-text-primary"
         }`}
       >
         <p>{message.content}</p>
-        <p
-          className={`mt-1 text-[10px] text-right ${
-            isMine ? "text-teal-100" : "text-slate-400"
-          }`}
-        >
+        <p className="mt-1 text-[11px] text-right text-text-secondary">
           {formatTime(message.timestamp)}
         </p>
       </div>
@@ -62,12 +59,12 @@ function ChatBubble({ message, isMine }) {
 }
 
 /* ─── Empty State ────────────────────────────────────────────────────── */
-function EmptyState({ emoji = "💬", title, sub }) {
+function EmptyState({ Icon = MessageSquare, title, sub }) {
   return (
     <div className="flex h-full flex-col items-center justify-center p-8 text-center">
-      <span className="mb-3 text-5xl">{emoji}</span>
-      <p className="font-semibold text-slate-700">{title}</p>
-      {sub && <p className="mt-1 text-sm text-slate-400">{sub}</p>}
+      <Icon size={40} strokeWidth={1.5} className="mb-3 text-text-secondary opacity-40" />
+      <p className="font-medium text-text-primary">{title}</p>
+      {sub && <p className="mt-1 text-[14px] text-text-secondary">{sub}</p>}
     </div>
   );
 }
@@ -104,42 +101,24 @@ function ChatWindow({ consultationId, currentUserId }) {
 
   if (isLoading) {
     return (
-      <div className="flex h-full items-center justify-center bg-slate-50">
-        <svg
-          className="h-7 w-7 animate-spin text-teal-500"
-          viewBox="0 0 24 24"
-          fill="none"
-        >
-          <circle
-            className="opacity-25"
-            cx="12"
-            cy="12"
-            r="10"
-            stroke="currentColor"
-            strokeWidth="4"
-          />
-          <path
-            className="opacity-75"
-            fill="currentColor"
-            d="M4 12a8 8 0 018-8v8H4z"
-          />
-        </svg>
+      <div className="flex h-full items-center justify-center bg-surface">
+        <Loader2 size={28} strokeWidth={2} className="animate-spin text-primary" />
       </div>
     );
   }
 
   return (
-    <div className="flex h-full flex-col bg-slate-50">
+    <div className="flex h-full flex-col bg-surface">
       {/* Live indicator */}
-      <div className="flex items-center justify-end border-b border-slate-200 bg-white px-4 py-1.5">
-        <span className="flex items-center gap-1.5 text-[11px] text-slate-400">
+      <div className="flex items-center justify-end border-b border-border bg-background px-4 py-1.5">
+        <span className="flex items-center gap-1.5 text-[11px] text-text-secondary">
           <span
             className={`h-1.5 w-1.5 rounded-full ${
-              isConnected ? "animate-pulse bg-green-400" : "bg-slate-300"
+              isConnected ? "animate-pulse bg-success" : "bg-border"
             }`}
           />
           {connectionError ? (
-            <span className="text-red-400">{connectionError}</span>
+            <span className="text-error">{connectionError}</span>
           ) : isConnected ? (
             "Live"
           ) : (
@@ -152,7 +131,7 @@ function ChatWindow({ consultationId, currentUserId }) {
       <div className="flex-1 overflow-y-auto px-4 py-4">
         {messages.length === 0 && (
           <EmptyState
-            emoji="💬"
+            Icon={MessageSquare}
             title="Belum ada pesan"
             sub="Mulai percakapan dengan pasien"
           />
@@ -168,7 +147,7 @@ function ChatWindow({ consultationId, currentUserId }) {
       </div>
 
       {/* Input bar */}
-      <div className="border-t border-slate-200 bg-white px-4 py-3">
+      <div className="border-t border-border bg-background px-4 py-3">
         <form
           onSubmit={handleSend}
           className="flex items-end gap-3"
@@ -185,21 +164,19 @@ function ChatWindow({ consultationId, currentUserId }) {
               }
             }}
             placeholder="Balas pasien... (Enter untuk kirim)"
-            className="flex-1 resize-none rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm text-slate-800 placeholder-slate-400 outline-none focus:border-teal-400 focus:bg-white focus:ring-2 focus:ring-teal-100"
+            className="flex-1 resize-none rounded-xl border border-border bg-surface px-4 py-2.5 text-[14px] text-text-primary placeholder-text-secondary outline-none transition focus:border-primary focus:bg-background focus:shadow-[0_0_0_3px_rgba(255,92,138,0.1)]"
           />
           <button
             id={`doctor-send-btn-${consultationId}`}
             type="submit"
             disabled={!input.trim() || sendMutation.isPending}
-            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-teal-500 to-cyan-500 text-white shadow transition hover:scale-105 hover:shadow-md disabled:opacity-50"
+            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary text-white transition-all hover:bg-primary-hover disabled:bg-border disabled:text-[#9CA3AF]"
           >
-            <svg
-              className="h-4 w-4 translate-x-0.5"
-              viewBox="0 0 24 24"
-              fill="currentColor"
-            >
-              <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" />
-            </svg>
+            {sendMutation.isPending ? (
+              <Loader2 size={16} className="animate-spin" />
+            ) : (
+              <Send size={16} strokeWidth={2} className="translate-x-0.5" />
+            )}
           </button>
         </form>
       </div>
@@ -224,27 +201,27 @@ function PatientItem({ consultation, isActive, onClick }) {
       onClick={onClick}
       className={`w-full rounded-xl p-3 text-left transition-all duration-200 ${
         isActive
-          ? "bg-teal-50 ring-2 ring-teal-400 shadow-sm"
-          : "bg-white hover:bg-slate-50 ring-1 ring-slate-100"
+          ? "bg-primary-light ring-2 ring-primary/30"
+          : "bg-background hover:bg-surface"
       }`}
     >
       <div className="flex items-center gap-3">
         {/* Avatar */}
-        <div className="relative flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-teal-500 to-cyan-400 text-sm font-bold text-white shadow-sm">
+        <div className="relative flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary-light text-[14px] font-bold text-primary">
           {initials}
           {/* Online dot */}
-          <span className="absolute -right-0.5 -bottom-0.5 h-3 w-3 rounded-full border-2 border-white bg-green-400" />
+          <span className="absolute -right-0.5 -bottom-0.5 h-3 w-3 rounded-full border-2 border-background bg-success" />
         </div>
         <div className="min-w-0 flex-1">
-          <p className="truncate text-sm font-bold text-slate-800">
+          <p className="truncate text-[14px] font-semibold text-text-primary">
             {patient?.fullName || `Pasien #${consultation.patientId}`}
           </p>
-          <p className="text-[11px] text-slate-400">
+          <p className="text-[11px] text-text-secondary">
             Konsultasi #{consultation.id}
           </p>
         </div>
         {isActive && (
-          <span className="shrink-0 text-sm text-teal-500">●</span>
+          <span className="shrink-0 text-[14px] text-primary">●</span>
         )}
       </div>
     </button>
@@ -313,26 +290,8 @@ export default function DoctorDashboard() {
   /* ── Loading / role resolving ────────────────────────────────────── */
   if (!role) {
     return (
-      <div className="flex h-screen items-center justify-center bg-slate-50">
-        <svg
-          className="h-7 w-7 animate-spin text-teal-500"
-          viewBox="0 0 24 24"
-          fill="none"
-        >
-          <circle
-            className="opacity-25"
-            cx="12"
-            cy="12"
-            r="10"
-            stroke="currentColor"
-            strokeWidth="4"
-          />
-          <path
-            className="opacity-75"
-            fill="currentColor"
-            d="M4 12a8 8 0 018-8v8H4z"
-          />
-        </svg>
+      <div className="flex h-screen items-center justify-center bg-surface">
+        <Loader2 size={28} strokeWidth={2} className="animate-spin text-primary" />
       </div>
     );
   }
@@ -344,19 +303,19 @@ export default function DoctorDashboard() {
 
   return (
     /* Full-screen, no navbar/footer */
-    <div className="flex h-screen flex-col overflow-hidden bg-slate-100">
+    <div className="flex h-screen flex-col overflow-hidden bg-surface">
       {/* ══ TOP HEADER ═══════════════════════════════════════════════ */}
-      <header className="flex shrink-0 items-center justify-between border-b border-slate-200 bg-white px-5 py-3 shadow-sm">
+      <header className="flex shrink-0 items-center justify-between border-b border-border bg-background px-5 py-3">
         {/* Brand + doctor info */}
         <div className="flex items-center gap-3">
-          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-teal-500 to-cyan-400 text-sm font-extrabold text-white shadow">
+          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary text-[14px] font-bold text-white">
             Dr
           </div>
           <div>
-            <h1 className="text-sm font-extrabold text-slate-800 leading-none">
+            <h1 className="text-[14px] font-semibold leading-none text-text-primary">
               Dashboard Dokter
             </h1>
-            <p className="mt-0.5 text-xs text-slate-400">
+            <p className="mt-0.5 text-[13px] text-text-secondary">
               {user?.fullName || user?.email}
             </p>
           </div>
@@ -368,14 +327,12 @@ export default function DoctorDashboard() {
           <button
             id="view-requests-btn"
             onClick={() => navigate("/doctor/requests")}
-            className="relative flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-slate-600 transition hover:bg-slate-50"
+            className="relative flex items-center gap-1.5 rounded-xl border border-border bg-background px-3 py-1.5 text-[13px] font-semibold text-text-secondary transition hover:bg-surface"
           >
-            <svg className="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
-            </svg>
+            <Bell size={14} strokeWidth={2} />
             Permintaan
             {pendingCount > 0 && (
-              <span className="absolute -top-1.5 -right-1.5 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-[10px] font-bold text-white">
+              <span className="absolute -top-1.5 -right-1.5 flex h-4 w-4 items-center justify-center rounded-full bg-error text-[10px] font-bold text-white">
                 {pendingCount}
               </span>
             )}
@@ -388,8 +345,9 @@ export default function DoctorDashboard() {
               logout();
               navigate("/auth");
             }}
-            className="rounded-lg border border-red-100 bg-red-50 px-3 py-1.5 text-xs font-semibold text-red-500 transition hover:bg-red-100"
+            className="flex items-center gap-1.5 rounded-xl border border-error/20 bg-error-light px-3 py-1.5 text-[13px] font-semibold text-error transition hover:bg-error/10"
           >
+            <LogOut size={14} strokeWidth={2} />
             Keluar
           </button>
         </div>
@@ -398,12 +356,12 @@ export default function DoctorDashboard() {
       {/* ══ BODY ═════════════════════════════════════════════════════ */}
       <div className="flex flex-1 overflow-hidden">
         {/* ── LEFT SIDEBAR: Active Patient List ───────────────────── */}
-        <aside className="flex w-72 shrink-0 flex-col border-r border-slate-200 bg-white">
-          <div className="border-b border-slate-100 px-4 py-3">
-            <h2 className="text-[11px] font-bold uppercase tracking-widest text-slate-400">
+        <aside className="flex w-72 shrink-0 flex-col border-r border-border bg-background">
+          <div className="border-b border-border px-4 py-3">
+            <h2 className="text-[11px] font-semibold uppercase tracking-widest text-text-secondary">
               Sesi Aktif
             </h2>
-            <p className="mt-0.5 text-xs text-slate-400">
+            <p className="mt-0.5 text-[13px] text-text-secondary">
               {ongoingConsultations.length} pasien sedang dalam konsultasi
             </p>
           </div>
@@ -414,19 +372,19 @@ export default function DoctorDashboard() {
                 {[1, 2, 3].map((i) => (
                   <div
                     key={i}
-                    className="h-16 animate-pulse rounded-xl bg-slate-100"
+                    className="h-16 animate-pulse rounded-xl bg-surface"
                   />
                 ))}
               </div>
             )}
             {isError && (
-              <div className="rounded-xl bg-red-50 p-4 text-center">
-                <p className="text-xs text-red-500">
+              <div className="rounded-xl bg-error-light p-4 text-center">
+                <p className="text-[13px] text-error">
                   {error?.message || "Gagal memuat"}
                 </p>
                 <button
                   onClick={refetch}
-                  className="mt-2 text-xs font-semibold text-red-600 underline"
+                  className="mt-2 text-[13px] font-semibold text-error underline"
                 >
                   Coba lagi
                 </button>
@@ -434,7 +392,7 @@ export default function DoctorDashboard() {
             )}
             {!isLoading && !isError && ongoingConsultations.length === 0 && (
               <EmptyState
-                emoji="🩺"
+                Icon={Stethoscope}
                 title="Tidak ada sesi aktif"
                 sub="Terima permintaan pasien terlebih dahulu"
               />
@@ -454,24 +412,24 @@ export default function DoctorDashboard() {
         <main className="flex flex-1 flex-col overflow-hidden">
           {!activeConsult ? (
             <EmptyState
-              emoji="👈"
+              Icon={MessageSquare}
               title="Pilih pasien untuk memulai chat"
               sub="Daftar sesi aktif ada di panel kiri"
             />
           ) : (
             <>
               {/* Chat header */}
-              <div className="flex items-center gap-4 border-b border-slate-200 bg-white px-6 py-3 shadow-sm">
-                <div className="relative flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-teal-500 to-cyan-400 text-sm font-bold text-white shadow-sm">
+              <div className="flex items-center gap-4 border-b border-border bg-background px-6 py-3">
+                <div className="relative flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary-light text-[14px] font-bold text-primary">
                   {activeConsult.patient?.fullName?.[0]?.toUpperCase() || "P"}
-                  <span className="absolute -right-0.5 -bottom-0.5 h-3 w-3 rounded-full border-2 border-white bg-green-400" />
+                  <span className="absolute -right-0.5 -bottom-0.5 h-3 w-3 rounded-full border-2 border-background bg-success" />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="truncate text-sm font-bold text-slate-800">
+                  <p className="truncate text-[14px] font-semibold text-text-primary">
                     {activeConsult.patient?.fullName ||
                       `Pasien #${activeConsult.patientId}`}
                   </p>
-                  <p className="text-xs text-teal-500 font-medium">
+                  <p className="text-[13px] font-medium text-primary">
                     Konsultasi #{activeConsult.id} · Sedang berlangsung
                   </p>
                 </div>

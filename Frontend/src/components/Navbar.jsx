@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { navLinks } from "../data/mockData";
 import { useAuth } from "../context/AuthContext";
+import { Stethoscope, Hospital, Bell, LogOut, ChevronDown } from "lucide-react";
 
 function decodeTokenRole(token) {
   try { return JSON.parse(atob(token.split(".")[1])).role || null; }
@@ -45,17 +46,17 @@ function Navbar() {
   };
 
   return (
-    <header className="sticky top-0 z-40 border-b border-slate-200/80 bg-white/95 backdrop-blur">
-      <nav className="mx-auto flex w-full max-w-6xl items-center justify-between px-4 py-3 sm:px-6 lg:px-8">
-        <Link to="/" className="flex items-center gap-2">
-          <span className="inline-flex h-9 w-9 items-center justify-center rounded-xl bg-red-500 text-sm font-bold text-white shadow-sm">
+    <header className="sticky top-0 z-40 border-b border-border bg-background/95 backdrop-blur">
+      <nav className="mx-auto flex w-full max-w-[1152px] items-center justify-between px-4 py-3 sm:px-6 lg:px-8">
+        <Link to="/" className="flex items-center gap-2.5">
+          <span className="inline-flex h-9 w-9 items-center justify-center rounded-xl bg-primary text-sm font-bold text-white">
             H+
           </span>
           <div>
-            <p className="text-sm font-bold tracking-wide text-slate-900">
+            <p className="text-[14px] font-bold tracking-tight text-text-primary">
               HaloHealth
             </p>
-            <p className="text-xs text-slate-500">Kesehatan jadi lebih mudah</p>
+            <p className="text-[11px] text-text-secondary">Kesehatan jadi lebih mudah</p>
           </div>
         </Link>
 
@@ -64,10 +65,10 @@ function Navbar() {
             <li key={link.name}>
               <Link
                 to={link.to}
-                className={`nav-link rounded-full px-4 py-2 text-sm font-medium transition ${
+                className={`nav-link rounded-full px-4 py-2 text-[14px] font-semibold transition-all duration-150 ${
                   isActiveLink(link.to)
-                    ? "bg-red-500 text-white shadow-sm transition-all duration-300 ease-out hover:bg-red-600 hover:shadow-none"
-                    : "nav-link--inactive text-slate-700"
+                    ? "bg-primary text-white hover:bg-primary-hover"
+                    : "nav-link--inactive text-text-secondary hover:text-text-primary"
                 }`}
               >
                 {link.name}
@@ -80,42 +81,34 @@ function Navbar() {
           <div className="relative" ref={dropdownRef}>
             <button
               onClick={() => setIsDropdownMenuOpen(!isDropdownMenuOpen)}
-              className="flex items-center gap-2 rounded-full border border-slate-200 bg-white p-1 pr-3 shadow-sm transition hover:bg-slate-50 focus:outline-none"
+              className="flex items-center gap-2 rounded-full border border-border bg-background p-1 pr-3 transition hover:bg-surface focus:outline-none"
+              aria-expanded={isDropdownMenuOpen}
             >
               <img
-                src={`https://ui-avatars.com/api/?name=${user.fullName || user.username || "User"}&background=random`}
-                alt="Profile"
+                src={`https://ui-avatars.com/api/?name=${user.fullName || user.username || "User"}&background=FFF1F5&color=FF5C8A`}
+                alt="Foto profil"
                 className="h-8 w-8 rounded-full object-cover"
               />
-              <span className="text-sm font-semibold text-slate-700">
+              <span className="text-[14px] font-semibold text-text-primary">
                 Hi, {user.fullName || user.username || "User"}
               </span>
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className={`h-4 w-4 text-slate-500 transition-transform ${isDropdownMenuOpen ? "rotate-180" : ""}`}
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M19 9l-7 7-7-7"
-                />
-              </svg>
+              <ChevronDown
+                size={16}
+                strokeWidth={2}
+                className={`text-text-secondary transition-transform ${isDropdownMenuOpen ? "rotate-180" : ""}`}
+              />
             </button>
 
             {isDropdownMenuOpen && (
-              <div className="ring-opacity-5 absolute right-0 z-50 mt-2 w-52 origin-top-right rounded-xl border border-slate-200 bg-white py-1 shadow-lg ring-1 ring-black focus:outline-none">
+              <div className="absolute right-0 z-50 mt-2 w-52 origin-top-right rounded-xl border border-border bg-background py-1 shadow-lg focus:outline-none">
                 {/* Role-based links */}
                 {role === "PATIENT" && (
                   <Link
-                    to="/my-consultations"
+                    to="/history"
                     onClick={() => setIsDropdownMenuOpen(false)}
-                    className="flex w-full items-center px-4 py-2 text-sm text-slate-700 transition-colors hover:bg-slate-50"
+                    className="flex w-full items-center gap-2.5 px-4 py-2.5 text-[14px] text-text-primary transition-colors hover:bg-surface"
                   >
-                    <span className="mr-2">🩺</span>
+                    <Stethoscope size={16} strokeWidth={1.75} className="text-text-secondary" />
                     Konsultasi Saya
                   </Link>
                 )}
@@ -124,45 +117,32 @@ function Navbar() {
                     <Link
                       to="/doctor/dashboard"
                       onClick={() => setIsDropdownMenuOpen(false)}
-                      className="flex w-full items-center px-4 py-2 text-sm text-slate-700 transition-colors hover:bg-slate-50"
+                      className="flex w-full items-center gap-2.5 px-4 py-2.5 text-[14px] text-text-primary transition-colors hover:bg-surface"
                     >
-                      <span className="mr-2">🏥</span>
+                      <Hospital size={16} strokeWidth={1.75} className="text-text-secondary" />
                       Dashboard Dokter
                     </Link>
                     <Link
                       to="/doctor/requests"
                       onClick={() => setIsDropdownMenuOpen(false)}
-                      className="flex w-full items-center px-4 py-2 text-sm text-slate-700 transition-colors hover:bg-slate-50"
+                      className="flex w-full items-center gap-2.5 px-4 py-2.5 text-[14px] text-text-primary transition-colors hover:bg-surface"
                     >
-                      <span className="mr-2">🔔</span>
+                      <Bell size={16} strokeWidth={1.75} className="text-text-secondary" />
                       Permintaan Masuk
                     </Link>
                   </>
                 )}
-                <div className="my-1 border-t border-slate-100" />
+                <div className="my-1 border-t border-border" />
                 <button
                   onClick={() => {
                     setIsDropdownMenuOpen(false);
                     logout();
                     navigate("/");
                   }}
-                  className="flex w-full items-center px-4 py-2 text-sm text-red-600 transition-colors hover:bg-red-50"
+                  className="flex w-full items-center gap-2.5 px-4 py-2.5 text-[14px] text-error transition-colors hover:bg-error-light"
                 >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="mr-2 h-4 w-4"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
-                    />
-                  </svg>
-                  Logout
+                  <LogOut size={16} strokeWidth={1.75} />
+                  Keluar
                 </button>
               </div>
             )}
@@ -170,22 +150,22 @@ function Navbar() {
         ) : (
           <Link
             to={isAuthPage ? "/" : "/auth"}
-            className="rounded-full bg-slate-900 px-4 py-2 text-sm font-semibold text-white transition hover:bg-slate-800"
+            className="rounded-xl bg-primary px-5 py-2.5 text-[14px] font-semibold text-white transition-all duration-150 hover:bg-primary-hover"
           >
             {isAuthPage ? "Beranda" : "Masuk"}
           </Link>
         )}
       </nav>
 
-      <div className="mx-auto flex w-full max-w-6xl gap-1 overflow-x-auto px-4 pb-3 md:hidden">
+      <div className="mx-auto flex w-full max-w-[1152px] gap-1 overflow-x-auto px-4 pb-3 md:hidden">
         {navLinks.map((link) => (
           <Link
             key={link.name}
             to={link.to}
-            className={`nav-link rounded-full px-3 py-1.5 text-xs font-medium whitespace-nowrap transition ${
+            className={`nav-link rounded-full px-3 py-1.5 text-[13px] font-medium whitespace-nowrap transition ${
               isActiveLink(link.to)
-                ? "bg-red-500 text-white shadow-sm transition-all duration-300 ease-out hover:bg-red-600 hover:shadow-none"
-                : "nav-link--inactive text-slate-700"
+                ? "bg-primary text-white hover:bg-primary-hover"
+                : "nav-link--inactive text-text-secondary"
             }`}
           >
             {link.name}

@@ -1,64 +1,61 @@
 @import "tailwindcss";
 
 @theme {
-  --font-sans: "Plus Jakarta Sans", "Segoe UI", sans-serif;
+  --font-sans: "Plus Jakarta Sans", "Segoe UI", system-ui, sans-serif;
+
+  /* ─── Color Tokens (DESIGN.md §3) ─────────────────────────── */
+  --color-primary: #FF5C8A;
+  --color-primary-hover: #E54D79;
+  --color-primary-light: #FFF1F5;
+
+  --color-success: #22C55E;
+  --color-success-light: #F0FDF4;
+
+  --color-warning: #F59E0B;
+  --color-warning-light: #FFFBEB;
+
+  --color-error: #EF4444;
+  --color-error-light: #FEF2F2;
+
+  --color-text-primary: #1F2937;
+  --color-text-secondary: #6B7280;
+
+  --color-background: #FFFFFF;
+  --color-surface: #F9FAFB;
+  --color-border: #E5E7EB;
 }
 
+/* ─── Base Styles ─────────────────────────────────────────── */
 body {
   margin: 0;
-  font-family: "Plus Jakarta Sans", "Segoe UI", sans-serif;
-  color: #0f172a;
-  background: #ffffff;
+  font-family: "Plus Jakarta Sans", "Segoe UI", system-ui, sans-serif;
+  color: var(--color-text-primary);
+  background: var(--color-background);
+  font-size: 14px;
+  line-height: 1.55;
+  letter-spacing: 0;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
-h1,
-h2,
-h3,
-h4 {
-  font-family: "Plus Jakarta Sans", "Segoe UI", sans-serif;
+h1, h2, h3, h4 {
+  font-family: "Plus Jakarta Sans", "Segoe UI", system-ui, sans-serif;
+  letter-spacing: -0.01em;
 }
 
-.bg-public-gradient {
-  background: radial-gradient(
-    circle at top,
-    #fff1f2 0%,
-    #ffffff 30%,
-    #f8fafc 100%
-  );
-}
-
-.bg-auth-gradient {
-  background: radial-gradient(
-    circle at top,
-    #fff1f2 0%,
-    #ffffff 32%,
-    #f8fafc 100%
-  );
-}
-
+/* ─── Poster aspect ratio ─────────────────────────────────── */
 .aspect-poster {
   aspect-ratio: 3 / 4;
 }
 
-.border-10 {
-  border-width: 10px;
-}
-
-.border-16 {
-  border-width: 16px;
-}
-
-.hero-halo-shadow {
-  box-shadow: 0 0 0 18px rgba(248, 113, 113, 0.14);
-}
-
+/* ─── Nav Link Animations ─────────────────────────────────── */
 .nav-link {
   position: relative;
   display: inline-block;
 }
 
 .nav-link--inactive {
-  transition: color 320ms ease-in-out;
+  transition: color 200ms ease-in-out;
 }
 
 .nav-link--inactive::after {
@@ -68,22 +65,46 @@ h4 {
   bottom: 0.22rem;
   width: 68%;
   height: 2px;
-  background: #ef4444;
+  background: var(--color-primary);
   border-radius: 999px;
   transform: translateX(-50%) scaleX(0);
   transform-origin: center;
-  transition: transform 380ms ease-in-out;
+  transition: transform 250ms ease-in-out;
   pointer-events: none;
 }
 
 .nav-link--inactive:hover {
-  color: #334155;
+  color: var(--color-text-primary);
 }
 
 .nav-link--inactive:hover::after {
   transform: translateX(-50%) scaleX(1);
 }
 
+/* ─── Button Cursor ───────────────────────────────────────── */
 button:not(:disabled):hover {
   cursor: pointer;
+}
+
+/* ─── Focus Visible (Accessibility) ───────────────────────── */
+:focus-visible {
+  outline: 2px solid var(--color-primary-light);
+  outline-offset: 2px;
+}
+
+/* ─── Card Elevation (DESIGN.md §10.III) ──────────────────── */
+.card-elevation {
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+}
+
+/* ─── Scrollbar Utility ───────────────────────────────────── */
+.scrollbar-thin::-webkit-scrollbar {
+  width: 4px;
+}
+.scrollbar-thin::-webkit-scrollbar-track {
+  background: transparent;
+}
+.scrollbar-thin::-webkit-scrollbar-thumb {
+  background: var(--color-border);
+  border-radius: 999px;
 }

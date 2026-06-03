@@ -4,6 +4,10 @@ import { useAuth } from "../../context/AuthContext";
 import { useMyConsultations } from "../../hooks/useConsultations";
 import { useQueryClient } from "@tanstack/react-query";
 import { getSocket } from "../../lib/socket";
+import {
+  Clock, MessageSquare, Check, X, Plus, Loader2,
+  AlertTriangle, Stethoscope, CreditCard, ClipboardList, ArrowRight,
+} from "lucide-react";
 
 /* ─── Helpers ────────────────────────────────────────────────────────── */
 function formatDate(ts) {
@@ -24,46 +28,42 @@ function formatCurrency(amount) {
 const STATUS = {
   REQUESTED: {
     label: "Menunggu Dokter",
-    emoji: "⏳",
-    bg: "bg-blue-50",
-    text: "text-blue-700",
-    ring: "ring-blue-200",
-    dot: "bg-blue-400 animate-pulse",
-    desc: "Dokter belum menerima permintaanmu",
+    Icon: Clock,
+    bg: "bg-warning-light",
+    text: "text-warning",
+    dotColor: "bg-warning",
+    desc: "Dokter belum menerima permintaan",
   },
   ONGOING: {
     label: "Sedang Berlangsung",
-    emoji: "💬",
-    bg: "bg-green-50",
-    text: "text-green-700",
-    ring: "ring-green-200",
-    dot: "bg-green-400 animate-pulse",
+    Icon: MessageSquare,
+    bg: "bg-success-light",
+    text: "text-success",
+    dotColor: "bg-success animate-pulse",
     desc: "Klik untuk masuk ke ruang chat",
   },
   COMPLETED: {
     label: "Selesai",
-    emoji: "✅",
-    bg: "bg-slate-50",
-    text: "text-slate-600",
-    ring: "ring-slate-200",
-    dot: "bg-slate-400",
+    Icon: Check,
+    bg: "bg-surface",
+    text: "text-text-secondary",
+    dotColor: "bg-text-secondary",
     desc: "Konsultasi telah selesai",
   },
   CANCELLED: {
     label: "Dibatalkan",
-    emoji: "❌",
-    bg: "bg-red-50",
-    text: "text-red-600",
-    ring: "ring-red-200",
-    dot: "bg-red-400",
+    Icon: X,
+    bg: "bg-error-light",
+    text: "text-error",
+    dotColor: "bg-error",
     desc: "Konsultasi dibatalkan",
   },
 };
 
 const PAYMENT = {
-  PENDING: { label: "Belum Bayar", color: "text-amber-600", bg: "bg-amber-50" },
-  PAID:    { label: "Sudah Bayar", color: "text-green-600", bg: "bg-green-50" },
-  REFUNDED:{ label: "Dikembalikan", color: "text-slate-500", bg: "bg-slate-50" },
+  PENDING: { label: "Belum Bayar", text: "text-warning", bg: "bg-warning-light" },
+  PAID:    { label: "Sudah Bayar", text: "text-success", bg: "bg-success-light" },
+  REFUNDED:{ label: "Dikembalikan", text: "text-text-secondary", bg: "bg-surface" },
 };
 
 /* ─── Consultation Card ──────────────────────────────────────────────── */
@@ -75,42 +75,42 @@ function ConsultationCard({ consultation, navigate }) {
   const needsPayment = consultation.paymentStatus === "PENDING";
 
   return (
-    <div className={`group relative rounded-2xl border bg-white p-5 shadow-sm transition-all hover:shadow-md ${canChat ? "ring-2 ring-green-300" : "ring-1 ring-slate-100"}`}>
+    <div className={`group relative rounded-xl bg-background p-5 shadow-[0_4px_6px_-1px_rgba(0,0,0,0.05),0_2px_4px_-1px_rgba(0,0,0,0.03)] transition-all duration-200 hover:shadow-md ${canChat ? "ring-2 ring-success/30" : ""}`}>
       {/* Status strip */}
-      <div className={`absolute left-0 top-0 h-full w-1 rounded-l-2xl ${s.dot.includes("animate") ? "animate-pulse" : ""} ${s.dot.replace("animate-pulse", "")}`} />
+      <div className={`absolute left-0 top-0 h-full w-1 rounded-l-xl ${s.dotColor.replace("animate-pulse", "")}`} />
 
       <div className="pl-2">
         {/* Header row */}
         <div className="flex items-start justify-between gap-3">
           <div className="flex items-center gap-2">
-            <span className="text-2xl">{s.emoji}</span>
+            <s.Icon size={20} strokeWidth={1.75} className={s.text} />
             <div>
-              <span className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-bold ring-1 ${s.bg} ${s.text} ${s.ring}`}>
+              <span className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-[11px] font-semibold ${s.bg} ${s.text}`}>
                 {s.label}
               </span>
-              <p className="mt-0.5 text-[11px] text-slate-400">{s.desc}</p>
+              <p className="mt-0.5 text-[11px] text-text-secondary">{s.desc}</p>
             </div>
           </div>
 
           {/* Payment badge */}
-          <span className={`shrink-0 rounded-full px-2.5 py-0.5 text-[11px] font-semibold ${p.color} ${p.bg}`}>
+          <span className={`shrink-0 rounded-full px-2.5 py-0.5 text-[11px] font-semibold ${p.text} ${p.bg}`}>
             {p.label}
           </span>
         </div>
 
         {/* Info row */}
         <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-3">
-          <div className="rounded-xl bg-slate-50 px-3 py-2">
-            <p className="text-[10px] font-semibold uppercase tracking-wider text-slate-400">Konsultasi</p>
-            <p className="mt-0.5 font-bold text-slate-800 text-sm">#{consultation.id}</p>
+          <div className="rounded-xl bg-surface px-3 py-2">
+            <p className="text-[10px] font-semibold uppercase tracking-wider text-text-secondary">Konsultasi</p>
+            <p className="mt-0.5 text-[14px] font-semibold text-text-primary">#{consultation.id}</p>
           </div>
-          <div className="rounded-xl bg-slate-50 px-3 py-2">
-            <p className="text-[10px] font-semibold uppercase tracking-wider text-slate-400">Biaya</p>
-            <p className="mt-0.5 font-bold text-teal-700 text-sm">{formatCurrency(consultation.fee)}</p>
+          <div className="rounded-xl bg-surface px-3 py-2">
+            <p className="text-[10px] font-semibold uppercase tracking-wider text-text-secondary">Biaya</p>
+            <p className="mt-0.5 text-[14px] font-semibold text-primary">{formatCurrency(consultation.fee)}</p>
           </div>
-          <div className="rounded-xl bg-slate-50 px-3 py-2 col-span-2 sm:col-span-1">
-            <p className="text-[10px] font-semibold uppercase tracking-wider text-slate-400">Dibuat</p>
-            <p className="mt-0.5 text-xs font-semibold text-slate-600">{formatDate(consultation.createdAt)}</p>
+          <div className="col-span-2 rounded-xl bg-surface px-3 py-2 sm:col-span-1">
+            <p className="text-[10px] font-semibold uppercase tracking-wider text-text-secondary">Dibuat</p>
+            <p className="mt-0.5 text-[13px] font-medium text-text-secondary">{formatDate(consultation.createdAt)}</p>
           </div>
         </div>
 
@@ -120,9 +120,10 @@ function ConsultationCard({ consultation, navigate }) {
             <Link
               to={`/consultations/${consultation.id}/payment`}
               id={`pay-btn-${consultation.id}`}
-              className="flex-1 rounded-xl bg-amber-500 py-2.5 text-center text-sm font-bold text-white shadow-sm hover:bg-amber-600"
+              className="flex flex-1 items-center justify-center gap-1.5 rounded-xl bg-warning py-2.5 text-center text-[14px] font-semibold text-white transition hover:bg-[#D97706]"
             >
-              💳 Bayar Sekarang
+              <CreditCard size={14} strokeWidth={2} />
+              Bayar Sekarang
             </Link>
           )}
 
@@ -130,15 +131,17 @@ function ConsultationCard({ consultation, navigate }) {
             <Link
               to={`/consultations/${consultation.id}/chat`}
               id={`chat-btn-${consultation.id}`}
-              className="flex-1 rounded-xl bg-gradient-to-r from-teal-500 to-cyan-500 py-2.5 text-center text-sm font-bold text-white shadow-md hover:from-teal-600 hover:to-cyan-600"
+              className="flex flex-1 items-center justify-center gap-1.5 rounded-xl bg-primary py-2.5 text-center text-[14px] font-semibold text-white transition hover:bg-primary-hover"
             >
-              💬 Masuk Chat
+              <MessageSquare size={14} strokeWidth={2} />
+              Masuk Chat
             </Link>
           )}
 
           {consultation.status === "REQUESTED" && consultation.paymentStatus === "PAID" && (
-            <div className="flex-1 rounded-xl border border-blue-200 bg-blue-50 py-2.5 text-center text-sm font-semibold text-blue-600">
-              ⏳ Menunggu Dokter Accept
+            <div className="flex flex-1 items-center justify-center gap-1.5 rounded-xl bg-warning-light py-2.5 text-center text-[14px] font-semibold text-warning">
+              <Clock size={14} strokeWidth={2} />
+              Menunggu Dokter Accept
             </div>
           )}
 
@@ -146,9 +149,10 @@ function ConsultationCard({ consultation, navigate }) {
             <Link
               to={`/consultations/${consultation.id}/chat`}
               id={`history-btn-${consultation.id}`}
-              className="flex-1 rounded-xl border border-slate-200 py-2.5 text-center text-sm font-semibold text-slate-500 hover:bg-slate-50"
+              className="flex flex-1 items-center justify-center gap-1.5 rounded-xl bg-surface py-2.5 text-center text-[14px] font-semibold text-text-secondary transition hover:bg-primary-light hover:text-primary"
             >
-              📋 Lihat Riwayat
+              <ClipboardList size={14} strokeWidth={2} />
+              Lihat Riwayat
             </Link>
           )}
         </div>
@@ -212,25 +216,26 @@ export default function MyConsultations() {
   }, [consultations, queryClient]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white">
+    <div className="min-h-screen bg-surface">
       {/* ── Header ──────────────────────────────────────────────────── */}
-      <div className="border-b border-slate-200 bg-white shadow-sm">
+      <div className="border-b border-border bg-background">
         <div className="mx-auto max-w-3xl px-4 py-4 sm:px-6">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-lg font-extrabold text-slate-800">
+              <h1 className="text-[18px] font-semibold text-text-primary">
                 Konsultasi Saya
               </h1>
-              <p className="text-xs text-slate-400">
+              <p className="text-[13px] text-text-secondary">
                 {consultations.length} konsultasi ditemukan
               </p>
             </div>
             <Link
               to="/consultations"
               id="new-consultation-btn"
-              className="rounded-xl bg-gradient-to-r from-teal-500 to-cyan-500 px-4 py-2 text-sm font-bold text-white shadow-sm hover:from-teal-600 hover:to-cyan-600"
+              className="flex items-center gap-1.5 rounded-xl bg-primary px-4 py-2.5 text-[14px] font-semibold text-white transition hover:bg-primary-hover"
             >
-              + Konsultasi Baru
+              <Plus size={16} strokeWidth={2} />
+              Konsultasi Baru
             </Link>
           </div>
         </div>
@@ -241,19 +246,19 @@ export default function MyConsultations() {
         {isLoading && (
           <div className="space-y-4">
             {[1, 2].map((i) => (
-              <div key={i} className="h-44 animate-pulse rounded-2xl bg-slate-100" />
+              <div key={i} className="h-44 animate-pulse rounded-xl bg-border" />
             ))}
           </div>
         )}
 
         {isError && (
-          <div className="rounded-2xl border border-red-100 bg-red-50 p-8 text-center">
-            <span className="mb-3 block text-4xl">⚠️</span>
-            <p className="font-bold text-red-700">Gagal memuat konsultasi</p>
-            <p className="mt-1 text-sm text-red-500">{error?.message}</p>
+          <div className="flex flex-col items-center rounded-xl bg-error-light p-8 text-center">
+            <AlertTriangle size={32} strokeWidth={1.75} className="mb-3 text-error" />
+            <p className="font-semibold text-error">Gagal memuat konsultasi</p>
+            <p className="mt-1 text-[14px] text-text-secondary">{error?.message}</p>
             <button
               onClick={refetch}
-              className="mt-4 rounded-full bg-red-500 px-5 py-2 text-sm font-semibold text-white hover:bg-red-600"
+              className="mt-4 rounded-xl bg-primary px-5 py-2.5 text-[14px] font-semibold text-white hover:bg-primary-hover"
             >
               Coba Lagi
             </button>
@@ -261,15 +266,15 @@ export default function MyConsultations() {
         )}
 
         {!isLoading && !isError && sorted.length === 0 && (
-          <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-slate-300 bg-white py-20 text-center">
-            <span className="mb-4 text-6xl">🩺</span>
-            <h3 className="text-base font-bold text-slate-700">Belum ada konsultasi</h3>
-            <p className="mt-1 text-sm text-slate-400">
+          <div className="flex flex-col items-center justify-center rounded-xl border-2 border-dashed border-border bg-background py-20 text-center">
+            <Stethoscope size={48} strokeWidth={1.5} className="mb-4 text-text-secondary opacity-40" />
+            <h3 className="text-[16px] font-semibold text-text-primary">Belum ada konsultasi</h3>
+            <p className="mt-1 text-[14px] text-text-secondary">
               Mulai berkonsultasi dengan dokter terpercaya kami
             </p>
             <Link
               to="/consultations"
-              className="mt-6 rounded-full bg-teal-500 px-6 py-2.5 text-sm font-semibold text-white hover:bg-teal-600"
+              className="mt-6 rounded-xl bg-primary px-6 py-2.5 text-[14px] font-semibold text-white hover:bg-primary-hover"
             >
               Cari Dokter
             </Link>
@@ -280,10 +285,10 @@ export default function MyConsultations() {
           <div className="space-y-4">
             {/* Ongoing banner */}
             {sorted.some((c) => c.status === "ONGOING") && (
-              <div className="flex items-center gap-2 rounded-xl border border-green-200 bg-green-50 px-4 py-2.5">
-                <span className="h-2 w-2 animate-pulse rounded-full bg-green-500" />
-                <p className="text-sm font-semibold text-green-700">
-                  Kamu memiliki sesi konsultasi yang sedang berlangsung!
+              <div className="flex items-center gap-2 rounded-xl bg-success-light px-4 py-2.5">
+                <span className="h-2 w-2 animate-pulse rounded-full bg-success" />
+                <p className="text-[14px] font-semibold text-success">
+                  Anda memiliki sesi konsultasi yang sedang berlangsung
                 </p>
               </div>
             )}
