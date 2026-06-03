@@ -1,6 +1,6 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef } from "react";
 import { Link, useSearchParams } from "react-router-dom";
-import { useVerifyPayment } from "../../hooks/useConsultations";
+import { useVerifyPayment } from "../hooks/useConsultations";
 import { useQueryClient } from "@tanstack/react-query";
 
 export default function ConsultationSuccess() {
@@ -13,20 +13,21 @@ export default function ConsultationSuccess() {
   const match = orderId.match(/^CONS-(\d+)-/);
   const consultationId = match ? match[1] : null;
 
-  const [verifyDone, setVerifyDone] = useState(false);
+  const verifyDoneRef = useRef(false);
 
-  // Verify payment status from Midtrans API right away
-  const { data: verifyData, isLoading: verifying, isError: verifyFailed } =
+  const { data: verifyData, isLoading: verifying } =
     useVerifyPayment(consultationId);
 
-  // After verify completes, refresh my-consultations cache
+  // Setelah verifikasi selesai, refresh cache konsultasi
   useEffect(() => {
-    if (!verifying && verifyData && !verifyDone) {
-      setVerifyDone(true);
+    if (!verifying && verifyData && !verifyDoneRef.current) {
+      verifyDoneRef.current = true;
       queryClient.invalidateQueries({ queryKey: ["my-consultations"] });
-      queryClient.invalidateQueries({ queryKey: ["consultation", consultationId] });
+      queryClient.invalidateQueries({
+        queryKey: ["consultation", consultationId],
+      });
     }
-  }, [verifying, verifyData, verifyDone, consultationId, queryClient]);
+  }, [verifying, verifyData, consultationId, queryClient]);
 
   const isPaid =
     verifyData?.data?.paymentStatus === "PAID" ||
@@ -45,7 +46,8 @@ export default function ConsultationSuccess() {
             Konsultasimu Terdaftar!
           </h1>
           <p className="mx-auto mt-4 max-w-lg text-sm leading-relaxed text-slate-500">
-            Pembayaran berhasil diproses. Dokter akan segera bergabung di ruang konsultasi.
+            Pembayaran berhasil diproses. Dokter akan segera bergabung di ruang
+            konsultasi.
           </p>
         </div>
       </section>
@@ -56,22 +58,50 @@ export default function ConsultationSuccess() {
           <div className="rounded-2xl border border-slate-200 bg-white p-10 shadow-sm">
             {/* Icon */}
             <div className="mx-auto mb-6 flex h-24 w-24 items-center justify-center rounded-full bg-green-100">
-              <svg className="h-12 w-12 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
+              <svg
+                className="h-12 w-12 text-green-600"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2.5}
+                  d="M5 13l4 4L19 7"
+                />
               </svg>
             </div>
 
-            <h2 className="text-xl font-extrabold text-slate-900">Pembayaran Dikonfirmasi</h2>
-            <p className="mt-3 text-sm text-slate-500 leading-relaxed">
-              Terima kasih telah menggunakan layanan kami. Dokter akan segera menghubungimu.
+            <h2 className="text-xl font-extrabold text-slate-900">
+              Pembayaran Dikonfirmasi
+            </h2>
+            <p className="mt-3 text-sm leading-relaxed text-slate-500">
+              Terima kasih telah menggunakan layanan kami. Dokter akan segera
+              menghubungimu.
             </p>
 
             {/* Payment status indicator */}
             {verifying && (
               <div className="mt-4 flex items-center justify-center gap-2 rounded-xl bg-blue-50 px-4 py-2.5">
-                <svg className="h-4 w-4 animate-spin text-blue-500" viewBox="0 0 24 24" fill="none">
-                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" />
+                <svg
+                  className="h-4 w-4 animate-spin text-blue-500"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                >
+                  <circle
+                    className="opacity-25"
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    strokeWidth="4"
+                  />
+                  <path
+                    className="opacity-75"
+                    fill="currentColor"
+                    d="M4 12a8 8 0 018-8v8H4z"
+                  />
                 </svg>
                 <span className="text-xs font-semibold text-blue-700">
                   Mengonfirmasi status pembayaran...
@@ -94,9 +124,14 @@ export default function ConsultationSuccess() {
                 { icon: "📋", label: "Dokter mendapat notifikasi" },
                 { icon: "💬", label: "Sesi konsultasi akan segera dimulai" },
               ].map((step, i) => (
-                <div key={i} className="flex items-center gap-3 rounded-xl bg-slate-50 px-4 py-3">
+                <div
+                  key={i}
+                  className="flex items-center gap-3 rounded-xl bg-slate-50 px-4 py-3"
+                >
                   <span className="text-lg">{step.icon}</span>
-                  <span className="text-sm font-medium text-slate-700">{step.label}</span>
+                  <span className="text-sm font-medium text-slate-700">
+                    {step.label}
+                  </span>
                 </div>
               ))}
             </div>
@@ -104,7 +139,7 @@ export default function ConsultationSuccess() {
             {/* CTA buttons */}
             <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:justify-center">
               <Link
-                to="/my-consultations"
+                to="/history"
                 id="go-to-my-consultations"
                 className="rounded-xl bg-gradient-to-r from-teal-500 to-cyan-500 px-6 py-3 text-sm font-bold text-white shadow-md transition-all hover:shadow-lg"
               >

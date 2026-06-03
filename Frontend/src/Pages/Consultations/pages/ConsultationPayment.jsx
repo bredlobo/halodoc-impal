@@ -1,20 +1,7 @@
-import { useNavigate } from "react-router-dom";
-import { useParams } from "react-router-dom";
-import { useMidtrans } from "../../hooks/useMidtrans";
-import { useConsultationDetail, usePayConsultation } from "../../hooks/useConsultations";
-
-const STATUS_STYLES = {
-  REQUESTED: "bg-blue-50 text-blue-700 ring-blue-100",
-  ONGOING: "bg-amber-50 text-amber-700 ring-amber-100",
-  COMPLETED: "bg-green-50 text-green-700 ring-green-100",
-  CANCELLED: "bg-red-50 text-red-700 ring-red-100",
-};
-
-const PAYMENT_STYLES = {
-  PENDING: "bg-yellow-50 text-yellow-700 ring-yellow-100",
-  PAID: "bg-green-50 text-green-700 ring-green-100",
-  REFUNDED: "bg-slate-50 text-slate-700 ring-slate-100",
-};
+import { useNavigate, useParams } from "react-router-dom";
+import { useMidtrans } from "../hooks/useMidtrans";
+import { useConsultationDetail, usePayConsultation } from "../hooks/useConsultations";
+import { STATUS_BADGE_STYLES, PAYMENT_BADGE_STYLES } from "../constants/statusConfig";
 
 function StatusBadge({ value, styleMap }) {
   const cls = styleMap[value] ?? "bg-slate-50 text-slate-700 ring-slate-100";
@@ -44,7 +31,8 @@ export default function ConsultationPayment() {
   const navigate = useNavigate();
   const { isLoaded, pay } = useMidtrans();
 
-  const { data: consultation, isLoading, isError, error, refetch } = useConsultationDetail(id);
+  const { data: consultation, isLoading, isError, error, refetch } =
+    useConsultationDetail(id);
 
   const paymentMutation = usePayConsultation(id, {
     onSuccess: (res) => {
@@ -139,12 +127,12 @@ export default function ConsultationPayment() {
 
               <div className="flex items-center justify-between py-4">
                 <span className="text-sm text-slate-500">Status Konsultasi</span>
-                <StatusBadge value={consData?.status} styleMap={STATUS_STYLES} />
+                <StatusBadge value={consData?.status} styleMap={STATUS_BADGE_STYLES} />
               </div>
 
               <div className="flex items-center justify-between py-4">
                 <span className="text-sm text-slate-500">Status Pembayaran</span>
-                <StatusBadge value={consData?.paymentStatus} styleMap={PAYMENT_STYLES} />
+                <StatusBadge value={consData?.paymentStatus} styleMap={PAYMENT_BADGE_STYLES} />
               </div>
 
               <div className="flex items-center justify-between py-5">
@@ -185,7 +173,10 @@ export default function ConsultationPayment() {
 
           {/* Back link */}
           <div className="mt-6 text-center">
-            <a href="/consultations" className="text-sm font-semibold text-teal-600 hover:underline">
+            <a
+              href="/consultations"
+              className="text-sm font-semibold text-teal-600 hover:underline"
+            >
               ← Kembali ke Daftar Dokter
             </a>
           </div>

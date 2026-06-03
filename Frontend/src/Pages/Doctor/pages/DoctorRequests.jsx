@@ -1,172 +1,12 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "../../context/AuthContext";
-import { useMyConsultations, useRespondToConsultation } from "../../hooks/useConsultations";
+import { useAuth } from "../../../context/AuthContext";
+import { useMyConsultations, useRespondToConsultation } from "../../Consultations/hooks/useConsultations";
 import { useQueryClient } from "@tanstack/react-query";
-import { getSocket } from "../../lib/socket";
+import { getSocket } from "../../../lib/socket";
+import { decodeTokenRole } from "../../Consultations/helpers/formatters";
+import RequestCard from "../components/RequestCard";
 
-/* ─── JWT Decode ─────────────────────────────────────────────────────── */
-function decodeTokenRole(token) {
-  try {
-    return JSON.parse(atob(token.split(".")[1])).role || null;
-  } catch {
-    return null;
-  }
-}
-
-/* ─── Helpers ────────────────────────────────────────────────────────── */
-function timeAgo(ts) {
-  const diff = Math.floor((Date.now() - new Date(ts).getTime()) / 1000);
-  if (diff < 60) return `${diff}d yang lalu`;
-  if (diff < 3600) return `${Math.floor(diff / 60)} menit yang lalu`;
-  return `${Math.floor(diff / 3600)} jam yang lalu`;
-}
-
-function formatCountdown(createdAt) {
-  const expiredAt = new Date(createdAt).getTime() + 5 * 60 * 1000;
-  const remaining = Math.max(0, Math.floor((expiredAt - Date.now()) / 1000));
-  const m = Math.floor(remaining / 60);
-  const s = remaining % 60;
-  return { remaining, label: `${m}:${s.toString().padStart(2, "0")}` };
-}
-
-/* ─── Request Card ───────────────────────────────────────────────────── */
-function RequestCard({ consultation, onAccept, onDecline, isLoading }) {
-  const patient = consultation.patient;
-  const initials =
-    patient?.fullName
-      ?.split(" ")
-      .slice(0, 2)
-      .map((n) => n[0])
-      .join("")
-      .toUpperCase() || "P";
-
-  const [countdown, setCountdown] = useState(
-    formatCountdown(consultation.createdAt)
-  );
-
-  useEffect(() => {
-    if (countdown.remaining <= 0) return;
-    const timer = setInterval(() => {
-      setCountdown(formatCountdown(consultation.createdAt));
-    }, 1000);
-    return () => clearInterval(timer);
-  }, [consultation.createdAt]);
-
-  const isExpired = countdown.remaining <= 0;
-  const isUrgent = countdown.remaining <= 60 && countdown.remaining > 0;
-
-  return (
-    <div
-      className={`rounded-2xl border bg-white p-5 shadow-sm transition-all duration-300 ${
-        isExpired
-          ? "border-slate-200 opacity-60"
-          : isUrgent
-          ? "border-red-200 ring-2 ring-red-100"
-          : "border-slate-200 hover:shadow-md"
-      }`}
-    >
-      {/* Card header */}
-      <div className="flex items-start gap-4">
-        {/* Avatar */}
-        <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-teal-500 to-cyan-400 text-base font-extrabold text-white shadow">
-          {initials}
-        </div>
-
-        <div className="flex-1 min-w-0">
-          <div className="flex items-center justify-between gap-2">
-            <h3 className="truncate text-sm font-extrabold text-slate-800">
-              {patient?.fullName || `Pasien #${consultation.patientId}`}
-            </h3>
-            {/* Countdown badge */}
-            <span
-              className={`shrink-0 rounded-full px-2.5 py-0.5 text-[11px] font-bold ${
-                isExpired
-                  ? "bg-slate-100 text-slate-400"
-                  : isUrgent
-                  ? "bg-red-100 text-red-600 animate-pulse"
-                  : "bg-blue-50 text-blue-600"
-              }`}
-            >
-              {isExpired ? "Kadaluarsa" : `⏱ ${countdown.label}`}
-            </span>
-          </div>
-          <p className="mt-0.5 text-xs text-slate-400">
-            {patient?.email} · {timeAgo(consultation.createdAt)}
-          </p>
-        </div>
-      </div>
-
-      {/* Info row */}
-      <div className="mt-4 flex gap-3">
-        <div className="flex-1 rounded-xl bg-slate-50 px-3 py-2.5 text-center">
-          <p className="text-[10px] font-semibold uppercase tracking-wider text-slate-400">
-            Biaya
-          </p>
-          <p className="mt-0.5 text-sm font-extrabold text-teal-600">
-            {new Intl.NumberFormat("id-ID", {
-              style: "currency",
-              currency: "IDR",
-              minimumFractionDigits: 0,
-            }).format(consultation.fee)}
-          </p>
-        </div>
-        <div className="flex-1 rounded-xl bg-slate-50 px-3 py-2.5 text-center">
-          <p className="text-[10px] font-semibold uppercase tracking-wider text-slate-400">
-            Status
-          </p>
-          <p className="mt-0.5 text-sm font-extrabold text-blue-600">
-            Menunggu
-          </p>
-        </div>
-        <div className="flex-1 rounded-xl bg-slate-50 px-3 py-2.5 text-center">
-          <p className="text-[10px] font-semibold uppercase tracking-wider text-slate-400">
-            Konsultasi
-          </p>
-          <p className="mt-0.5 text-sm font-extrabold text-slate-700">
-            #{consultation.id}
-          </p>
-        </div>
-      </div>
-
-      {/* Action buttons */}
-      {!isExpired && (
-        <div className="mt-4 flex gap-3">
-          <button
-            id={`decline-btn-${consultation.id}`}
-            onClick={() => onDecline(consultation.id)}
-            disabled={isLoading}
-            className="flex-1 rounded-xl border border-red-200 bg-red-50 py-2.5 text-sm font-bold text-red-600 transition hover:bg-red-100 disabled:opacity-60"
-          >
-            ✕ Tolak
-          </button>
-          <button
-            id={`accept-btn-${consultation.id}`}
-            onClick={() => onAccept(consultation.id)}
-            disabled={isLoading}
-            className="flex-[2] rounded-xl bg-gradient-to-r from-teal-500 to-cyan-500 py-2.5 text-sm font-bold text-white shadow-md transition hover:from-teal-600 hover:to-cyan-600 hover:shadow-lg disabled:opacity-60"
-          >
-            {isLoading ? (
-              <span className="flex items-center justify-center gap-2">
-                <svg className="h-4 w-4 animate-spin" viewBox="0 0 24 24" fill="none">
-                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" />
-                </svg>
-                Memproses...
-              </span>
-            ) : (
-              "✓ Terima Konsultasi"
-            )}
-          </button>
-        </div>
-      )}
-    </div>
-  );
-}
-
-/* ══════════════════════════════════════════════════════════════════════ */
-/*  MAIN PAGE                                                              */
-/* ══════════════════════════════════════════════════════════════════════ */
 export default function DoctorRequests() {
   const { user, token, logout } = useAuth();
   const navigate = useNavigate();
@@ -218,7 +58,7 @@ export default function DoctorRequests() {
     if (role && role !== "DOCTOR") navigate("/", { replace: true });
   }, [user, token, role, navigate]);
 
-  /* Real-time: refresh when new requests arrive */
+  /* Real-time: refresh ketika ada permintaan baru masuk */
   useEffect(() => {
     if (!token) return;
     const socket = getSocket();
@@ -316,10 +156,7 @@ export default function DoctorRequests() {
         {isLoading && (
           <div className="space-y-4">
             {[1, 2, 3].map((i) => (
-              <div
-                key={i}
-                className="h-40 animate-pulse rounded-2xl bg-white"
-              />
+              <div key={i} className="h-40 animate-pulse rounded-2xl bg-white" />
             ))}
           </div>
         )}

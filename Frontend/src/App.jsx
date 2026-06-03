@@ -6,15 +6,15 @@ import AuthPage from "./Pages/Auth/Auth";
 import NotFound from "./Pages/NotFound";
 import ProductPage from "./Pages/Products/Home";
 import ProductDetailPage from "./Pages/Products/ProductDetail/Home";
-import SpecializationSelect from "./Pages/Consultations/SpecializationSelect";
-import DoctorList from "./Pages/Consultations/DoctorList";
-import DoctorDetail from "./Pages/Consultations/DoctorDetail";
-import ConsultationPayment from "./Pages/Consultations/ConsultationPayment";
-import ConsultationSuccess from "./Pages/Consultations/Success";
-import ConsultationChat from "./Pages/Consultations/ConsultationChat";
-import DoctorDashboard from "./Pages/Consultations/DoctorDashboard";
-import DoctorRequests from "./Pages/Consultations/DoctorRequests";
-import MyConsultations from "./Pages/Consultations/MyConsultations";
+import SpecializationSelect from "./Pages/Doctor/pages/SpecializationSelect";
+import DoctorList from "./Pages/Doctor/pages/DoctorList";
+import DoctorDetail from "./Pages/Doctor/pages/DoctorDetail";
+import ConsultationPayment from "./Pages/Consultations/pages/ConsultationPayment";
+import ConsultationSuccess from "./Pages/Consultations/pages/ConsultationSuccess";
+import ConsultationChat from "./Pages/Consultations/pages/ConsultationChat";
+import DoctorDashboard from "./Pages/Doctor/pages/DoctorDashboard";
+import DoctorRequests from "./Pages/Doctor/pages/DoctorRequests";
+import MyConsultations from "./Pages/Consultations/pages/MyConsultations";
 
 const routes = createBrowserRouter([
   {
