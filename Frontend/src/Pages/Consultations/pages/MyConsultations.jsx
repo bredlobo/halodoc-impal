@@ -75,54 +75,83 @@ function ConsultationCard({ consultation }) {
   const needsPayment = consultation.paymentStatus === "PENDING";
 
   return (
-    <div className={`group relative rounded-xl bg-background p-5 shadow-[0_4px_6px_-1px_rgba(0,0,0,0.05),0_2px_4px_-1px_rgba(0,0,0,0.03)] transition-all duration-200 hover:shadow-md ${canChat ? "ring-2 ring-success/30" : ""}`}>
-      {/* Status strip */}
-      <div className={`absolute left-0 top-0 h-full w-1 rounded-l-xl ${s.dotColor.replace("animate-pulse", "")}`} />
+    <div
+      className={`group relative overflow-hidden rounded-2xl border bg-background p-6 transition-all duration-300 ${
+        canChat
+          ? "border-success bg-success-light/10 shadow-[0_0_20px_rgba(34,197,94,0.08)]"
+          : "border-border/60 hover:border-primary/20 hover:shadow-[0_8px_30px_rgba(0,0,0,0.04)]"
+      }`}
+    >
+      {/* Accent indicator top border */}
+      <div
+        className={`absolute top-0 left-0 right-0 h-1 ${
+          consultation.status === "ONGOING"
+            ? "bg-success"
+            : consultation.status === "REQUESTED"
+            ? "bg-warning"
+            : consultation.status === "COMPLETED"
+            ? "bg-text-secondary/30"
+            : "bg-error"
+        }`}
+      />
 
-      <div className="pl-2">
+      <div className="flex flex-col gap-4">
         {/* Header row */}
-        <div className="flex items-start justify-between gap-3">
-          <div className="flex items-center gap-2">
-            <s.Icon size={20} strokeWidth={1.75} className={s.text} />
+        <div className="flex items-center justify-between gap-3">
+          <div className="flex items-center gap-3">
+            <div className={`flex h-10 w-10 items-center justify-center rounded-xl ${s.bg}`}>
+              <s.Icon size={18} strokeWidth={2} className={s.text} />
+            </div>
             <div>
-              <span className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-[11px] font-semibold ${s.bg} ${s.text}`}>
-                {s.label}
-              </span>
-              <p className="mt-0.5 text-[11px] text-text-secondary">{s.desc}</p>
+              <div className="flex items-center gap-2">
+                <span className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-[11px] font-bold ${s.bg} ${s.text}`}>
+                  {s.label}
+                </span>
+                {canChat && (
+                  <span className="relative flex h-2 w-2">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-success opacity-75"></span>
+                    <span className="relative inline-flex rounded-full h-2 w-2 bg-success"></span>
+                  </span>
+                )}
+              </div>
+              <p className="mt-1 text-[12px] text-text-secondary">{s.desc}</p>
             </div>
           </div>
 
           {/* Payment badge */}
-          <span className={`shrink-0 rounded-full px-2.5 py-0.5 text-[11px] font-semibold ${p.text} ${p.bg}`}>
+          <span className={`shrink-0 rounded-lg px-2.5 py-1 text-[11px] font-bold ${p.text} ${p.bg}`}>
             {p.label}
           </span>
         </div>
 
-        {/* Info row */}
-        <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-3">
-          <div className="rounded-xl bg-surface px-3 py-2">
-            <p className="text-[10px] font-semibold uppercase tracking-wider text-text-secondary">Konsultasi</p>
-            <p className="mt-0.5 text-[14px] font-semibold text-text-primary">#{consultation.id}</p>
+        {/* Divider */}
+        <div className="h-px bg-border/40 w-full" />
+
+        {/* Info grid */}
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+          <div className="rounded-xl border border-border/30 bg-surface/30 px-3.5 py-2.5">
+            <p className="text-[10px] font-bold uppercase tracking-wider text-text-secondary/80">ID Konsultasi</p>
+            <p className="mt-1 text-[14px] font-bold text-text-primary">#{consultation.id}</p>
           </div>
-          <div className="rounded-xl bg-surface px-3 py-2">
-            <p className="text-[10px] font-semibold uppercase tracking-wider text-text-secondary">Biaya</p>
-            <p className="mt-0.5 text-[14px] font-semibold text-primary">{formatCurrency(consultation.fee)}</p>
+          <div className="rounded-xl border border-border/30 bg-surface/30 px-3.5 py-2.5">
+            <p className="text-[10px] font-bold uppercase tracking-wider text-text-secondary/80">Biaya Medis</p>
+            <p className="mt-1 text-[14px] font-extrabold text-primary">{formatCurrency(consultation.fee)}</p>
           </div>
-          <div className="col-span-2 rounded-xl bg-surface px-3 py-2 sm:col-span-1">
-            <p className="text-[10px] font-semibold uppercase tracking-wider text-text-secondary">Dibuat</p>
-            <p className="mt-0.5 text-[13px] font-medium text-text-secondary">{formatDate(consultation.createdAt)}</p>
+          <div className="col-span-2 rounded-xl border border-border/30 bg-surface/30 px-3.5 py-2.5 sm:col-span-1">
+            <p className="text-[10px] font-bold uppercase tracking-wider text-text-secondary/80">Tanggal Dibuat</p>
+            <p className="mt-1 text-[13px] font-semibold text-text-secondary">{formatDate(consultation.createdAt)}</p>
           </div>
         </div>
 
-        {/* Actions */}
-        <div className="mt-4 flex gap-2">
+        {/* Actions button group */}
+        <div className="flex gap-2.5 mt-2">
           {needsPayment && consultation.status !== "CANCELLED" && (
             <Link
               to={`/consultations/${consultation.id}/payment`}
               id={`pay-btn-${consultation.id}`}
-              className="flex flex-1 items-center justify-center gap-1.5 rounded-xl bg-warning py-2.5 text-center text-[14px] font-semibold text-white transition hover:bg-[#D97706]"
+              className="flex flex-1 items-center justify-center gap-1.5 rounded-xl bg-warning py-3 text-center text-[14px] font-bold text-white shadow-sm hover:bg-[#D97706] hover:shadow transition-all duration-150"
             >
-              <CreditCard size={14} strokeWidth={2} />
+              <CreditCard size={15} strokeWidth={2} />
               Bayar Sekarang
             </Link>
           )}
@@ -131,17 +160,17 @@ function ConsultationCard({ consultation }) {
             <Link
               to={`/consultations/${consultation.id}/chat`}
               id={`chat-btn-${consultation.id}`}
-              className="flex flex-1 items-center justify-center gap-1.5 rounded-xl bg-primary py-2.5 text-center text-[14px] font-semibold text-white transition hover:bg-primary-hover"
+              className="flex flex-1 items-center justify-center gap-1.5 rounded-xl bg-primary py-3 text-center text-[14px] font-bold text-white shadow-sm hover:bg-primary-hover hover:shadow transition-all duration-150"
             >
-              <MessageSquare size={14} strokeWidth={2} />
+              <MessageSquare size={15} strokeWidth={2} />
               Masuk Chat
             </Link>
           )}
 
           {consultation.status === "REQUESTED" && consultation.paymentStatus === "PAID" && (
-            <div className="flex flex-1 items-center justify-center gap-1.5 rounded-xl bg-warning-light py-2.5 text-center text-[14px] font-semibold text-warning">
-              <Clock size={14} strokeWidth={2} />
-              Menunggu Dokter Accept
+            <div className="flex flex-1 items-center justify-center gap-1.5 rounded-xl border border-warning/20 bg-warning-light/50 py-3 text-center text-[14px] font-semibold text-warning">
+              <Clock size={15} strokeWidth={2} />
+              Menunggu Dokter Konfirmasi
             </div>
           )}
 
@@ -149,10 +178,10 @@ function ConsultationCard({ consultation }) {
             <Link
               to={`/consultations/${consultation.id}/chat`}
               id={`history-btn-${consultation.id}`}
-              className="flex flex-1 items-center justify-center gap-1.5 rounded-xl bg-surface py-2.5 text-center text-[14px] font-semibold text-text-secondary transition hover:bg-primary-light hover:text-primary"
+              className="flex flex-1 items-center justify-center gap-1.5 rounded-xl border border-border/80 bg-background py-3 text-center text-[14px] font-semibold text-text-secondary hover:border-primary/30 hover:bg-primary-light/30 hover:text-primary transition-all duration-150"
             >
-              <ClipboardList size={14} strokeWidth={2} />
-              Lihat Riwayat
+              <ClipboardList size={15} strokeWidth={2} />
+              Lihat Riwayat Chat
             </Link>
           )}
         </div>
@@ -282,16 +311,6 @@ export default function MyConsultations() {
 
         {!isLoading && !isError && sorted.length > 0 && (
           <div className="space-y-4">
-            {/* Ongoing banner */}
-            {sorted.some((c) => c.status === "ONGOING") && (
-              <div className="flex items-center gap-2 rounded-xl bg-success-light px-4 py-2.5">
-                <span className="h-2 w-2 animate-pulse rounded-full bg-success" />
-                <p className="text-[14px] font-semibold text-success">
-                  Anda memiliki sesi konsultasi yang sedang berlangsung
-                </p>
-              </div>
-            )}
-
             {sorted.map((c) => (
               <ConsultationCard key={c.id} consultation={c} />
             ))}

@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import heroDoctor from "../../../assets/hero-doctor.png";
 
 function HeroSection() {
@@ -77,12 +78,18 @@ function HeroSection() {
             usia.
           </p>
           <div className="mt-[28px] flex flex-wrap items-center gap-[13px]">
-            <button className="bg-primary hover:bg-primary-hover rounded-xl px-[21px] py-[13px] text-[14px] leading-[1] font-semibold tracking-[0.01em] text-white transition-all duration-150">
+            <Link
+              to="/consultations"
+              className="bg-primary hover:bg-primary-hover rounded-xl px-[21px] py-[13px] text-[14px] leading-[1] font-semibold tracking-[0.01em] text-white transition-all duration-150 text-center"
+            >
               Mulai Konsultasi
-            </button>
-            <button className="bg-surface text-text-primary hover:bg-border rounded-xl px-[21px] py-[13px] text-[14px] leading-[1] font-semibold tracking-[0.01em] transition-all duration-150">
+            </Link>
+            <Link
+              to="/consultations/doctors"
+              className="bg-surface text-text-primary hover:bg-border rounded-xl px-[21px] py-[13px] text-[14px] leading-[1] font-semibold tracking-[0.01em] transition-all duration-150 text-center border border-border/40"
+            >
               Lihat Dokter
-            </button>
+            </Link>
           </div>
         </div>
 

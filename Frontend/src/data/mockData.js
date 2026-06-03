@@ -1,7 +1,7 @@
 export const navLinks = [
   { name: 'Beranda', to: '/' },
   { name: 'Konsultasi', to: '/consultations' },
-  { name: 'Toko', to: '/products' },
+  { name: 'Informasi Obat', to: '/products' },
   { name: 'Riwayat', to: '/history' },
 ]
 
@@ -13,15 +13,15 @@ export const features = [
     icon: 'Stethoscope',
   },
   {
-    title: 'Toko Obat',
+    title: 'Informasi Obat',
     description:
-      'Telusuri obat terpercaya dan produk kesehatan dengan pencarian serta checkout yang sederhana.',
+      'Telusuri informasi obat terpercaya dan produk kesehatan secara lengkap dan mudah.',
     icon: 'Pill',
   },
   {
     title: 'Resep Digital',
     description:
-      'Terima resep secara digital dan hubungkan langsung ke pemesanan obat dalam satu alur.',
+      'Terima resep secara digital dan hubungkan langsung ke informasi detail obat dalam satu alur.',
     icon: 'FileText',
   },
   {
