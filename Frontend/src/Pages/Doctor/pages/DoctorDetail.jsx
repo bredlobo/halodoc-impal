@@ -1,6 +1,5 @@
 import { useNavigate, useParams, Link } from "react-router-dom";
-import { useDoctorById } from "../../../hooks/useDoctors";
-import { useRequestConsultation } from "../../Consultations/hooks/useConsultations";
+import { useDoctorById, useRequestConsultation } from "../../../hooks";
 
 function DetailSkeleton() {
   return (

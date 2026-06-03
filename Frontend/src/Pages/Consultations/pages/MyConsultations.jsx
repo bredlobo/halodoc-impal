@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../../context/AuthContext";
-import { useMyConsultations } from "../hooks/useConsultations";
+import { useMyConsultations } from "../../../hooks";
 import { useQueryClient } from "@tanstack/react-query";
 import { getSocket } from "../../../lib/socket";
 import ConsultationCard from "../components/ConsultationCard";

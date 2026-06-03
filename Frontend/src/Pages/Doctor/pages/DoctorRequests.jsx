@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../../context/AuthContext";
-import { useMyConsultations, useRespondToConsultation } from "../../Consultations/hooks/useConsultations";
+import { useMyConsultations, useRespondToConsultation } from "../../../hooks";
 import { useQueryClient } from "@tanstack/react-query";
 import { getSocket } from "../../../lib/socket";
 import { decodeTokenRole } from "../../Consultations/helpers/formatters";

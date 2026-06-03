@@ -5,8 +5,8 @@ import {
   useConsultationDetail,
   useSendMessage,
   useChatHistory,
-} from "../hooks/useConsultations";
-import { useConsultationChat } from "../hooks/useConsultationChat";
+  useConsultationChat,
+} from "../../../hooks";
 import { useQueryClient } from "@tanstack/react-query";
 import { getSocket } from "../../../lib/socket";
 import { formatDate } from "../helpers/formatters";

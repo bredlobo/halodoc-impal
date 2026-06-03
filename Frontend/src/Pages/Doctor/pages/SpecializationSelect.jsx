@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import { SPECIALIZATIONS } from "../constants/specializations";
+import { SPECIALIZATIONS } from "../../../constants/specializations";
 
 export default function SpecializationSelect() {
   const navigate = useNavigate();

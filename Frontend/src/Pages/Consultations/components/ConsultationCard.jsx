@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { formatDate, formatCurrency } from "../helpers/formatters";
-import { CONSULTATION_STATUS, PAYMENT_STATUS } from "../constants/statusConfig";
+import { CONSULTATION_STATUS, PAYMENT_STATUS } from "../../../constants/statusConfig";
 
 /**
  * Kartu konsultasi di halaman MyConsultations (riwayat konsultasi pasien).

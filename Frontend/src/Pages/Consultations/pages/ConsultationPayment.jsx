@@ -1,7 +1,6 @@
 import { useNavigate, useParams } from "react-router-dom";
-import { useMidtrans } from "../hooks/useMidtrans";
-import { useConsultationDetail, usePayConsultation } from "../hooks/useConsultations";
-import { STATUS_BADGE_STYLES, PAYMENT_BADGE_STYLES } from "../constants/statusConfig";
+import { useMidtrans, useConsultationDetail, usePayConsultation } from "../../../hooks";
+import { STATUS_BADGE_STYLES, PAYMENT_BADGE_STYLES } from "../../../constants/statusConfig";
 
 function StatusBadge({ value, styleMap }) {
   const cls = styleMap[value] ?? "bg-slate-50 text-slate-700 ring-slate-100";

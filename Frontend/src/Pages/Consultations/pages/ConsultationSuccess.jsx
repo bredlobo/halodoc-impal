@@ -1,6 +1,6 @@
 import { useEffect, useRef } from "react";
 import { Link, useSearchParams } from "react-router-dom";
-import { useVerifyPayment } from "../hooks/useConsultations";
+import { useVerifyPayment } from "../../../hooks";
 import { useQueryClient } from "@tanstack/react-query";
 
 export default function ConsultationSuccess() {
