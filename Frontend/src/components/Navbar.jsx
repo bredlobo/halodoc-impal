@@ -3,6 +3,7 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { navLinks } from "../data/mockData";
 import { useAuth } from "../context/AuthContext";
 import { Stethoscope, Hospital, Bell, LogOut, ChevronDown } from "lucide-react";
+import logo from "../assets/logo.png";
 
 function decodeTokenRole(token) {
   try { return JSON.parse(atob(token.split(".")[1])).role || null; }
@@ -49,13 +50,8 @@ function Navbar() {
     <header className="sticky top-0 z-40 border-b border-border bg-background/95 backdrop-blur">
       <nav className="mx-auto flex md:grid md:grid-cols-[1fr_auto_1fr] w-full max-w-[1152px] items-center justify-between px-4 py-3 sm:px-6 lg:px-8">
         <div className="flex justify-start">
-          <Link to="/" className="flex items-center gap-2.5">
-            <span className="inline-flex h-9 w-9 items-center justify-center rounded-xl bg-primary text-sm font-bold text-white">
-              H+
-            </span>
-            <span className="text-[16px] font-extrabold tracking-tight text-text-primary">
-              HaloHealth
-            </span>
+          <Link to="/" className="flex items-center">
+            <img src={logo} alt="HaloHealth" className="h-[34px] w-auto object-contain" />
           </Link>
         </div>
 
