@@ -61,6 +61,96 @@ export default class ConsultationsService {
     }
   }
 
+  // ── 30-minute session end ────────────────────────────────────────────
+  private static sessionEndJobs: Map<number, NodeJS.Timeout> = new Map();
+
+  private static scheduleSessionEnd(
+    consultationId: number,
+    patientId: number,
+    doctorId: number,
+    delayMs: number = 30 * 60 * 1000, // default: full 30 minutes
+  ): void {
+    const timeout = setTimeout(async () => {
+      try {
+        const consultation =
+          await ConsultationsRepository.getConsultationById(consultationId);
+
+        if (consultation && consultation.status === "ONGOING") {
+          await prisma.consultation.update({
+            where: { id: consultationId },
+            data: { status: "COMPLETED", endTime: new Date() },
+          });
+
+          const payload = {
+            consultationId,
+            message: "Sesi konsultasi 30 menit telah berakhir.",
+          };
+
+          // Notify both parties
+          getIO().to(`user_${patientId}`).emit("consultation_session_ended", payload);
+          getIO().to(`user_${doctorId}`).emit("consultation_session_ended", payload);
+          getIO().to(`consultation_${consultationId}`).emit("consultation_session_ended", payload);
+        }
+      } catch (err) {
+        console.error("Error in session end job:", err);
+      } finally {
+        ConsultationsService.sessionEndJobs.delete(consultationId);
+      }
+    }, delayMs);
+
+    ConsultationsService.sessionEndJobs.set(consultationId, timeout);
+  }
+
+  static cancelSessionEnd(consultationId: number): void {
+    const job = ConsultationsService.sessionEndJobs.get(consultationId);
+    if (job) {
+      clearTimeout(job);
+      ConsultationsService.sessionEndJobs.delete(consultationId);
+    }
+  }
+
+  static async recoverSessionTimers(): Promise<void> {
+    const SESSION_MS = 30 * 60 * 1000;
+
+    const ongoingConsultations = await prisma.consultation.findMany({
+      where: { status: "ONGOING" },
+      select: { id: true, patientId: true, doctorId: true, startTime: true },
+    });
+
+    if (ongoingConsultations.length === 0) return;
+
+    console.log(
+      `Recovering session timers for ${ongoingConsultations.length} ongoing consultation(s)...`,
+    );
+
+    for (const c of ongoingConsultations) {
+      if (!c.startTime) continue;
+
+      const elapsed = Date.now() - new Date(c.startTime).getTime();
+      const remaining = SESSION_MS - elapsed;
+
+      if (remaining <= 0) {
+        // Already overdue — complete immediately
+        try {
+          await prisma.consultation.update({
+            where: { id: c.id },
+            data: { status: "COMPLETED", endTime: new Date() },
+          });
+          console.log(`  Consultation #${c.id} was overdue — marked COMPLETED.`);
+        } catch (err) {
+          console.error(`  Failed to complete overdue consultation #${c.id}:`, err);
+        }
+      } else {
+        // Schedule for the remaining time
+        ConsultationsService.scheduleSessionEnd(c.id, c.patientId, c.doctorId, remaining);
+        console.log(
+          `  Consultation #${c.id} timer rescheduled — ${Math.round(remaining / 1000)}s remaining.`,
+        );
+      }
+    }
+  }
+
+
   static async getConsultationById(consultationId: number): Promise<ResponseResult<any>> {
     try {
       const consultation = await ConsultationsRepository.getConsultationById(consultationId);
@@ -77,7 +167,6 @@ export default class ConsultationsService {
   static async requestConsultation(
     patientId: number,
     doctorId: number,
-    fee: number = 50000, // Default fee
   ): Promise<ResponseResult<RequestedConsultation>> {
     try {
       const patient = await prisma.user.findUnique({
@@ -85,6 +174,13 @@ export default class ConsultationsService {
       });
       if (!patient)
         return wrapper.error(new NotFoundError("Patient not found"));
+
+      // Fetch fee from the doctor's profile in the database
+      const fee = await ConsultationsRepository.getDoctorFee(doctorId);
+      if (fee === null)
+        return wrapper.error(
+          new NotFoundError("Doctor profile or consultation fee not found"),
+        );
 
       const consultation = await ConsultationsRepository.requestConsultation(
         patientId,
@@ -169,6 +265,13 @@ export default class ConsultationsService {
             startTime: updated.startTime,
           });
 
+        // ── 30-minute session limit ────────────────────────────────
+        ConsultationsService.scheduleSessionEnd(
+          consultationId,
+          consultation.patientId,
+          doctorId,
+        );
+
         return wrapper.data(updated);
       } else if (action === "DECLINE") {
         const updated = await ConsultationsRepository.updateStatus(
@@ -202,6 +305,11 @@ export default class ConsultationsService {
         await ConsultationsRepository.getConsultationById(consultationId);
       if (!consultation)
         return wrapper.error(new NotFoundError("Consultation not found"));
+
+      // Cancel the 30-min session timer if ending the consultation early
+      if (status === "COMPLETED" || status === "CANCELLED") {
+        ConsultationsService.cancelSessionEnd(consultationId);
+      }
 
       const updated = await ConsultationsRepository.updateStatus(
         consultationId,

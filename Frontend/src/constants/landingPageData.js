@@ -1,6 +1,6 @@
-import ads1 from "../assets/ads-1.png";
-import ads2 from "../assets/ads-2.png";
-import ads3 from "../assets/ads-3.png";
+import ads1 from "../assets/haloskin-model.png";
+import ads2 from "../assets/mcu-model.png";
+import ads3 from "../assets/tele-model.png";
 
 export const adsData = [
   {
