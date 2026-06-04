@@ -1,7 +1,10 @@
 import { useNavigate } from "react-router-dom";
 import { useParams } from "react-router-dom";
 import { useMidtrans } from "../../../hooks/useMidtrans";
-import { useConsultationDetail, usePayConsultation } from "../../../hooks/useConsultations";
+import {
+  useConsultationDetail,
+  usePayConsultation,
+} from "../../../hooks/useConsultations";
 import { AlertTriangle, Check, Loader2 } from "lucide-react";
 
 const STATUS_STYLES = {
@@ -20,7 +23,9 @@ const PAYMENT_STYLES = {
 function StatusBadge({ value, styleMap }) {
   const cls = styleMap[value] ?? "bg-surface text-text-secondary";
   return (
-    <span className={`inline-flex rounded-full px-2.5 py-0.5 text-[11px] font-semibold ${cls}`}>
+    <span
+      className={`inline-flex rounded-full px-2.5 py-0.5 text-[11px] font-semibold ${cls}`}
+    >
       {value}
     </span>
   );
@@ -28,12 +33,12 @@ function StatusBadge({ value, styleMap }) {
 
 function PaymentSkeleton() {
   return (
-    <div className="min-h-screen bg-surface py-12">
+    <div className="bg-surface min-h-screen py-12">
       <div className="mx-auto max-w-xl px-4">
-        <div className="animate-pulse space-y-4 rounded-xl bg-background p-8">
-          <div className="mx-auto h-6 w-48 rounded bg-border" />
-          <div className="h-40 rounded-xl bg-surface" />
-          <div className="h-12 rounded-xl bg-border" />
+        <div className="bg-background animate-pulse space-y-4 rounded-xl p-8">
+          <div className="bg-border mx-auto h-6 w-48 rounded" />
+          <div className="bg-surface h-40 rounded-xl" />
+          <div className="bg-border h-12 rounded-xl" />
         </div>
       </div>
     </div>
@@ -45,7 +50,13 @@ export default function ConsultationPayment() {
   const navigate = useNavigate();
   const { isLoaded, pay } = useMidtrans();
 
-  const { data: consultation, isLoading, isError, error, refetch } = useConsultationDetail(id);
+  const {
+    data: consultation,
+    isLoading,
+    isError,
+    error,
+    refetch,
+  } = useConsultationDetail(id);
 
   const paymentMutation = usePayConsultation(id, {
     onSuccess: (res) => {
@@ -80,17 +91,23 @@ export default function ConsultationPayment() {
 
   if (isError) {
     return (
-      <div className="min-h-screen bg-surface py-12">
+      <div className="bg-surface min-h-screen py-12">
         <div className="mx-auto max-w-xl px-4">
-          <div className="flex flex-col items-center justify-center rounded-xl bg-error-light py-20 text-center">
-            <AlertTriangle size={40} strokeWidth={1.75} className="mb-4 text-error" />
-            <h3 className="text-[16px] font-semibold text-text-primary">Gagal memuat detail pembayaran</h3>
-            <p className="mt-1 max-w-sm text-[14px] text-text-secondary">
+          <div className="bg-error-light flex flex-col items-center justify-center rounded-xl py-20 text-center">
+            <AlertTriangle
+              size={40}
+              strokeWidth={1.75}
+              className="text-error mb-4"
+            />
+            <h3 className="text-text-primary text-[16px] font-semibold">
+              Gagal memuat detail pembayaran
+            </h3>
+            <p className="text-text-secondary mt-1 max-w-sm text-[14px]">
               {error?.message || "Terjadi kesalahan. Coba lagi."}
             </p>
             <button
               onClick={() => refetch()}
-              className="mt-6 rounded-xl bg-primary px-5 py-2.5 text-[14px] font-semibold text-white transition hover:bg-primary-hover"
+              className="bg-primary hover:bg-primary-hover mt-6 rounded-xl px-5 py-2.5 text-[14px] font-semibold text-white transition"
             >
               Coba Lagi
             </button>
@@ -104,18 +121,19 @@ export default function ConsultationPayment() {
   const isPaid = consData?.paymentStatus === "PAID";
 
   return (
-    <div className="min-h-screen bg-surface">
+    <div className="bg-surface min-h-screen">
       {/* ── Hero Banner ──────────────────────────────────────────────── */}
-      <section className="border-b border-border bg-background py-[34px] sm:py-[55px]">
+      <section className="border-border bg-background border-b py-[34px] sm:py-[55px]">
         <div className="mx-auto max-w-[1152px] px-4 text-center sm:px-6 lg:px-8">
-          <span className="mb-3 inline-flex rounded-full bg-primary-light px-3 py-1 text-[11px] font-semibold tracking-widest text-primary uppercase">
+          <span className="bg-primary-light text-primary mb-3 inline-flex rounded-full px-3 py-1 text-[11px] font-semibold tracking-widest uppercase">
             Konsultasi Online
           </span>
-          <h1 className="mt-2 text-[32px] font-bold leading-[1.25] tracking-[-0.01em] text-text-primary">
+          <h1 className="text-text-primary mt-2 text-[32px] leading-[1.25] font-bold tracking-[-0.01em]">
             Konfirmasi Pembayaran
           </h1>
-          <p className="mx-auto mt-4 max-w-lg text-[14px] leading-[1.55] text-text-secondary">
-            Periksa ringkasan pesanan konsultasi dan selesaikan pembayaran untuk terhubung dengan dokter.
+          <p className="text-text-secondary mx-auto mt-4 max-w-lg text-[14px] leading-[1.55]">
+            Periksa ringkasan pesanan konsultasi dan selesaikan pembayaran untuk
+            terhubung dengan dokter.
           </p>
         </div>
       </section>
@@ -123,34 +141,50 @@ export default function ConsultationPayment() {
       {/* ── Payment Card ─────────────────────────────────────────────── */}
       <section className="py-[34px] sm:py-[55px]">
         <div className="mx-auto max-w-[550px] px-4 sm:px-6">
-          <div className="overflow-hidden rounded-[21px] bg-background shadow-[0_4px_6px_-1px_rgba(0,0,0,0.05),0_2px_4px_-1px_rgba(0,0,0,0.03)]">
+          <div className="bg-background overflow-hidden rounded-[21px] shadow-[0_4px_6px_-1px_rgba(0,0,0,0.05),0_2px_4px_-1px_rgba(0,0,0,0.03)]">
             {/* Card Header */}
-            <div className="border-b border-border bg-surface px-6 py-4">
-              <h2 className="text-[14px] font-semibold uppercase tracking-wider text-text-secondary">
+            <div className="border-border bg-surface border-b px-6 py-4">
+              <h2 className="text-text-secondary text-[14px] font-semibold tracking-wider uppercase">
                 Ringkasan Pesanan
               </h2>
             </div>
 
             {/* Order Details */}
-            <div className="divide-y divide-border px-6">
+            <div className="divide-border divide-y px-6">
               <div className="flex items-center justify-between py-4">
-                <span className="text-[14px] text-text-secondary">ID Konsultasi</span>
-                <span className="font-semibold text-text-primary">CONS-{consData?.id}</span>
+                <span className="text-text-secondary text-[14px]">
+                  ID Konsultasi
+                </span>
+                <span className="text-text-primary font-semibold">
+                  CONS-{consData?.id}
+                </span>
               </div>
 
               <div className="flex items-center justify-between py-4">
-                <span className="text-[14px] text-text-secondary">Status Konsultasi</span>
-                <StatusBadge value={consData?.status} styleMap={STATUS_STYLES} />
+                <span className="text-text-secondary text-[14px]">
+                  Status Konsultasi
+                </span>
+                <StatusBadge
+                  value={consData?.status}
+                  styleMap={STATUS_STYLES}
+                />
               </div>
 
               <div className="flex items-center justify-between py-4">
-                <span className="text-[14px] text-text-secondary">Status Pembayaran</span>
-                <StatusBadge value={consData?.paymentStatus} styleMap={PAYMENT_STYLES} />
+                <span className="text-text-secondary text-[14px]">
+                  Status Pembayaran
+                </span>
+                <StatusBadge
+                  value={consData?.paymentStatus}
+                  styleMap={PAYMENT_STYLES}
+                />
               </div>
 
               <div className="flex items-center justify-between py-5">
-                <span className="text-[16px] font-semibold text-text-primary">Total Biaya</span>
-                <span className="text-[24px] font-bold text-primary">
+                <span className="text-text-primary text-[16px] font-semibold">
+                  Total Biaya
+                </span>
+                <span className="text-primary text-[24px] font-bold">
                   {new Intl.NumberFormat("id-ID", {
                     style: "currency",
                     currency: "IDR",
@@ -161,32 +195,32 @@ export default function ConsultationPayment() {
             </div>
 
             {/* CTA */}
-            <div className="border-t border-border px-6 py-5">
+            <div className="border-border border-t px-6 py-5">
               <button
                 id="pay-button"
                 onClick={() => paymentMutation.mutate()}
                 disabled={!isLoaded || paymentMutation.isPending || isPaid}
-                className={`w-full rounded-xl py-[13px] text-[14px] font-semibold leading-[1] tracking-[0.01em] transition-all duration-150 ${
+                className={`w-full rounded-xl py-[13px] text-[14px] leading-[1] font-semibold tracking-[0.01em] transition-all duration-150 ${
                   isPaid
-                    ? "bg-success text-white cursor-not-allowed"
-                    : "bg-primary text-white hover:bg-primary-hover disabled:bg-border disabled:text-[#9CA3AF] disabled:cursor-not-allowed"
+                    ? "bg-success cursor-not-allowed text-white"
+                    : "bg-primary hover:bg-primary-hover disabled:bg-border text-white disabled:cursor-not-allowed disabled:text-[#9CA3AF]"
                 }`}
               >
                 {paymentMutation.isPending
                   ? "Memproses..."
                   : isPaid
-                  ? "Sudah Dibayar"
-                  : "Bayar dengan Midtrans"}
+                    ? "Sudah Dibayar"
+                    : "Bayar"}
               </button>
-              <p className="mt-3 text-center text-[11px] text-text-secondary">
-                Pembayaran aman diproses oleh Midtrans
-              </p>
             </div>
           </div>
 
           {/* Back link */}
           <div className="mt-6 text-center">
-            <a href="/consultations" className="text-[14px] font-semibold text-primary hover:underline">
+            <a
+              href="/consultations"
+              className="text-primary text-[14px] font-semibold hover:underline"
+            >
               Kembali ke Daftar Dokter
             </a>
           </div>
