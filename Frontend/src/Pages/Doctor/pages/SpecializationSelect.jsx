@@ -68,13 +68,19 @@ export default function SpecializationSelect() {
   return (
     <div className="min-h-screen bg-background">
       {/* ── Hero ──────────────────────────────────────────────────────── */}
-      <section className="border-b border-border bg-surface py-[34px] sm:py-[55px]">
-        <div className="relative mx-auto max-w-[1152px] px-4 text-center sm:px-6 lg:px-8">
-          <span className="mb-4 inline-flex items-center gap-1.5 rounded-full bg-primary-light px-4 py-1.5 text-[11px] font-semibold tracking-widest text-primary uppercase">
-            <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-primary" />
-            Konsultasi Online
-          </span>
-          <h1 className="mt-3 text-[32px] font-bold leading-[1.25] tracking-[-0.01em] text-text-primary sm:text-[40px]">
+      <section className="relative overflow-hidden border-b border-border bg-gradient-to-b from-primary-light via-primary-light/40 to-background py-[44px] sm:py-[68px]">
+        {/* Left side abstract outframe shapes */}
+        <div className="pointer-events-none absolute -left-20 -top-20 w-64 h-64 rounded-full border-4 border-primary/10 hidden md:block" />
+        <div className="pointer-events-none absolute -left-10 bottom-4 w-32 h-32 rounded-full bg-primary/5 blur-sm hidden md:block" />
+        <div className="pointer-events-none absolute left-36 top-10 w-12 h-12 rounded-full border border-primary/20 hidden md:block" />
+
+        {/* Right side abstract outframe shapes */}
+        <div className="pointer-events-none absolute -right-24 -bottom-12 w-80 h-80 rounded-full border-2 border-primary/10 hidden md:block" />
+        <div className="pointer-events-none absolute right-16 top-6 w-20 h-20 rounded-full border border-primary/15 hidden md:block" />
+        <div className="pointer-events-none absolute -right-6 top-1/3 w-8 h-8 rounded-full bg-primary/10 hidden md:block" />
+
+        <div className="relative z-10 mx-auto max-w-[1152px] px-4 text-center sm:px-6 lg:px-8">
+          <h1 className="text-[34px] font-bold leading-[1.2] tracking-[-0.02em] text-text-primary sm:text-[44px]">
             Pilih Spesialisasi
           </h1>
           <p className="mx-auto mt-4 max-w-lg text-[14px] leading-[1.55] text-text-secondary sm:text-[18px] sm:leading-[1.50]">

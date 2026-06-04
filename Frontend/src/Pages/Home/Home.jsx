@@ -5,12 +5,12 @@ import StorePreviewSection from "./components/StorePreviewSection";
 
 function HomePage() {
   return (
-    <>
+    <div className="w-full overflow-x-hidden">
       <HeroSection />
       <FeaturesSection />
       <DoctorsPreviewSection />
       <StorePreviewSection />
-    </>
+    </div>
   );
 }
 
