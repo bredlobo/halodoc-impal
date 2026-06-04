@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useLogin, useRegister } from "../../hooks";
+import { Eye, EyeOff } from "lucide-react";
 
 const INITIAL_LOGIN_FORM = {
   email: "",
@@ -20,6 +21,7 @@ const INITIAL_REGISTER_FORM = {
 function AuthPage() {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("login");
+  const [showLoginPassword, setShowLoginPassword] = useState(false);
 
   const {
     mutateAsync: login,
@@ -152,14 +154,23 @@ function AuthPage() {
               <label className="mb-1 block text-[14px] font-medium text-text-primary">
                 Password
               </label>
-              <input
-                type="password"
-                name="password"
-                placeholder="Masukkan password"
-                className={getFieldError(loginError, "password") ? inputErrorClass : inputDefaultClass}
-                value={loginForm.password}
-                onChange={handleLoginChange}
-              />
+              <div className="relative">
+                <input
+                  type={showLoginPassword ? "text" : "password"}
+                  name="password"
+                  placeholder="Masukkan password"
+                  className={`${getFieldError(loginError, "password") ? inputErrorClass : inputDefaultClass} pr-10`}
+                  value={loginForm.password}
+                  onChange={handleLoginChange}
+                />
+                <button
+                  type="button"
+                  className="absolute inset-y-0 right-0 flex items-center pr-3 text-[#9CA3AF] transition-colors hover:text-text-primary"
+                  onClick={() => setShowLoginPassword((prev) => !prev)}
+                >
+                  {showLoginPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                </button>
+              </div>
               {getFieldError(loginError, "password") && (
                 <span className="mt-1 block text-[11px] text-error">
                   {getFieldError(loginError, "password")}
