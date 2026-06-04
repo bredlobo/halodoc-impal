@@ -54,73 +54,76 @@ export default function ConsultationSuccess() {
       {/* ── Success Card ─────────────────────────────────────────────── */}
       <section className="py-[34px] sm:py-[55px]">
         <div className="mx-auto max-w-lg px-4 text-center sm:px-6">
-          <div className="rounded-[21px] bg-background p-10 shadow-[0_4px_6px_-1px_rgba(0,0,0,0.05),0_2px_4px_-1px_rgba(0,0,0,0.03)]">
-            {/* Icon */}
-            <div className="mx-auto mb-6 flex h-24 w-24 items-center justify-center rounded-full bg-success-light">
-              <CheckCircle2 size={48} strokeWidth={1.5} className="text-success" />
+          <div className="rounded-[24px] bg-background p-8 md:p-10 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-border/40">
+            {/* Success Icon */}
+            <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-success-light text-success shadow-[0_0_0_8px_rgba(34,197,94,0.04)]">
+              <CheckCircle2 size={40} strokeWidth={1.5} />
             </div>
 
-            <h2 className="text-[18px] font-semibold text-text-primary">Pembayaran Dikonfirmasi</h2>
-            <p className="mt-3 text-[14px] leading-[1.55] text-text-secondary">
-              Terima kasih telah menggunakan layanan kami. Dokter akan segera menghubungi Anda.
+            <h2 className="text-[20px] font-bold tracking-[-0.01em] text-text-primary">Pembayaran Dikonfirmasi</h2>
+            <p className="mt-2 text-[14px] leading-relaxed text-text-secondary">
+              Terima kasih. Pembayaran Anda telah kami terima dan sesi Anda siap dimulai.
             </p>
 
             {/* Payment status indicator */}
             {verifying && (
-              <div className="mt-4 flex items-center justify-center gap-2 rounded-xl bg-warning-light px-4 py-2.5">
+              <div className="mt-5 flex items-center justify-center gap-2 rounded-xl bg-warning-light px-4 py-2.5">
                 <Loader2 size={16} className="animate-spin text-warning" />
                 <span className="text-[13px] font-semibold text-warning">
-                  Mengonfirmasi status pembayaran...
+                  Memverifikasi transaksi...
                 </span>
               </div>
             )}
             {!verifying && isPaid && (
-              <div className="mt-4 flex items-center justify-center gap-2 rounded-xl bg-success-light px-4 py-2.5">
+              <div className="mt-5 flex items-center justify-center gap-2 rounded-xl bg-success-light px-4 py-2.5">
                 <Check size={16} strokeWidth={2.5} className="text-success" />
                 <span className="text-[13px] font-semibold text-success">
-                  Status pembayaran: LUNAS
+                  Status: Terverifikasi (LUNAS)
                 </span>
               </div>
             )}
 
-            {/* Steps */}
-            <div className="mt-8 grid gap-3 text-left">
+            {/* Minimalist Vertical Steps Timeline */}
+            <div className="mt-8 border-l-2 border-border/60 pl-6 ml-4 space-y-6 text-left relative">
               {[
-                { Icon: Check, label: "Pembayaran diterima" },
-                { Icon: Bell, label: "Dokter mendapat notifikasi" },
-                { Icon: MessageSquare, label: "Sesi konsultasi akan segera dimulai" },
+                { label: "Pembayaran Diterima", desc: "Dana berhasil diamankan oleh sistem." },
+                { label: "Notifikasi Terkirim", desc: "Dokter sedang bersiap membuka konsultasi." },
+                { label: "Sesi Siap", desc: "Silakan masuk ke ruang chat konsultasi." }
               ].map((step, i) => (
-                <div key={i} className="flex items-center gap-3 rounded-xl bg-surface px-4 py-3">
-                  <step.Icon size={18} strokeWidth={1.75} className="text-primary" />
-                  <span className="text-[14px] font-medium text-text-primary">{step.label}</span>
+                <div key={i} className="relative">
+                  <div className="absolute -left-[33px] top-1 flex h-[14px] w-[14px] items-center justify-center rounded-full bg-success text-white ring-4 ring-background">
+                    <Check size={8} strokeWidth={3} />
+                  </div>
+                  <h4 className="text-[13px] font-semibold leading-none text-text-primary">{step.label}</h4>
+                  <p className="text-[11px] text-text-secondary mt-1 leading-normal">{step.desc}</p>
                 </div>
               ))}
             </div>
 
             {/* CTA buttons */}
-            <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:justify-center">
+            <div className="mt-10 flex flex-col gap-2.5 sm:flex-row sm:justify-center">
               <Link
                 to="/history"
                 id="go-to-my-consultations"
-                className="rounded-xl bg-primary px-6 py-3 text-[14px] font-semibold text-white transition-all hover:bg-primary-hover"
+                className="flex h-11 w-full sm:w-[130px] items-center justify-center rounded-xl bg-primary px-4 text-[13px] font-semibold text-white transition-all hover:bg-primary-hover text-center"
               >
-                Lihat Status Konsultasi
+                Cek Status
               </Link>
               {consultationId && (
                 <Link
                   to={`/consultations/${consultationId}/chat`}
                   id="go-to-chat"
-                  className="rounded-xl border border-border bg-background px-6 py-3 text-[14px] font-semibold text-text-primary transition-colors hover:bg-primary-light hover:text-primary"
+                  className="flex h-11 w-full sm:w-[130px] items-center justify-center rounded-xl border border-border bg-background px-4 text-[13px] font-semibold text-text-primary transition-colors hover:bg-surface text-center"
                 >
-                  Buka Ruang Chat
+                  Buka Chat
                 </Link>
               )}
               <Link
                 to="/"
                 id="go-to-home"
-                className="rounded-xl bg-surface px-6 py-3 text-[14px] font-semibold text-text-secondary transition-colors hover:bg-border hover:text-text-primary"
+                className="flex h-11 w-full sm:w-[130px] items-center justify-center rounded-xl bg-surface px-4 text-[13px] font-semibold text-text-secondary transition-colors hover:bg-border hover:text-text-primary text-center"
               >
-                Ke Beranda
+                Beranda
               </Link>
             </div>
           </div>
