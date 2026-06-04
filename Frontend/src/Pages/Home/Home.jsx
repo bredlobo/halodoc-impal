@@ -1,15 +1,15 @@
-import DoctorsPreviewSection from "./components/DoctorsPreviewSection";
 import FeaturesSection from "./components/FeaturesSection";
 import HeroSection from "./components/HeroSection";
-import StorePreviewSection from "./components/StorePreviewSection";
+import MedicalAdsSection from "./components/MedicalAdsSection";
+import TestimonialsSection from "./components/TestimonialsSection";
 
 function HomePage() {
   return (
     <div className="w-full overflow-x-hidden">
       <HeroSection />
       <FeaturesSection />
-      <DoctorsPreviewSection />
-      <StorePreviewSection />
+      <MedicalAdsSection />
+      <TestimonialsSection />
     </div>
   );
 }

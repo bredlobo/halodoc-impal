@@ -99,6 +99,8 @@ function HeroSection() {
             alt="Dokter HaloHealth"
             className="relative z-10 mx-auto h-auto max-h-[320px] sm:max-h-[420px] lg:max-h-[560px] xl:max-h-[680px] w-full max-w-xl lg:max-w-none object-contain object-bottom"
           />
+          {/* Gradient transition overlay to blend the bottom of the doctor photo */}
+          <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-primary-light to-transparent z-20 pointer-events-none" />
         </div>
       </div>
     </section>
