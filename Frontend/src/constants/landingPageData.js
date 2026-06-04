@@ -6,17 +6,20 @@ export const adsData = [
   {
     id: 1,
     image: ads1,
-    alt: "HaloHealth Care - Proteksi Kesehatan Keluarga"
+    alt: "HaloHealth Care - Proteksi Kesehatan Keluarga",
+    bgColor: "#E5C6C4"
   },
   {
     id: 2,
     image: ads2,
-    alt: "Home Health Check-Up - Skrining Medis Dari Rumah"
+    alt: "Home Health Check-Up - Skrining Medis Dari Rumah",
+    bgColor: "#2D7E81"
   },
   {
     id: 3,
     image: ads3,
-    alt: "Telemedicine 24/7 - Konsultasi Dokter Spesialis Kapan Saja"
+    alt: "Telemedicine 24/7 - Konsultasi Dokter Spesialis Kapan Saja",
+    bgColor: "#B7D3E1"
   }
 ];
 
