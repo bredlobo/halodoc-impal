@@ -77,7 +77,6 @@ export default class ConsultationsService {
   static async requestConsultation(
     patientId: number,
     doctorId: number,
-    fee: number = 50000, // Default fee
   ): Promise<ResponseResult<RequestedConsultation>> {
     try {
       const patient = await prisma.user.findUnique({
@@ -85,6 +84,13 @@ export default class ConsultationsService {
       });
       if (!patient)
         return wrapper.error(new NotFoundError("Patient not found"));
+
+      // Fetch fee from the doctor's profile in the database
+      const fee = await ConsultationsRepository.getDoctorFee(doctorId);
+      if (fee === null)
+        return wrapper.error(
+          new NotFoundError("Doctor profile or consultation fee not found"),
+        );
 
       const consultation = await ConsultationsRepository.requestConsultation(
         patientId,

@@ -44,6 +44,7 @@ export default class DoctorsRepository {
             telephoneNumber: true,
           },
         },
+        specialization: true,
       },
     });
   }
