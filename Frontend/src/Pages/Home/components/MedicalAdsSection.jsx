@@ -8,6 +8,7 @@ function MedicalAdsSection() {
 
   const dragStart = useRef(0);
   const isDraggingRef = useRef(false);
+  const hasDragged = useRef(false);
 
   const prevSlide = () => {
     setCurrentIndex((prev) => (prev === 0 ? adsData.length - 1 : prev - 1));
@@ -28,12 +29,16 @@ function MedicalAdsSection() {
     dragStart.current = clientX;
     isDraggingRef.current = true;
     setIsDraggingState(true);
+    hasDragged.current = false;
   };
 
   const handleMove = (clientX) => {
     if (!isDraggingRef.current) return;
     const delta = clientX - dragStart.current;
     setDragOffset(delta);
+    if (Math.abs(delta) > 5) {
+      hasDragged.current = true;
+    }
   };
 
   const handleEnd = () => {
@@ -85,7 +90,7 @@ function MedicalAdsSection() {
               <div
                 key={ad.id}
                 onClick={() => {
-                  if (dragOffset === 0) {
+                  if (!hasDragged.current) {
                     setCurrentIndex(index);
                   }
                 }}
