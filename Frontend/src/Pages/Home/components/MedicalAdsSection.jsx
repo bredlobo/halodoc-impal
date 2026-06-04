@@ -99,6 +99,7 @@ function MedicalAdsSection() {
                     ? "border-primary/20 shadow-md scale-100 opacity-100 cursor-default"
                     : "border-border/50 scale-98 opacity-90 cursor-pointer hover:opacity-95"
                 }`}
+                style={{ backgroundColor: ad.bgColor || "#ffffff" }}
               >
                 <img
                   src={ad.image}
