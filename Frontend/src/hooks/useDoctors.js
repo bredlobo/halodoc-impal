@@ -6,7 +6,7 @@ function mapDoctor(doc) {
     name: doc.user?.fullName ?? doc.name,
     specialization: doc.specialization?.name ?? doc.specialization,
     experience: doc.experience ?? "Expert",
-    fee: doc.fee ?? 100000,
+    fee: doc.consultationFee ?? doc.fee ?? 50000,
     rating: doc.rating ?? 4.8,
     bio: doc.bio ?? null,
   };

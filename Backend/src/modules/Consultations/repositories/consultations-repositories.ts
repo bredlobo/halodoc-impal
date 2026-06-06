@@ -26,6 +26,14 @@ export default class ConsultationsRepository {
     });
   }
 
+  static async getDoctorFee(doctorId: number): Promise<number | null> {
+    const profile = await prisma.doctorProfile.findUnique({
+      where: { userId: doctorId },
+      select: { consultationFee: true },
+    });
+    return profile?.consultationFee ?? null;
+  }
+
   static async updateStatus(
     consultationId: number,
     status: ConsultationStatus,

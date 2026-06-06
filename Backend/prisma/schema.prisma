@@ -118,6 +118,7 @@ model DoctorProfile {
   specializationId Int
   strNumber        String         @unique
   photoUrl         String?
+  consultationFee  Float          @default(50000)
   createdAt        DateTime       @default(now())
   updatedAt        DateTime       @updatedAt
 

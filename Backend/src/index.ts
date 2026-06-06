@@ -9,7 +9,7 @@ import doctorsRoutes from "@/routes/doctors";
 import { config } from "@/helpers/infra/global-config";
 import { setupSwagger } from "@/docs/swagger";
 import { initSocket } from "@/helpers/utils/socket";
-import ConsultationsRepository from "@/modules/Consultations/repositories/consultations-repositories";
+import { runStartupTasks } from "@/helpers/utils/startup";
 
 const app: Application = express();
 const httpServer = createServer(app);
@@ -62,17 +62,9 @@ app.use("/api/v1/doctors", doctorsRoutes);
 setupSwagger(app);
 initSocket(httpServer, corsOptions);
 
-// Clean up expired consultations on startup
-ConsultationsRepository.cancelExpiredConsultations()
-  .then((res) => {
-    if (res.count > 0) {
-      console.log(`Cleaned up ${res.count} expired requested consultations.`);
-    }
-  })
-  .catch((err) => {
-    console.error("Failed to clean up expired consultations on startup", err);
-  });
+runStartupTasks();
 
 httpServer.listen(PORT, HOST, () => {
   console.log(`Server running on http://${HOST}:${PORT}`);
 });
+
